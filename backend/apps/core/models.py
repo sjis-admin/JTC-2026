@@ -20,7 +20,7 @@ class SiteSettings(models.Model):
     registration_deadline = models.DateTimeField(null=True, blank=True, help_text='Registration closing deadline date and time')
     
     contact_email = models.EmailField(default='jtc@sjis.edu.bd')
-    contact_phone = models.CharField(max_length=20, default='+880 2-9116271')
+    contact_phone = models.CharField(max_length=100, default='+880 2-9116271', help_text='Helpline numbers displayed in footer and passes')
     facebook_url = models.URLField(blank=True)
     instagram_url = models.URLField(blank=True)
     youtube_url = models.URLField(blank=True)

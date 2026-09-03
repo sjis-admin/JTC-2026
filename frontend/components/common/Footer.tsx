@@ -1,17 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Cpu, Mail, Phone, MapPin, Facebook, Instagram, Youtube, Shield } from 'lucide-react';
+import { Cpu, Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { fetchSiteSettings, SiteSettingsData } from '@/lib/api';
 
 export default function Footer() {
   const pathname = usePathname();
+  const [settings, setSettings] = useState<SiteSettingsData | null>(null);
+
+  useEffect(() => {
+    fetchSiteSettings().then(setSettings).catch(() => {});
+  }, []);
 
   // Hide the public footer completely inside the Admin Suite
   if (pathname.startsWith('/admin')) {
     return null;
   }
+
+  const phone = settings?.contact_phone || '+880 2-9116271';
+  const email = settings?.contact_email || 'jtc@sjis.edu.bd';
+  const venue = settings?.venue || '97 Asad Avenue, Mohammadpur, Dhaka 1207';
+  const fbUrl = settings?.facebook_url || 'https://facebook.com';
+  const instaUrl = settings?.instagram_url || 'https://instagram.com';
+  const ytUrl = settings?.youtube_url || 'https://youtube.com';
 
   return (
     <footer className="bg-[#010714] border-t border-surface-border text-slate-400 text-sm mt-auto relative overflow-hidden">
@@ -38,15 +51,21 @@ export default function Footer() {
               Fostering excellence in artificial intelligence, competitive programming, robotics, aeronautics, digital media, and esports.
             </p>
             <div className="flex items-center gap-3 pt-2">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface border border-surface-border flex items-center justify-center text-slate-300 hover:text-gold hover:border-gold transition-colors">
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface border border-surface-border flex items-center justify-center text-slate-300 hover:text-gold hover:border-gold transition-colors">
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface border border-surface-border flex items-center justify-center text-slate-300 hover:text-gold hover:border-gold transition-colors">
-                <Youtube className="w-4 h-4" />
-              </a>
+              {fbUrl && (
+                <a href={fbUrl} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface border border-surface-border flex items-center justify-center text-slate-300 hover:text-gold hover:border-gold transition-colors">
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
+              {instaUrl && (
+                <a href={instaUrl} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface border border-surface-border flex items-center justify-center text-slate-300 hover:text-gold hover:border-gold transition-colors">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {ytUrl && (
+                <a href={ytUrl} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg bg-surface border border-surface-border flex items-center justify-center text-slate-300 hover:text-gold hover:border-gold transition-colors">
+                  <Youtube className="w-4 h-4" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -80,15 +99,15 @@ export default function Footer() {
             <div className="space-y-2.5 text-xs text-slate-300">
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-gold shrink-0" />
-                <span className="whitespace-nowrap">97 Asad Avenue, Mohammadpur, Dhaka 1207</span>
+                <span>{venue}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-gold shrink-0" />
-                <a href="mailto:jtc@sjis.edu.bd" className="hover:text-gold transition-colors">jtc@sjis.edu.bd</a>
+                <a href={`mailto:${email}`} className="hover:text-gold transition-colors">{email}</a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-gold shrink-0" />
-                <span>+880 2-9116271</span>
+                <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} className="hover:text-gold transition-colors">{phone}</a>
               </div>
             </div>
           </div>

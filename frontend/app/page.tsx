@@ -6,7 +6,6 @@ import MiniGamification from '@/components/sections/MiniGamification';
 import EligibilityTable from '@/components/sections/EligibilityTable';
 import CarnivalTimeline from '@/components/sections/CarnivalTimeline';
 import RulesHighlights from '@/components/sections/RulesHighlights';
-import FAQSection from '@/components/sections/FAQSection';
 import { fetchEvents, fetchSiteSettings } from '@/lib/api';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -81,9 +80,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* 9. FAQ */}
-      <FAQSection />
     </div>
   );
 }

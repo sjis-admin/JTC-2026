@@ -6,7 +6,7 @@ import { Card, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck, Phone } from 'lucide-react';
 
 const toInputDateTime = (val: string | null | undefined) => {
   if (!val) return '';
@@ -248,6 +248,47 @@ export default function AdminSettingsPage() {
             {settings?.logo_url && (
               <p className="text-[11px] text-slate-400 mt-1">Current Logo: {settings.logo_url}</p>
             )}
+          </div>
+        </Card>
+
+        {/* Contact Information, Helpdesk & Social Links */}
+        <Card glow="none" className="border border-surface-border bg-surface space-y-4">
+          <CardTitle className="text-lg flex items-center gap-2 text-gold">
+            <Phone className="w-5 h-5 text-teal-400" /> Helpdesk Contact Numbers & Socials
+          </CardTitle>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Helpline / Contact Numbers"
+              placeholder="e.g. +880 2-9116271, +880 1700-000000"
+              value={settings?.contact_phone || ''}
+              onChange={(e) => setSettings({ ...settings, contact_phone: e.target.value })}
+            />
+            <Input
+              label="Support / Helpdesk Email"
+              placeholder="e.g. jtc@sjis.edu.bd"
+              value={settings?.contact_email || ''}
+              onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
+            />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <Input
+              label="Facebook Page URL"
+              placeholder="https://facebook.com/..."
+              value={settings?.facebook_url || ''}
+              onChange={(e) => setSettings({ ...settings, facebook_url: e.target.value })}
+            />
+            <Input
+              label="Instagram Profile URL"
+              placeholder="https://instagram.com/..."
+              value={settings?.instagram_url || ''}
+              onChange={(e) => setSettings({ ...settings, instagram_url: e.target.value })}
+            />
+            <Input
+              label="YouTube Channel URL"
+              placeholder="https://youtube.com/..."
+              value={settings?.youtube_url || ''}
+              onChange={(e) => setSettings({ ...settings, youtube_url: e.target.value })}
+            />
           </div>
         </Card>
 
