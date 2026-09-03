@@ -142,7 +142,7 @@ export default function EventsShowcase({
         {limit && (
           <Link href="/events">
             <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-              View All 19 Events <ArrowRight className="w-4 h-4 ml-1" />
+              View All Events <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         )}

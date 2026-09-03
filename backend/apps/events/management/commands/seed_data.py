@@ -503,6 +503,12 @@ class Command(BaseCommand):
             },
         ]
 
+        valid_slugs = [edata['slug'] for edata in events_data]
+        # Clean up old duplicate/renamed event records
+        deleted_count, _ = Event.objects.exclude(slug__in=valid_slugs).delete()
+        if deleted_count > 0:
+            self.stdout.write(self.style.WARNING(f'Removed {deleted_count} deprecated duplicate event records.'))
+
         for idx, edata in enumerate(events_data, 1):
             grp_codes = edata.pop('groups', [])
             faqs = edata.pop('faqs', [])
@@ -523,6 +529,6 @@ class Command(BaseCommand):
             for f_idx, (q, a) in enumerate(faqs, 1):
                 EventFAQ.objects.create(event=event, question=q, answer=a, order=f_idx)
 
-            self.stdout.write(self.style.SUCCESS(f'Seeded event [{idx}/19]: {event.name}'))
+            self.stdout.write(self.style.SUCCESS(f'Seeded event [{idx}/{len(events_data)}]: {event.name}'))
 
-        self.stdout.write(self.style.SUCCESS('All 19 events seeded successfully!'))
+        self.stdout.write(self.style.SUCCESS(f'All {len(events_data)} official events synced and seeded successfully!'))

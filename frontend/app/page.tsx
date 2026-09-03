@@ -35,7 +35,7 @@ export default async function HomePage() {
       <EventsShowcase
         events={events}
         title="Featured Competitions & Segments"
-        subtitle="Explore our top flagship arenas or browse the full catalogue of 19 events."
+        subtitle="Explore our top flagship arenas or browse the full catalogue of competitions."
         limit={6}
       />
 
@@ -73,7 +73,7 @@ export default async function HomePage() {
                 </Link>
                 <Link href="/events">
                   <Button variant="secondary" size="lg" className="px-8 py-4 text-base font-bold">
-                    Explore All 19 Arenas
+                    Explore All Arenas
                   </Button>
                 </Link>
               </div>

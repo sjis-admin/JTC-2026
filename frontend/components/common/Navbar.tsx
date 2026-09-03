@@ -41,7 +41,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home', mobileLabel: 'Home', icon: <Home className="w-4 h-4 text-gold" /> },
-    { href: '/events', label: '19 Competitions', mobileLabel: '19 Competitions', icon: <Trophy className="w-4 h-4 text-gold" /> },
+    { href: '/events', label: 'Competitions', mobileLabel: 'Competitions', icon: <Trophy className="w-4 h-4 text-gold" /> },
     { href: '/rulebook', label: 'Rulebook', mobileLabel: 'Official Rulebook', icon: <BookOpen className="w-4 h-4 text-gold" /> },
     { href: '/#groups', label: 'Eligibility', mobileLabel: 'Grade Eligibility (A–E)', icon: <Users className="w-4 h-4 text-gold" /> },
     { href: '/#rules', label: 'Guidelines', mobileLabel: 'Guidelines & Rules', icon: <FileText className="w-4 h-4 text-gold" /> },

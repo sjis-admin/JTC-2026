@@ -60,7 +60,7 @@ export default function Hero({ settings }: HeroProps) {
           </h1>
 
           <p className="text-base sm:text-xl text-slate-200 max-w-3xl mx-auto font-light leading-relaxed">
-            The flagship national technology carnival featuring <strong className="text-gold-light font-bold">19 competitive arenas</strong> across AI Prompting, Algorithmic Coding, Autonomous Robotics, Custom Drone Flight, LAN E-Sports, and Creative Media.
+            The flagship national technology carnival featuring <strong className="text-gold-light font-bold">competitive arenas</strong> across AI Prompting, Algorithmic Coding, Autonomous Robotics, Custom Drone Flight, LAN E-Sports, and Creative Media.
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export default function Hero({ settings }: HeroProps) {
           </Link>
           <Link href="/events">
             <Button variant="secondary" size="lg" className="w-full sm:w-auto text-base px-8 py-4">
-              Explore All 19 Segments
+              Explore All Arenas
             </Button>
           </Link>
         </div>

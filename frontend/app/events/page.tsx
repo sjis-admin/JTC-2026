@@ -12,7 +12,7 @@ export default async function EventsPage() {
     <div className="pt-28 pb-20">
       <EventsShowcase
         events={events}
-        title="All 19 Carnival Events"
+        title="Official Carnival Competitions"
         subtitle="Filter by category, check eligibility, explore guidelines, and register for individual or team challenges."
         showFilters={true}
       />
