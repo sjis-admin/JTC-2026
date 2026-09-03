@@ -23,6 +23,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
 
+    // Only verify once per session
+    if (authorized && user) return;
+
     adminFetch('/admin/me/')
       .then(async (res) => {
         if (res.ok) {
@@ -38,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         clearAdminToken();
         router.push(ADMIN_AUTH_PATH);
       });
-  }, [pathname, router]);
+  }, [router, authorized, user]);
 
   if (!authorized) {
     return (
@@ -54,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navItems = [
     { href: '/admin', label: 'Dashboard Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
     { href: '/admin/registrations', label: 'Registrations & Trx', icon: <Users className="w-4 h-4" /> },
-    { href: '/admin/events', label: 'Competitions (19)', icon: <CalendarDays className="w-4 h-4" /> },
+    { href: '/admin/events', label: 'Competitions', icon: <CalendarDays className="w-4 h-4" /> },
     { href: '/admin/scanner', label: 'Gate Pass Scanner', icon: <QrCode className="w-4 h-4" /> },
     { href: '/admin/schools', label: 'Institutions', icon: <School className="w-4 h-4" /> },
     { href: '/admin/settings', label: 'Site & SMS Settings', icon: <Settings className="w-4 h-4" /> },
@@ -91,6 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={true}
                   className={cn(
                     'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200',
                     isActive
@@ -119,6 +123,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           )}
           <Link
             href="/"
+            prefetch={true}
             className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-gold rounded-lg transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> View Public Website
@@ -155,6 +160,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 onClick={() => setSidebarOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-200 hover:bg-surface hover:text-gold"
               >
