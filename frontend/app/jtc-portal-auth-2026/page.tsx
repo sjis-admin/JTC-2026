@@ -53,19 +53,21 @@ function AdminLoginForm() {
 
   return (
     <div className="w-full max-w-md space-y-6">
-      <div className="text-center space-y-2">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-surface border border-gold/40 text-gold shadow-lg shadow-gold/20 mb-2">
+      <div className="flex flex-col items-center text-center space-y-2.5">
+        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-surface border border-gold/40 text-gold shadow-lg shadow-gold/20">
           <ShieldCheck className="w-6 h-6" />
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface border border-gold/30 text-[10px] font-mono font-bold text-gold uppercase tracking-wider block mx-auto w-fit">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface border border-gold/30 text-[10px] font-mono font-bold text-gold uppercase tracking-wider">
           <Sparkles className="w-3 h-3" /> RESTRICTED EXECUTIVE GATEWAY
         </div>
-        <h1 className="text-2xl font-extrabold text-white font-mono">
-          JTC Control Portal
-        </h1>
-        <p className="text-xs text-slate-400">
-          SJIS Tech Carnival 2026 Executive Authentication
-        </p>
+        <div>
+          <h1 className="text-2xl font-extrabold text-white font-mono">
+            JTC Control Portal
+          </h1>
+          <p className="text-xs text-slate-400 mt-0.5">
+            SJIS Tech Carnival 2026 Executive Authentication
+          </p>
+        </div>
       </div>
 
       <Card glow="gold" className="border border-surface-border bg-surface-elevated/90">
