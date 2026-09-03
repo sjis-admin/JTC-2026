@@ -9,6 +9,8 @@ import {
   ArrowLeft, MapPin, Users, User, Calendar, Trophy, Sparkles, CheckCircle2, HelpCircle
 } from 'lucide-react';
 
+import type { Metadata } from 'next';
+
 interface EventPageProps {
   params: { slug: string };
 }
@@ -16,6 +18,57 @@ interface EventPageProps {
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 export const revalidate = 0;
+
+export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+  const event = await fetchEventBySlug(params.slug);
+  if (!event) {
+    return {
+      title: 'Competition Not Found',
+    };
+  }
+
+  const feeText = event.fee_display || `৳${event.individual_fee}`;
+  const title = `${event.name} — SJIS Tech Carnival 2026`;
+  const description = `${event.description} Fee: ${feeText}. Venue: ${event.venue_detail}. Open to ${event.eligibility_groups?.map((g) => `Group ${g.code} (${g.grade_range})`).join(', ')}.`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      event.name,
+      event.category,
+      'SJIS Tech Carnival 2026',
+      'Josephite Tech Club',
+      'St. Joseph International School',
+      'Dhaka School Tech Fest',
+      `${event.name} Registration`,
+      `${event.name} Rules SJIS`,
+    ],
+    alternates: {
+      canonical: `https://jtc.sjis.edu.bd/events/${event.slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://jtc.sjis.edu.bd/events/${event.slug}`,
+      type: 'article',
+      images: [
+        {
+          url: '/og-preview.png',
+          width: 1200,
+          height: 630,
+          alt: event.name,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/og-preview.png'],
+    },
+  };
+}
 
 export default async function EventDetailPage({ params }: EventPageProps) {
   const event = await fetchEventBySlug(params.slug);

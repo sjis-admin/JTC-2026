@@ -8,8 +8,32 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import type { Metadata } from 'next';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: 'Official Rulebook & Guidelines — SJIS Tech Carnival 2026',
+  description:
+    'Download and view the official rulebook, scoring criteria, submission guidelines, and eligibility rules for all 18 events at SJIS Inter-School Tech Carnival 2026.',
+  keywords: [
+    'SJIS Rulebook 2026',
+    'Tech Carnival Rules Bangladesh',
+    'Coding Competition Guidelines',
+    'Drone Competition Rules SJIS',
+    'Robo Showcase Rules',
+    'Valorant Rulebook School Fest',
+  ],
+  alternates: {
+    canonical: 'https://jtc.sjis.edu.bd/rulebook',
+  },
+  openGraph: {
+    title: 'Official Rulebook & Guidelines — SJIS Tech Carnival 2026',
+    description: 'Official rules, scoring rubrics, and eligibility criteria for all 18 competitions.',
+    url: 'https://jtc.sjis.edu.bd/rulebook',
+  },
+};
 
 export default async function RulebookPage() {
   const events = await fetchEvents();
