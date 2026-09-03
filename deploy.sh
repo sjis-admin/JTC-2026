@@ -79,19 +79,76 @@ if [[ "$1" == "--status" ]]; then
     exit 0
 fi
 
+if [[ "$1" == "--nginx" ]]; then
+    log_info "Configuring Host Nginx reverse proxy for jtc.sjis.edu.bd..."
+    if [ -d "/etc/nginx/sites-available" ]; then
+        cp nginx/host-nginx-jtc.conf /etc/nginx/sites-available/jtc.sjis.edu.bd
+        ln -sf /etc/nginx/sites-available/jtc.sjis.edu.bd /etc/nginx/sites-enabled/
+        nginx -t
+        systemctl reload nginx
+        log_success "Host Nginx updated & reloaded! jtc.sjis.edu.bd is now proxying to Docker containers."
+    else
+        log_error "/etc/nginx/sites-available directory not found on host."
+    fi
+    exit 0
+fi
+
 # ─── Step 1: Pre-flight Validations ───────────────────────────────────────────
 log_info "Step 1/7: Validating production environment..."
 
 if [ ! -f "$ENV_FILE" ]; then
-    if [ -f ".env.prod.example" ]; then
-        log_warn ".env.prod file not found! Copying from .env.prod.example..."
-        cp .env.prod.example "$ENV_FILE"
-        log_warn "Created ${ENV_FILE}. Please edit it with your real credentials before re-running."
-        exit 1
-    else
-        log_error "No .env.prod or .env.prod.example found in workspace!"
-        exit 1
-    fi
+    log_info "No .env.prod found. Auto-generating production configuration..."
+    
+    # Generate secure random secret key and database password
+    AUTO_SECRET_KEY=$(openssl rand -hex 32 2>/dev/null || tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w 50 | head -n 1)
+    AUTO_DB_PASS=$(openssl rand -hex 16 2>/dev/null || tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w 24 | head -n 1)
+
+    cat <<EOF > "$ENV_FILE"
+# ==============================================================================
+# JTC CARNIVAL — AUTO-GENERATED PRODUCTION CONFIGURATION (.env.prod)
+# ==============================================================================
+DOMAIN=jtc.sjis.edu.bd
+FRONTEND_URL=https://jtc.sjis.edu.bd
+BACKEND_URL=https://jtc.sjis.edu.bd
+
+DEBUG=False
+SECRET_KEY=${AUTO_SECRET_KEY}
+
+ALLOWED_HOSTS=jtc.sjis.edu.bd,www.jtc.sjis.edu.bd,localhost,127.0.0.1,backend,frontend
+CORS_ALLOWED_ORIGINS=https://jtc.sjis.edu.bd,https://www.jtc.sjis.edu.bd
+CSRF_TRUSTED_ORIGINS=https://jtc.sjis.edu.bd,https://www.jtc.sjis.edu.bd
+
+POSTGRES_DB=jtc_carnival_db
+POSTGRES_USER=jtc_admin
+POSTGRES_PASSWORD=${AUTO_DB_PASS}
+
+NEXT_PUBLIC_API_URL=/api
+NEXT_PUBLIC_TURNSTILE_ENABLED=false
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+
+CLOUDFLARE_TURNSTILE_ENABLED=False
+CLOUDFLARE_TURNSTILE_SECRET_KEY=
+
+SECURE_SSL_REDIRECT=True
+
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=jtc@sjis.edu.bd
+EMAIL_HOST_PASSWORD=
+DEFAULT_FROM_EMAIL=Josephite Tech Club <jtc@sjis.edu.bd>
+
+GREENWEB_SMS_ENABLED=False
+GREENWEB_SMS_USER=
+GREENWEB_SMS_PASS=
+GREENWEB_SMS_FROM=JTCSJIS
+
+SSLCOMMERZ_STORE_ID=testbox
+SSLCOMMERZ_STORE_PASS=qwerty
+SSLCOMMERZ_IS_SANDBOX=True
+EOF
+    log_success "Created ${ENV_FILE} with auto-generated secure SECRET_KEY and DB password!"
 fi
 
 # Export variables from .env.prod for compose build args
