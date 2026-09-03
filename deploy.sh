@@ -171,6 +171,7 @@ fi
 # ─── Step 3: Build & Start Docker Services ────────────────────────────────────
 log_info "Step 3/7: Building and upgrading Docker containers..."
 ${DOCKER_COMPOSE} build --pull
+${DOCKER_COMPOSE} build --no-cache frontend
 ${DOCKER_COMPOSE} up -d --remove-orphans
 
 # ─── Step 4: Database Readiness & Migrations ──────────────────────────────────

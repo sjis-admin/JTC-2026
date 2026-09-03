@@ -43,16 +43,32 @@ interface EventsShowcaseProps {
 }
 
 export default function EventsShowcase({
-  events,
+  events: initialEvents = [],
   title = 'Featured Competitions & Segments',
   subtitle = 'Discover all 19 competitive challenges, robotics showdowns, and creative arenas.',
   limit,
   showFilters = true,
 }: EventsShowcaseProps) {
+  const [events, setEvents] = useState<EventItem[]>(initialEvents);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [quickViewEvent, setQuickViewEvent] = useState<EventItem | null>(null);
+
+  // Client-side fallback if server-side rendered array was empty
+  useEffect(() => {
+    if (initialEvents && initialEvents.length > 0) {
+      setEvents(initialEvents);
+    } else {
+      fetch('/api/events/')
+        .then((res) => (res.ok ? res.json() : []))
+        .then((data) => {
+          const list = Array.isArray(data) ? data : data.results || [];
+          if (list.length > 0) setEvents(list);
+        })
+        .catch((err) => console.error('Client events fetch error:', err));
+    }
+  }, [initialEvents]);
 
   const categories = useMemo(() => [
     { id: 'ALL', label: 'All Segments', count: events.length },
