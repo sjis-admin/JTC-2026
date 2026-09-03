@@ -1,0 +1,117 @@
+services:
+  # ─── PostgreSQL Database ────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: jtc_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-jtc_carnival_db}
+      POSTGRES_USER: ${POSTGRES_USER:-jtc_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jtc_secure_password_change_me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - jtc_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jtc_admin} -d ${POSTGRES_DB:-jtc_carnival_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── Django 5 Backend & Gunicorn ────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jtc_backend
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-jtc_admin}:${POSTGRES_PASSWORD:-jtc_secure_password_change_me}@db:5432/${POSTGRES_DB:-jtc_carnival_db}
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    networks:
+      - jtc_internal
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/settings/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Next.js 14 Frontend ────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NEXT_PUBLIC_TURNSTILE_ENABLED: ${NEXT_PUBLIC_TURNSTILE_ENABLED:-false}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+    container_name: jtc_frontend
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    networks:
+      - jtc_internal
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Nginx Reverse Proxy & SSL ──────────────────────────────────────────────
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: jtc_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+      - certbot_www:/var/www/certbot:ro
+      - certbot_conf:/etc/letsencrypt:ro
+    networks:
+      - jtc_internal
+    depends_on:
+      - frontend
+      - backend
+
+  # ─── Certbot for Automated SSL Renewals ──────────────────────────────────────
+  certbot:
+    image: certbot/certbot:latest
+    container_name: jtc_certbot
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - jtc_internal
+
+volumes:
+  postgres_data:
+    name: jtc_postgres_data
+  static_volume:
+    name: jtc_static_volume
+  media_volume:
+    name: jtc_media_volume
+  certbot_www:
+    name: jtc_certbot_www
+  certbot_conf:
+    name: jtc_certbot_conf
+
+networks:
+  jtc_internal:
+    name: jtc_internal_network
+    driver: bridge
