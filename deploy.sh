@@ -112,15 +112,15 @@ FRONTEND_URL=https://jtc.sjis.edu.bd
 BACKEND_URL=https://jtc.sjis.edu.bd
 
 DEBUG=False
-SECRET_KEY=${AUTO_SECRET_KEY}
+SECRET_KEY="${AUTO_SECRET_KEY}"
 
-ALLOWED_HOSTS=jtc.sjis.edu.bd,www.jtc.sjis.edu.bd,localhost,127.0.0.1,backend,frontend
-CORS_ALLOWED_ORIGINS=https://jtc.sjis.edu.bd,https://www.jtc.sjis.edu.bd
-CSRF_TRUSTED_ORIGINS=https://jtc.sjis.edu.bd,https://www.jtc.sjis.edu.bd
+ALLOWED_HOSTS="jtc.sjis.edu.bd,www.jtc.sjis.edu.bd,localhost,127.0.0.1,backend,frontend"
+CORS_ALLOWED_ORIGINS="https://jtc.sjis.edu.bd,https://www.jtc.sjis.edu.bd"
+CSRF_TRUSTED_ORIGINS="https://jtc.sjis.edu.bd,https://www.jtc.sjis.edu.bd"
 
 POSTGRES_DB=jtc_carnival_db
 POSTGRES_USER=jtc_admin
-POSTGRES_PASSWORD=${AUTO_DB_PASS}
+POSTGRES_PASSWORD="${AUTO_DB_PASS}"
 
 NEXT_PUBLIC_API_URL=/api
 NEXT_PUBLIC_TURNSTILE_ENABLED=false
@@ -137,7 +137,7 @@ EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER=jtc@sjis.edu.bd
 EMAIL_HOST_PASSWORD=
-DEFAULT_FROM_EMAIL=Josephite Tech Club <jtc@sjis.edu.bd>
+DEFAULT_FROM_EMAIL="Josephite Tech Club <jtc@sjis.edu.bd>"
 
 GREENWEB_SMS_ENABLED=False
 GREENWEB_SMS_USER=
