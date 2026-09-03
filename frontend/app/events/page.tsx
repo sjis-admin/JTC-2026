@@ -2,7 +2,8 @@ import React from 'react';
 import EventsShowcase from '@/components/sections/EventsShowcase';
 import { fetchEvents } from '@/lib/api';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function EventsPage() {
   const events = await fetchEvents();

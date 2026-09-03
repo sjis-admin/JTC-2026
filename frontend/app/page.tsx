@@ -12,7 +12,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Sparkles, ArrowRight, Flame } from 'lucide-react';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const [settings, events] = await Promise.all([

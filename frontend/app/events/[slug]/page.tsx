@@ -13,12 +13,9 @@ interface EventPageProps {
   params: { slug: string };
 }
 
-export async function generateStaticParams() {
-  const events = await fetchEvents();
-  return events.map((e) => ({ slug: e.slug }));
-}
-
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const revalidate = 0;
 
 export default async function EventDetailPage({ params }: EventPageProps) {
   const event = await fetchEventBySlug(params.slug);
