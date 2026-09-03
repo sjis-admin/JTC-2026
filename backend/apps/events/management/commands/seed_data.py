@@ -73,6 +73,36 @@ class Command(BaseCommand):
         # 4. Events definition
         events_data = [
             {
+                'name': 'Coding Marathon (Coding Competition)',
+                'slug': 'coding-marathon',
+                'short_name': 'Coding Marathon',
+                'category': 'CODING',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Computer Lab',
+                'submission_type': 'LAB',
+                'highlight': True,
+                'icon': 'Code',
+                'description': 'Algorithmic programming and creative coding competition across junior and senior categories. Winner awarded Medals.',
+                'rules': (
+                    "### Segment Breakdown\n"
+                    "- **Group A (Grade 3–4)**: Scratch block-based challenge.\n"
+                    "- **Group B (Grade 5–6)**: Scratch block-based problem solving.\n"
+                    "- **Group C (Grade 7–8)**: Python algorithmic challenge (competitive platform).\n"
+                    "- **Group D (Grade 9–12)**: Python / C++ competitive programming contest environment.\n\n"
+                    "### General Rules\n"
+                    "- Contest will be held in the SJIS Computer Lab.\n"
+                    "- No external assistance or AI code generation assistants are permitted.\n"
+                    "- Award: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Automated test cases passed, code efficiency, and submission time penalty.",
+                'faqs': [
+                    ("Are standard libraries allowed?", "Yes, all standard libraries for Python / C++ are permitted.")
+                ]
+            },
+            {
                 'name': 'AI Prompting',
                 'slug': 'ai-prompting',
                 'short_name': 'AI Prompting',
@@ -85,447 +115,19 @@ class Command(BaseCommand):
                 'submission_type': 'ONLINE',
                 'highlight': True,
                 'icon': 'Sparkles',
-                'description': 'Test your generative AI mastery by reverse-engineering visual styles, composition, and subjects using prompt engineering.',
+                'description': 'Test your generative AI mastery by reverse-engineering visual styles, composition, and subjects using prompt engineering. Winner awarded Medals.',
                 'rules': (
                     "### Task\n"
                     "Contestants are given a specific target image and a text description. They must generate an image that matches the style, composition, and subject of the target as closely as possible.\n\n"
                     "### Participant Requirements & Rules\n"
                     "- **Bring Your Own Device (BYOD)**: Participants must bring their own hardware (laptop, tablet, or smartphone) to the venue.\n"
-                    "- **Connectivity & Platform**: Participants are responsible for their own internet connectivity and must be logged into their preferred AI image generation platform prior to the start.\n\n"
-                    "### Instant Disqualification Criteria\n"
-                    "- Violates host platform safety guidelines (NSFW, extreme violence).\n"
-                    "- Prompt history does not match the generated image (judges will test-run winning prompts to verify reproducibility).\n"
-                    "- Reverse-engineered image-to-image prompts are used (uploading an existing image to the AI to clone it).\n"
-                    "- Submitted prompt is **NOT** in one continuous paragraph (no bullet points, no line breaks, no massive word-salad blocks)."
+                    "- **Connectivity & Platform**: Participants are responsible for their own internet connectivity and must be logged into their preferred AI image generation platform prior to the start.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
                 ),
-                'judging_criteria': (
-                    "- **Element Fidelity**: Did the AI actually render every element requested in the prompt, or did it ignore half of them?\n"
-                    "- **Cleanliness & Artifacts**: Deductions for standard AI glitches (floating limbs, chaotic text, melted hands, impossible geometry).\n"
-                    "- **Prompt Intentionality**: Is the prompt clean and cohesive, or just repetitive buzzwords ('photorealistic, 8k, hyperdetailed')?"
-                ),
+                'judging_criteria': "Element fidelity, prompt intentionality, and cleanliness (no AI glitches).",
                 'faqs': [
-                    ("What AI platforms are allowed?", "Midjourney, DALL-E, Stable Diffusion, Adobe Firefly, Bing Image Creator, or similar text-to-image generators."),
-                    ("Can I use multiple prompts?", "You can experiment within the time limit, but only one final prompt and resulting image can be submitted.")
+                    ("What AI platforms are allowed?", "Midjourney, DALL-E, Stable Diffusion, Adobe Firefly, Bing Image Creator, or similar text-to-image generators.")
                 ]
-            },
-            {
-                'name': 'Coding Marathon',
-                'slug': 'coding-marathon',
-                'short_name': 'Coding Marathon',
-                'category': 'CODING',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Computer Lab',
-                'submission_type': 'LAB',
-                'highlight': True,
-                'icon': 'Code',
-                'description': 'Algorithmic programming and creative coding competition across junior and senior categories.',
-                'rules': (
-                    "### Segment Breakdown\n"
-                    "- **Group A (Grade 3–4)**: Scratch block-based challenge.\n"
-                    "- **Group B (Grade 5–6)**: Scratch block-based problem solving.\n"
-                    "- **Group C (Grade 7–8)**: Python algorithmic challenge (Codeforces / competitive platform).\n"
-                    "- **Group D (Grade 9–12)**: Python / C++ competitive programming (Codeforces contest environment).\n\n"
-                    "### General Rules\n"
-                    "- Contest will be held in the SJIS Computer Lab.\n"
-                    "- No external assistance or AI code generation assistants are permitted."
-                ),
-                'judging_criteria': "Automated test cases passed, code efficiency, and submission time penalty.",
-                'faqs': [
-                    ("Are standard libraries allowed?", "Yes, all standard libraries for Python / C++ are permitted.")
-                ]
-            },
-            {
-                'name': 'Tech-art Bonanza (Digital Art & Poster)',
-                'slug': 'tech-art-bonanza',
-                'short_name': 'Digital Art & Poster',
-                'category': 'DIGITAL_ART',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Art & Media Hall',
-                'submission_type': 'PENDRIVE',
-                'highlight': True,
-                'icon': 'Palette',
-                'description': 'Theme-based digital art, illustration, and graphic poster design.',
-                'rules': (
-                    "- **Eligibility**: Grade 3 to Grade 12.\n"
-                    "- **Theme**: A specific tech/futuristic theme will be provided before the submission window.\n"
-                    "- **Software**: Used software must be explicitly stated (Photoshop, Illustrator, Procreate, Krita, Blender, etc.).\n"
-                    "- **Submission**: Both working project source files (.psd, .ai, .procreate, .blend) and high-res export image files (.png/.jpg) must be submitted via pendrive on the first day of the fest."
-                ),
-                'judging_criteria': "Creativity, thematic relevance, aesthetic appeal, technical composition, and typography.",
-                'faqs': [
-                    ("Can I use AI generated elements?", "No, all artwork must be original human illustration.")
-                ]
-            },
-            {
-                'name': 'SwiftType Blitz (Typing Competition)',
-                'slug': 'swifttype-blitz',
-                'short_name': 'Type Blitz',
-                'category': 'TYPING',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 200,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Computer Lab',
-                'submission_type': 'LAB',
-                'highlight': False,
-                'icon': 'Keyboard',
-                'description': 'Speed typing showdown powered by Monkeytype in the SJIS Computer Lab.',
-                'rules': (
-                    "- **Platform**: Monkeytype standard 60-second mode.\n"
-                    "- **Warmup**: 5 minutes will be given for keyboard warmup.\n"
-                    "- **Attempts**: 3 tries will be given to record the highest score.\n"
-                    "- **Result**: Best of 3 WPM (Words Per Minute) with accuracy threshold will be recorded.\n"
-                    "- Top 3 highest WPM scorers will be awarded medals and prizes."
-                ),
-                'judging_criteria': "Highest Net WPM and highest Accuracy percentage.",
-                'faqs': [
-                    ("Can I bring my own mechanical keyboard?", "Yes, you may bring your own USB keyboard.")
-                ]
-            },
-            {
-                'name': 'PowerPoint Presentation',
-                'slug': 'powerpoint-presentation',
-                'short_name': 'PowerPoint Presentation',
-                'category': 'CREATIVE',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Auditorium / Seminar Hall',
-                'submission_type': 'STAGE',
-                'highlight': False,
-                'icon': 'Presentation',
-                'description': 'Theme-based slide deck creation and live on-stage presentation.',
-                'rules': (
-                    "- **Format**: Submission and live presentation based.\n"
-                    "- **Theme**: A theme will be provided in advance.\n"
-                    "- **Time Limit**: 5 minutes presentation + 2 minutes Q&A from judges.\n"
-                    "- Slides must be submitted beforehand in .pptx or .pdf format."
-                ),
-                'judging_criteria': "Slide aesthetics, clarity of communication, stage presence, time management, and Q&A responses.",
-                'faqs': []
-            },
-            {
-                'name': 'Gaming Quiz',
-                'slug': 'gaming-quiz',
-                'short_name': 'Gaming Quiz',
-                'category': 'GAMING',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Old Building Room & Stage',
-                'submission_type': 'MIXED',
-                'highlight': False,
-                'icon': 'Gamepad2',
-                'description': 'Test your deep knowledge of video game lore, mechanics, esports, and gaming history across 3 rounds.',
-                'rules': (
-                    "### 3-Round Tournament Structure\n"
-                    "- **Round 1 (Prelims)**: Written exam on paper in old building classroom based on provided syllabus.\n"
-                    "- **Round 2 (Semi-Finals)**: Top qualifiers compete in stage round.\n"
-                    "- **Round 3 (Grand Finals)**: Rapid buzzer and visual rounds on stage.\n\n"
-                    "Questions cover PC, Console, Retro, Esports, and Game Development history."
-                ),
-                'judging_criteria': "Written score for prelims, direct point totals in buzzer/stage rounds.",
-                'faqs': []
-            },
-            {
-                'name': 'Webpage Creation',
-                'slug': 'webpage-creation',
-                'short_name': 'Webpage Creation',
-                'category': 'CODING',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Computer Lab',
-                'submission_type': 'LAB',
-                'highlight': False,
-                'icon': 'Globe',
-                'description': 'Design and code a high-quality responsive website based on a prompt within the time limit.',
-                'rules': (
-                    "- HTML, CSS, JavaScript, and popular frontend libraries are allowed.\n"
-                    "- Participants will be provided an on-the-spot theme/topic.\n"
-                    "- Evaluation will be on design aesthetics, responsiveness, semantic structure, and interactivity."
-                ),
-                'judging_criteria': "Design quality, code structure, responsiveness across mobile & desktop, creativity.",
-                'faqs': []
-            },
-            {
-                'name': 'Game Sync Symphony (Gaming Montage & Anime MV)',
-                'slug': 'game-sync-symphony',
-                'short_name': 'Video Editing (Montage/AMV)',
-                'category': 'DIGITAL_ART',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Main Stage Screening',
-                'submission_type': 'PENDRIVE',
-                'highlight': False,
-                'icon': 'Film',
-                'description': 'Dynamic video editing competition featuring gaming montages and anime music videos.',
-                'rules': (
-                    "### 2 Segments Included (1 Package - ৳300)\n"
-                    "- **Segment 1**: Gaming Montage (Gameplay synchronization, beat matching, SFX, color grading).\n"
-                    "- **Segment 2**: Anime MV (AMV) (Narrative pacing, typography, scene transitions).\n"
-                    "- Participants may enter either segment or both for the single package fee of ৳300.\n"
-                    "- Videos will be reviewed and shortlisted by judges before the final stage screening.\n"
-                    "- Submission via pendrive / external HDD / SSD on Day 1 of the fest."
-                ),
-                'judging_criteria': "Audio-video sync, pacing, visual effects, storytelling, rendering quality (1080p/4K 60fps).",
-                'faqs': []
-            },
-            {
-                'name': 'Photography Competition',
-                'slug': 'photography-competition',
-                'short_name': 'Photography',
-                'category': 'CREATIVE',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 200,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D', 'E'],
-                'venue_detail': 'Exhibition Gallery',
-                'submission_type': 'PHYSICAL',
-                'highlight': True,
-                'icon': 'Camera',
-                'description': 'Capture striking visual moments and showcase your work in the prestigious carnival photo exhibition.',
-                'rules': (
-                    "### Submission & Exhibition Guidelines\n"
-                    "1. **Photograph Size**: Must be printed in **7 × 9 inches (18 × 23 cm)** size.\n"
-                    "2. **Printing & Lamination**: Each student must submit **one hardcopy per photograph (up to 2 photographs per participant)**. The photograph must be **properly laminated** by the student before submission. Do NOT mount on cardboard, foam board, or frame.\n"
-                    "3. **Display**: All photographs will be hung with clips in the exhibition gallery.\n"
-                    "4. **Information on BACK SIDE**:\n"
-                    "   - Student’s Name\n"
-                    "   - Class & Section / University Dept\n"
-                    "   - House / Institution\n"
-                    "   - Title of the Photograph\n"
-                    "5. **Scoring**: 2 photos submitted per participant, each rated 0–10 (Total out of 20 marks)."
-                ),
-                'judging_criteria': "Composition, lighting, emotional resonance, technical sharpness, storytelling.",
-                'faqs': []
-            },
-            {
-                'name': 'Tech Bytes (Tech Article Writing)',
-                'slug': 'tech-bytes',
-                'short_name': 'Tech Article Writing',
-                'category': 'CREATIVE',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Writing Hall',
-                'submission_type': 'PHYSICAL',
-                'highlight': False,
-                'icon': 'FileText',
-                'description': 'Deep dive analytical article writing on trending technology, AI ethics, cybersecurity, and future computing.',
-                'rules': (
-                    "- Individual event (৳300).\n"
-                    "- Word count: 600–1000 words.\n"
-                    "- Topics will be released on the day or submitted prior as announced."
-                ),
-                'judging_criteria': "Depth of research, clarity of thought, grammatical precision, technical accuracy.",
-                'faqs': []
-            },
-            {
-                'name': 'Tech Quiz',
-                'slug': 'tech-quiz',
-                'short_name': 'Tech Quiz',
-                'category': 'QUIZ',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Main Stage & Exam Hall',
-                'submission_type': 'MIXED',
-                'highlight': False,
-                'icon': 'HelpCircle',
-                'description': 'Battle of intellect across computer science, frontier tech, inventions, and tech giants.',
-                'rules': (
-                    "### 2 Rounds\n"
-                    "- **Round 1 (Written)**: 30 marks paper exam. Top 10 participants will be selected. Time of submission matters (earlier submission breaks ties).\n"
-                    "- **Round 2 (Finals)**: Live on-stage buzzer round to determine 1st, 2nd, and 3rd place champions."
-                ),
-                'judging_criteria': "Accuracy of answers, speed of submission, buzzer round reaction time.",
-                'faqs': []
-            },
-            {
-                'name': 'Tech Meme Contest',
-                'slug': 'tech-meme',
-                'short_name': 'Tech Meme',
-                'category': 'CREATIVE',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D', 'E'],
-                'venue_detail': 'Online Submission',
-                'submission_type': 'ONLINE',
-                'highlight': False,
-                'icon': 'Smile',
-                'description': 'Show off your tech humor and relatability through original programming, IT, and student life memes.',
-                'rules': (
-                    "- Must be original content created by the participant.\n"
-                    "- Memes must strictly adhere to school-appropriate humor (no vulgarity or targeted harassment)."
-                ),
-                'judging_criteria': "Humor, relatability, creativity, visual template execution.",
-                'faqs': []
-            },
-            {
-                'name': "Rubik's Cube Speedcubing",
-                'slug': 'rubiks-cube',
-                'short_name': "Rubik's Cube",
-                'category': 'OTHER',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 200,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'Speedcubing Arena',
-                'submission_type': 'PHYSICAL',
-                'highlight': False,
-                'icon': 'Box',
-                'description': 'Fast-paced 3x3 speedcubing tournament with official WCA timer inspection rules.',
-                'rules': (
-                    "- Official 3x3 cube scramble.\n"
-                    "- 15 seconds inspection time.\n"
-                    "- Average of 5 solves (Ao5) format to decide top podium finishers."
-                ),
-                'judging_criteria': "Fastest single solve and Ao5 times recorded via stackmat timer.",
-                'faqs': []
-            },
-            {
-                'name': 'Treasure Hunt',
-                'slug': 'treasure-hunt',
-                'short_name': 'Treasure Hunt',
-                'category': 'OTHER',
-                'event_type': 'TEAM',
-                'individual_fee': 0,
-                'team_fee': 500,
-                'team_min': 3,
-                'team_max': 3,
-                'groups': ['A', 'B', 'C', 'D'],
-                'venue_detail': 'SJIS Campus Grounds',
-                'submission_type': 'PHYSICAL',
-                'highlight': True,
-                'icon': 'Compass',
-                'description': 'Campus-wide tech riddle and cryptic clue solving expedition in teams of 3.',
-                'rules': (
-                    "- Team size: Exactly 3 members per team (৳500 per team).\n"
-                    "- Teams must solve cryptographic clues, QR codes, and tech riddles hidden across campus.\n"
-                    "- First team to decrypt the final master vault wins."
-                ),
-                'judging_criteria': "Fastest team to complete all clue checkpoints and return with the final artifact.",
-                'faqs': []
-            },
-            {
-                'name': 'Valorant (E-Sports Tournament)',
-                'slug': 'valorant-esports',
-                'short_name': 'Valorant (5v5)',
-                'category': 'ESPORTS',
-                'event_type': 'TEAM',
-                'individual_fee': 0,
-                'team_fee': 500,
-                'team_min': 5,
-                'team_max': 6,
-                'groups': ['C', 'D', 'E'],
-                'venue_detail': 'Online (Prelims) & Main Stage LAN (Semis/Finals)',
-                'submission_type': 'MIXED',
-                'highlight': True,
-                'icon': 'Crosshair',
-                'description': '5v5 tactical shooter showdown. Knockout stages online, Semis and Grand Finals hosted on stage LAN with live broadcast.',
-                'rules': (
-                    "### Tournament Structure\n"
-                    "- **Format**: Single-elimination knockouts.\n"
-                    "- **Prelims**: Played online prior to LAN day.\n"
-                    "- **Semi-Finals & Grand Finals**: Played live on stage on high-performance LAN rigs, live-streamed on official Facebook page.\n"
-                    "- **Team**: 5 main players + 1 optional substitute.\n"
-                    "- Standard competitive ruleset and map veto system."
-                ),
-                'judging_criteria': "Direct match victories based on official Riot Games tournament rulebook.",
-                'faqs': [
-                    ("Can we use our own peripherals on stage?", "Yes, keyboard, mouse, mousepad, and in-ear monitors are allowed on stage.")
-                ]
-            },
-            {
-                'name': 'EA FC (FIFA E-Sports)',
-                'slug': 'eafc-esports',
-                'short_name': 'EA FC (1v1)',
-                'category': 'ESPORTS',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 200,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D', 'E'],
-                'venue_detail': 'Gaming Arena (Fest Day)',
-                'submission_type': 'PHYSICAL',
-                'highlight': True,
-                'icon': 'Trophy',
-                'description': '1v1 EA Sports FC console championship. All knockout rounds played on LAN on the day of the fest.',
-                'rules': (
-                    "- **Format**: 1v1 knockout tournament.\n"
-                    "- **Platform**: PlayStation 5 / PC LAN.\n"
-                    "- All rounds will be held on LAN on the day of the fest.\n"
-                    "- Semi-finals and Grand Finals presented on the main stage with live streaming."
-                ),
-                'judging_criteria': "Standard 6-minute halves with Extra Time and Penalties on tie.",
-                'faqs': [
-                    ("Can I bring my own controller?", "Yes, compatible DualSense / Xbox controllers are permitted.")
-                ]
-            },
-            {
-                'name': 'Robo Showcase (Project Display)',
-                'slug': 'robo-showcase',
-                'short_name': 'Robo Showcase',
-                'category': 'ROBOTICS',
-                'event_type': 'BOTH',
-                'individual_fee': 500,
-                'team_fee': 1000,
-                'team_min': 1,
-                'team_max': 3,
-                'groups': ['C', 'D', 'E'],
-                'venue_detail': 'Robotics & Hardware Exhibition Hall',
-                'submission_type': 'STAGE',
-                'highlight': True,
-                'icon': 'Bot',
-                'description': 'Exhibition of autonomous, IoT, assistive, and embedded robotics innovations.',
-                'rules': (
-                    "- **Eligibility**: Group C, D, E (Grade 7 to University).\n"
-                    "- **Fee**: ৳500 for Individual, ৳1000 for Team (Max 3 members).\n"
-                    "- Hardware prototype must be functional and demonstrated live before the jury.\n"
-                    "- A poster / schematic summary must accompany the project display."
-                ),
-                'judging_criteria': "Innovation, technical complexity, real-world utility, execution quality, and Q&A presentation.",
-                'faqs': []
-            },
-            {
-                'name': 'Line Follower Robot (LFR)',
-                'slug': 'line-robot',
-                'short_name': 'Line Follower Robot',
-                'category': 'ROBOTICS',
-                'event_type': 'BOTH',
-                'individual_fee': 500,
-                'team_fee': 1000,
-                'team_min': 1,
-                'team_max': 3,
-                'groups': ['B', 'C', 'D', 'E'],
-                'venue_detail': 'Robotics Arena Track',
-                'submission_type': 'PHYSICAL',
-                'highlight': False,
-                'icon': 'Cpu',
-                'description': 'Autonomous line following robot race across a complex black-line maze with obstacles and sharp curves.',
-                'rules': (
-                    "- **Eligibility**: Group B, C, D, E (Grade 5 to University).\n"
-                    "- **Fee**: ৳500 individual / ৳1000 team (max 3 persons).\n"
-                    "- Maximum robot dimensions: 25cm x 25cm x 25cm.\n"
-                    "- Robot must autonomously follow the line without manual intervention.\n"
-                    "- 2 trial runs given per robot; fastest clean run counts."
-                ),
-                'judging_criteria': "Track completion time minus checkpoint penalties.",
-                'faqs': []
             },
             {
                 'name': 'Drone Competition (Design & Flight)',
@@ -542,14 +144,361 @@ class Command(BaseCommand):
                 'submission_type': 'STAGE',
                 'highlight': True,
                 'icon': 'Plane',
-                'description': 'Custom drone manufacturing, aerodynamic stability, obstacle navigation, and precision landing showcase.',
+                'description': 'Making own drone and make it fly! Individual (৳500) or Team of max 3 (৳1000). Group C & D. Winner awarded prestigious Crest.',
                 'rules': (
-                    "- **Eligibility**: Group C & D (Grade 7 to Grade 12).\n"
-                    "- **Fee**: ৳500 individual / ৳1000 team (max 3 persons).\n"
-                    "- **Award**: Prestigious Winner Crest + Medals.\n"
+                    "- **Eligibility**: Group C (Grade 7–8) & Group D (Grade 9–12).\n"
+                    "- **Fee**: Individual: ৳500 | Team (Max 3 members): ৳1000.\n"
+                    "- **Award**: Prestigious Winner Crest + Certificate.\n"
                     "- Participants must build/configure their own drone and demonstrate controlled flight, obstacle maneuver, and target landing in the designated flight zone."
                 ),
                 'judging_criteria': "Flight stability, maneuver accuracy, build craftsmanship, pilot control, and safety adherence.",
+                'faqs': []
+            },
+            {
+                'name': 'PowerPoint Presentation',
+                'slug': 'powerpoint-presentation',
+                'short_name': 'PowerPoint Presentation',
+                'category': 'CREATIVE',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Auditorium / Seminar Hall',
+                'submission_type': 'STAGE',
+                'highlight': False,
+                'icon': 'Presentation',
+                'description': 'Theme-based slide deck creation and live on-stage presentation. Winner awarded Medals.',
+                'rules': (
+                    "- **Format**: Submission and live presentation based.\n"
+                    "- **Theme**: A theme will be provided in advance.\n"
+                    "- **Time Limit**: 5 minutes presentation + 2 minutes Q&A from judges.\n"
+                    "- Slides must be submitted beforehand in .pptx or .pdf format.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Slide aesthetics, clarity of communication, stage presence, time management, and Q&A responses.",
+                'faqs': []
+            },
+            {
+                'name': 'Game Sync Symphony (Gaming Montage / Video)',
+                'slug': 'game-sync-symphony',
+                'short_name': 'Gaming Montage / Video',
+                'category': 'DIGITAL_ART',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Main Stage Screening',
+                'submission_type': 'PENDRIVE',
+                'highlight': False,
+                'icon': 'Film',
+                'description': 'Dynamic video editing competition featuring gaming montages and synced gameplay videos. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳300).\n"
+                    "- Video editing package featuring gameplay synchronization, beat matching, visual SFX, and color grading.\n"
+                    "- Submission via pendrive on Day 1 of the fest.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Audio-video sync, pacing, visual effects, storytelling, rendering quality (1080p/4K 60fps).",
+                'faqs': []
+            },
+            {
+                'name': 'SwiftType Blitz (Typing Competition)',
+                'slug': 'swifttype-blitz',
+                'short_name': 'Type Blitz',
+                'category': 'TYPING',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 200,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Computer Lab',
+                'submission_type': 'LAB',
+                'highlight': False,
+                'icon': 'Keyboard',
+                'description': 'Speed typing showdown in the SJIS Computer Lab. Winner awarded Medals.',
+                'rules': (
+                    "- **Platform**: Speed typing 60-second test mode.\n"
+                    "- **Attempts**: 3 tries will be given to record the highest score.\n"
+                    "- **Result**: Best Net WPM (Words Per Minute) with accuracy threshold.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Highest Net WPM and highest Accuracy percentage.",
+                'faqs': [
+                    ("Can I bring my own mechanical keyboard?", "Yes, you may bring your own USB keyboard.")
+                ]
+            },
+            {
+                'name': 'Robo Showcase (Robot Display)',
+                'slug': 'robo-showcase',
+                'short_name': 'Robo Showcase',
+                'category': 'ROBOTICS',
+                'event_type': 'BOTH',
+                'individual_fee': 500,
+                'team_fee': 1000,
+                'team_min': 1,
+                'team_max': 3,
+                'groups': ['C', 'D', 'E'],
+                'venue_detail': 'Robotics & Hardware Exhibition Hall',
+                'submission_type': 'STAGE',
+                'highlight': True,
+                'icon': 'Bot',
+                'description': 'Robot Display & Hardware Innovation. Individual (৳500) or Team of max 3 (৳1000). Winner awarded prestigious Crest.',
+                'rules': (
+                    "- **Eligibility**: Group C, D, E (Grade 7 to University).\n"
+                    "- **Fee**: Individual: ৳500 | Team (Max 3 members): ৳1000.\n"
+                    "- Hardware prototype must be functional and demonstrated live before the jury.\n"
+                    "- **Award**: Prestigious Winner Crest + Certificate."
+                ),
+                'judging_criteria': "Innovation, technical complexity, real-world utility, execution quality, and Q&A presentation.",
+                'faqs': []
+            },
+            {
+                'name': 'Tech-art Bonanza (Digital Art & Banner Submission)',
+                'slug': 'tech-art-bonanza',
+                'short_name': 'Digital Art / Banner',
+                'category': 'DIGITAL_ART',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Art & Media Hall',
+                'submission_type': 'PENDRIVE',
+                'highlight': True,
+                'icon': 'Palette',
+                'description': 'Theme-based digital art, illustration, and banner design submission. Winner awarded Medals.',
+                'rules': (
+                    "- **Eligibility**: Grade 3 to Grade 12 (Group A–D).\n"
+                    "- **Fee**: ৳300 (individual).\n"
+                    "- **Submission**: Source files and high-res export via pendrive on Day 1.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Creativity, thematic relevance, aesthetic appeal, technical composition, and typography.",
+                'faqs': []
+            },
+            {
+                'name': 'Photo Editing (Photography Competition)',
+                'slug': 'photo-editing',
+                'short_name': 'Photo Editing',
+                'category': 'CREATIVE',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 200,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D', 'E'],
+                'venue_detail': 'Exhibition Gallery',
+                'submission_type': 'PHYSICAL',
+                'highlight': True,
+                'icon': 'Camera',
+                'description': 'Creative photo editing and photography showcase in the carnival gallery. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳200).\n"
+                    "- Photo submission and creative editing exhibition.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Composition, color grading, storytelling, technical sharpness, creativity.",
+                'faqs': []
+            },
+            {
+                'name': 'Tech Bytes (Tech Article Writing)',
+                'slug': 'tech-bytes',
+                'short_name': 'Tech Article Writing',
+                'category': 'CREATIVE',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Writing Hall',
+                'submission_type': 'PHYSICAL',
+                'highlight': False,
+                'icon': 'FileText',
+                'description': 'Deep dive analytical tech article writing on modern computing, AI ethics, and IT innovations. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳300).\n"
+                    "- Word count: 600–1000 words.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Depth of research, clarity of thought, grammatical precision, technical accuracy.",
+                'faqs': []
+            },
+            {
+                'name': 'Rubik’s Showdown (Rubik’s Cube Competition)',
+                'slug': 'rubiks-showdown',
+                'short_name': "Rubik's Showdown",
+                'category': 'OTHER',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 200,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Speedcubing Arena',
+                'submission_type': 'PHYSICAL',
+                'highlight': False,
+                'icon': 'Box',
+                'description': 'Fast-paced 3x3 speedcubing tournament with official timer rules. Winner awarded Medals.',
+                'rules': (
+                    "- Official 3x3 cube scramble and inspection rules.\n"
+                    "- Individual event (৳200).\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Fastest single solve and average solve times.",
+                'faqs': []
+            },
+            {
+                'name': 'Tech Memes',
+                'slug': 'tech-memes',
+                'short_name': 'Tech Memes',
+                'category': 'CREATIVE',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D', 'E'],
+                'venue_detail': 'Online Submission',
+                'submission_type': 'ONLINE',
+                'highlight': False,
+                'icon': 'Smile',
+                'description': 'Original programming, computer science, and tech student humor. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳300).\n"
+                    "- Must be original content created by the participant.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Humor, relatability, creativity, visual template execution.",
+                'faqs': []
+            },
+            {
+                'name': 'Gaming Quiz',
+                'slug': 'gaming-quiz',
+                'short_name': 'Gaming Quiz',
+                'category': 'GAMING',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Old Building Room & Stage',
+                'submission_type': 'MIXED',
+                'highlight': False,
+                'icon': 'Gamepad2',
+                'description': 'Video game lore, mechanics, esports, and gaming history quiz. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳300).\n"
+                    "- Written prelims followed by live stage buzzer rounds.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Written score for prelims, direct point totals in buzzer/stage rounds.",
+                'faqs': []
+            },
+            {
+                'name': 'Tech Quiz',
+                'slug': 'tech-quiz',
+                'short_name': 'Tech Quiz',
+                'category': 'QUIZ',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Main Stage & Exam Hall',
+                'submission_type': 'MIXED',
+                'highlight': False,
+                'icon': 'HelpCircle',
+                'description': 'Battle of intellect across computer science, frontier tech, inventions, and tech giants. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳300).\n"
+                    "- Written exam followed by live stage buzzer round.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Accuracy of answers, speed of submission, buzzer round reaction time.",
+                'faqs': []
+            },
+            {
+                'name': 'HTML Web Page creation',
+                'slug': 'html-webpage-creation',
+                'short_name': 'HTML Web Page creation',
+                'category': 'CODING',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D'],
+                'venue_detail': 'Computer Lab',
+                'submission_type': 'LAB',
+                'highlight': False,
+                'icon': 'Globe',
+                'description': 'Design and code a responsive webpage from scratch based on an on-the-spot prompt. Winner awarded Medals.',
+                'rules': (
+                    "- Individual event (৳300).\n"
+                    "- HTML, CSS, JavaScript in lab code challenge.\n"
+                    "- **Award**: Official Winner Medals & Certificate."
+                ),
+                'judging_criteria': "Design quality, code structure, responsiveness across mobile & desktop, creativity.",
+                'faqs': []
+            },
+            {
+                'name': 'Line Robot',
+                'slug': 'line-robot',
+                'short_name': 'Line Robot',
+                'category': 'ROBOTICS',
+                'event_type': 'BOTH',
+                'individual_fee': 300,
+                'team_fee': 1000,
+                'team_min': 1,
+                'team_max': 3,
+                'groups': ['B', 'C', 'D', 'E'],
+                'venue_detail': 'Robotics Arena Track',
+                'submission_type': 'PHYSICAL',
+                'highlight': False,
+                'icon': 'Cpu',
+                'description': 'Autonomous line following robot race across a complex black-line track. Individual (৳300) / Team of max 3 (৳1000). Awarded Medals / Crest.',
+                'rules': (
+                    "- **Eligibility**: Group B, C, D, E (Grade 5 to University).\n"
+                    "- **Fee**: Individual: ৳300 | Team (Max 3 members): ৳1000.\n"
+                    "- Robot must autonomously follow the line without manual intervention.\n"
+                    "- **Award**: Medals / Crest + Certificate."
+                ),
+                'judging_criteria': "Track completion time minus checkpoint penalties.",
+                'faqs': []
+            },
+            {
+                'name': 'Valorant (Team of 5)',
+                'slug': 'valorant-esports',
+                'short_name': 'Valorant (5v5)',
+                'category': 'ESPORTS',
+                'event_type': 'TEAM',
+                'individual_fee': 0,
+                'team_fee': 500,
+                'team_min': 5,
+                'team_max': 5,
+                'groups': ['C', 'D', 'E'],
+                'venue_detail': 'Online (Prelims) & Main Stage LAN (Semis/Finals)',
+                'submission_type': 'MIXED',
+                'highlight': True,
+                'icon': 'Crosshair',
+                'description': '5v5 tactical shooter showdown. Team of 5 (৳500). Semis and Grand Finals hosted on stage LAN with live broadcast. Winner awarded Prize Money & Model Cheque.',
+                'rules': (
+                    "### Tournament Structure\n"
+                    "- **Team Size**: Exactly 5 players per team (৳500 per team).\n"
+                    "- **Prelims**: Played online prior to LAN day.\n"
+                    "- **Semi-Finals & Grand Finals**: Played live on stage on high-performance LAN rigs with live streaming.\n"
+                    "- **Award**: Prize Money + Model Cheque + Champion Crest."
+                ),
+                'judging_criteria': "Direct match victories based on official competitive tournament rulebook.",
+                'faqs': []
+            },
+            {
+                'name': 'EAFC (FIFA E-Sports)',
+                'slug': 'eafc-esports',
+                'short_name': 'EAFC (1v1)',
+                'category': 'ESPORTS',
+                'event_type': 'INDIVIDUAL',
+                'individual_fee': 300,
+                'team_fee': 0,
+                'groups': ['A', 'B', 'C', 'D', 'E'],
+                'venue_detail': 'Gaming Arena (Fest Day)',
+                'submission_type': 'PHYSICAL',
+                'highlight': True,
+                'icon': 'Trophy',
+                'description': '1v1 EA Sports FC console championship. Individual (৳300). Knockout rounds on LAN on Fest Day. Winner awarded Football Crest / Prize Money.',
+                'rules': (
+                    "- **Format**: 1v1 knockout tournament (৳300).\n"
+                    "- **Platform**: PlayStation 5 / PC LAN on Fest Day.\n"
+                    "- **Award**: Football Crest / Prize Money + Certificate."
+                ),
+                'judging_criteria': "Standard 6-minute halves with Extra Time and Penalties on tie.",
                 'faqs': []
             },
         ]
