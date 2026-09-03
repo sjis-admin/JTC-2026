@@ -96,6 +96,76 @@ function RegisterForm() {
   const [paymentMethod, setPaymentMethod] = useState<'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK' | 'CASH'>('SSLCOMMERZ');
   const [paymentReference, setPaymentReference] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [draftRestored, setDraftRestored] = useState<boolean>(false);
+
+  // ─── 1. Restore saved draft on mount ───────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('jtc_registration_draft_v1');
+      if (saved) {
+        const draft = JSON.parse(saved);
+        if (draft.name) setName(draft.name);
+        if (draft.email) setEmail(draft.email);
+        if (draft.phone) setPhone(draft.phone);
+        if (draft.schoolId) setSchoolId(draft.schoolId);
+        if (draft.schoolOther) setSchoolOther(draft.schoolOther);
+        if (draft.grade) setGrade(draft.grade);
+        if (draft.selectedEvents && Object.keys(draft.selectedEvents).length > 0) {
+          setSelectedEvents(draft.selectedEvents);
+        }
+        if (draft.paymentMethod) setPaymentMethod(draft.paymentMethod);
+        if (draft.paymentReference) setPaymentReference(draft.paymentReference);
+        setDraftRestored(true);
+      }
+    } catch (e) {
+      console.warn('Draft restore notice:', e);
+    }
+  }, []);
+
+  // ─── 2. Auto-save draft on input change ─────────────────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        const hasContent = Boolean(name || email || phone || schoolOther || Object.keys(selectedEvents).length > 0);
+        if (hasContent) {
+          localStorage.setItem(
+            'jtc_registration_draft_v1',
+            JSON.stringify({
+              name,
+              email,
+              phone,
+              schoolId,
+              schoolOther,
+              grade,
+              selectedEvents,
+              paymentMethod,
+              paymentReference,
+              savedAt: new Date().toISOString(),
+            })
+          );
+        }
+      } catch (e) {
+        // storage quota / private window
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [name, email, phone, schoolId, schoolOther, grade, selectedEvents, paymentMethod, paymentReference]);
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem('jtc_registration_draft_v1');
+    } catch (e) {}
+    setName('');
+    setEmail('');
+    setPhone('');
+    setSchoolId('1');
+    setSchoolOther('');
+    setGrade('9');
+    setSelectedEvents({});
+    setPaymentReference('');
+    setDraftRestored(false);
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -336,6 +406,11 @@ function RegisterForm() {
 
       const res = await submitRegistration(payload);
 
+      // Clear saved draft upon successful submission
+      try {
+        localStorage.removeItem('jtc_registration_draft_v1');
+      } catch (e) {}
+
       // If SSLCommerz Instant Online Payment is chosen, redirect to SSLCommerz Gateway
       if (paymentMethod === 'SSLCOMMERZ' && totalFee > 0) {
         try {
@@ -377,6 +452,25 @@ function RegisterForm() {
           Josephite Tech Club • St. Joseph International School
         </p>
       </div>
+
+      {/* Auto-Restored Draft Banner */}
+      {draftRestored && (
+        <div className="mb-6 p-4 rounded-xl bg-surface-elevated/90 border border-teal-500/40 text-slate-200 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-teal-500/5">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" />
+            <span>
+              <strong>Draft Restored:</strong> We automatically recovered your previously filled information.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={clearDraft}
+            className="text-slate-400 hover:text-rose-400 text-xs underline font-semibold transition-colors text-left sm:text-right"
+          >
+            Clear Draft & Start Fresh
+          </button>
+        </div>
+      )}
 
       {/* Dynamic Registration Closed / Scheduled Gate */}
       {siteSettings && !siteSettings.registration_open && (
