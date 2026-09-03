@@ -7,15 +7,16 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Turnstile } from '@/components/ui/Turnstile';
 import { API_BASE, setAdminToken } from '@/lib/api';
-import { ShieldCheck, Lock, Sparkles } from 'lucide-react';
+import { ShieldCheck, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
 
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromUrl = searchParams.get('from') || '/admin';
 
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -85,17 +86,36 @@ function AdminLoginForm() {
           <Input
             label="Username"
             required
+            placeholder="Enter username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
 
-          <Input
-            label="Password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="w-full space-y-1.5">
+            <label htmlFor="admin-password" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+              Password <span className="text-rose-400 ml-1">*</span>
+            </label>
+            <div className="relative">
+              <input
+                id="admin-password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-4 pr-11 py-2.5 rounded-xl bg-surface/80 border border-surface-border text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-jtc-cyan focus:ring-1 focus:ring-jtc-cyan transition-all duration-200"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors focus:outline-none p-1"
+                tabIndex={-1}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4 text-gold" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
 
           {/* Cloudflare Turnstile Bot Defense */}
           <Turnstile onSuccess={(token) => setTurnstileToken(token)} />
@@ -106,10 +126,6 @@ function AdminLoginForm() {
             </Button>
           </div>
         </form>
-
-        <div className="mt-4 pt-4 border-t border-surface-border text-center text-[11px] text-slate-500">
-          Default credentials: <code className="text-slate-400">admin</code> / <code className="text-slate-400">admin123</code>
-        </div>
       </Card>
     </div>
   );
