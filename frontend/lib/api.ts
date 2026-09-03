@@ -1,4 +1,19 @@
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+export function getApiBase(): string {
+  if (typeof window === 'undefined') {
+    // Server-side (SSR inside Docker or Node.js)
+    if (process.env.INTERNAL_API_URL) return process.env.INTERNAL_API_URL;
+    if (process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.startsWith('http')) {
+      return process.env.NEXT_PUBLIC_API_URL;
+    }
+    return 'http://backend:8000/api';
+  }
+  // Client-side (Browser)
+  const publicUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (publicUrl && publicUrl.startsWith('http')) return publicUrl;
+  return '/api';
+}
+
+export const API_BASE = getApiBase();
 export const ADMIN_AUTH_PATH = process.env.NEXT_PUBLIC_ADMIN_AUTH_PATH || '/jtc-portal-auth-2026';
 
 export interface EventGroup {
@@ -116,7 +131,7 @@ export interface RegistrationResponse {
 
 export async function fetchSiteSettings(): Promise<SiteSettingsData> {
   try {
-    const res = await fetch(`${API_BASE}/settings/`, { next: { revalidate: 60 } });
+    const res = await fetch(`${getApiBase()}/settings/`, { next: { revalidate: 60 } });
     if (!res.ok) throw new Error('Failed to fetch settings');
     return await res.json();
   } catch (err) {
@@ -143,7 +158,7 @@ export async function fetchSiteSettings(): Promise<SiteSettingsData> {
 
 export async function fetchEvents(): Promise<EventItem[]> {
   try {
-    const res = await fetch(`${API_BASE}/events/`, { next: { revalidate: 60 } });
+    const res = await fetch(`${getApiBase()}/events/`, { next: { revalidate: 60 } });
     if (!res.ok) throw new Error('Failed to fetch events');
     const data = await res.json();
     return Array.isArray(data) ? data : data.results || [];
@@ -155,7 +170,7 @@ export async function fetchEvents(): Promise<EventItem[]> {
 
 export async function fetchEventBySlug(slug: string): Promise<EventItem | null> {
   try {
-    const res = await fetch(`${API_BASE}/events/${slug}/`, { next: { revalidate: 60 } });
+    const res = await fetch(`${getApiBase()}/events/${slug}/`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     return await res.json();
   } catch (err) {
@@ -166,7 +181,7 @@ export async function fetchEventBySlug(slug: string): Promise<EventItem | null> 
 
 export async function fetchSchools(): Promise<SchoolItem[]> {
   try {
-    const res = await fetch(`${API_BASE}/schools/`, { next: { revalidate: 300 } });
+    const res = await fetch(`${getApiBase()}/schools/`, { next: { revalidate: 300 } });
     if (!res.ok) throw new Error('Failed to fetch schools');
     return await res.json();
   } catch (err) {
@@ -176,7 +191,7 @@ export async function fetchSchools(): Promise<SchoolItem[]> {
 }
 
 export async function submitRegistration(payload: RegistrationPayload): Promise<RegistrationResponse> {
-  const res = await fetch(`${API_BASE}/registrations/`, {
+  const res = await fetch(`${getApiBase()}/registrations/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -190,13 +205,13 @@ export async function submitRegistration(payload: RegistrationPayload): Promise<
 }
 
 export async function lookupRegistration(code: string): Promise<RegistrationResponse> {
-  const res = await fetch(`${API_BASE}/registrations/${code}/`);
+  const res = await fetch(`${getApiBase()}/registrations/${code}/`);
   if (!res.ok) throw new Error('Registration not found');
   return await res.json();
 }
 
 export async function initiateSSLCommerzPayment(code: string): Promise<{ gateway_url: string; status: string }> {
-  const res = await fetch(`${API_BASE}/payments/sslcommerz/initiate/${code}/`, {
+  const res = await fetch(`${getApiBase()}/payments/sslcommerz/initiate/${code}/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -240,7 +255,7 @@ export async function adminFetch(endpoint: string, options: RequestInit = {}) {
     headers.set('Content-Type', 'application/json');
   }
 
-  const res = await fetch(`${API_BASE}${endpoint}`, {
+  const res = await fetch(`${getApiBase()}${endpoint}`, {
     ...options,
     headers,
   });

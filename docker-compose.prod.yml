@@ -60,6 +60,8 @@ services:
       - "127.0.0.1:${JTC_FRONTEND_PORT:-3055}:3000"
     env_file:
       - .env.prod
+    environment:
+      - INTERNAL_API_URL=http://backend:8000/api
     networks:
       - jtc_internal
     depends_on:
