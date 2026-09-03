@@ -4,8 +4,7 @@ import { fetchEvents } from '@/lib/api';
 
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: 'All Competitions & Arenas — SJIS Tech Carnival 2026',

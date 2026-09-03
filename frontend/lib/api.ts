@@ -131,7 +131,9 @@ export interface RegistrationResponse {
 
 export async function fetchSiteSettings(): Promise<SiteSettingsData> {
   try {
-    const res = await fetch(`${getApiBase()}/settings/`, { cache: 'no-store' });
+    const res = await fetch(`${getApiBase()}/settings/`, {
+      next: { revalidate: 30 },
+    });
     if (!res.ok) throw new Error('Failed to fetch settings');
     return await res.json();
   } catch (err) {
@@ -150,7 +152,7 @@ export async function fetchSiteSettings(): Promise<SiteSettingsData> {
       facebook_url: 'https://facebook.com',
       instagram_url: 'https://instagram.com',
       youtube_url: 'https://youtube.com',
-      announcement_banner: '⚡ Registrations for SJIS Inter-School Tech Carnival 2026 are now open! Explore 19 exciting events and register today.',
+      announcement_banner: '⚡ Registrations for SJIS Inter-School Tech Carnival 2026 are now open! Explore 18 exciting events and register today.',
       logo_url: null,
     };
   }
@@ -158,7 +160,9 @@ export async function fetchSiteSettings(): Promise<SiteSettingsData> {
 
 export async function fetchEvents(): Promise<EventItem[]> {
   try {
-    const res = await fetch(`${getApiBase()}/events/`, { cache: 'no-store' });
+    const res = await fetch(`${getApiBase()}/events/`, {
+      next: { revalidate: 30 },
+    });
     if (!res.ok) throw new Error('Failed to fetch events');
     const data = await res.json();
     return Array.isArray(data) ? data : data.results || [];
@@ -170,7 +174,9 @@ export async function fetchEvents(): Promise<EventItem[]> {
 
 export async function fetchEventBySlug(slug: string): Promise<EventItem | null> {
   try {
-    const res = await fetch(`${getApiBase()}/events/${slug}/`, { cache: 'no-store' });
+    const res = await fetch(`${getApiBase()}/events/${slug}/`, {
+      next: { revalidate: 30 },
+    });
     if (!res.ok) return null;
     return await res.json();
   } catch (err) {
@@ -181,7 +187,9 @@ export async function fetchEventBySlug(slug: string): Promise<EventItem | null> 
 
 export async function fetchSchools(): Promise<SchoolItem[]> {
   try {
-    const res = await fetch(`${getApiBase()}/schools/`, { cache: 'no-store' });
+    const res = await fetch(`${getApiBase()}/schools/`, {
+      next: { revalidate: 60 },
+    });
     if (!res.ok) throw new Error('Failed to fetch schools');
     return await res.json();
   } catch (err) {
