@@ -11,12 +11,27 @@ SANDBOX_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validatio
 LIVE_VALIDATION_URL = 'https://securepay.sslcommerz.com/validator/api/validationserverAPI.php'
 
 
+def get_sslcommerz_config():
+    """Dynamically resolves SSLCommerz credentials from Database SiteSettings or env settings."""
+    try:
+        from apps.core.models import SiteSettings
+        site = SiteSettings.get()
+        store_id = site.sslcommerz_store_id.strip() if site.sslcommerz_store_id else settings.SSLCOMMERZ_STORE_ID
+        store_pass = site.sslcommerz_store_pass.strip() if site.sslcommerz_store_pass else settings.SSLCOMMERZ_STORE_PASS
+        is_sandbox = site.sslcommerz_is_sandbox if site.sslcommerz_store_id else settings.SSLCOMMERZ_IS_SANDBOX
+        return store_id, store_pass, is_sandbox
+    except Exception:
+        return settings.SSLCOMMERZ_STORE_ID, settings.SSLCOMMERZ_STORE_PASS, settings.SSLCOMMERZ_IS_SANDBOX
+
+
 def get_session_url() -> str:
-    return SANDBOX_SESSION_URL if settings.SSLCOMMERZ_IS_SANDBOX else LIVE_SESSION_URL
+    _, _, is_sandbox = get_sslcommerz_config()
+    return SANDBOX_SESSION_URL if is_sandbox else LIVE_SESSION_URL
 
 
 def get_validation_url() -> str:
-    return SANDBOX_VALIDATION_URL if settings.SSLCOMMERZ_IS_SANDBOX else LIVE_VALIDATION_URL
+    _, _, is_sandbox = get_sslcommerz_config()
+    return SANDBOX_VALIDATION_URL if is_sandbox else LIVE_VALIDATION_URL
 
 
 def initiate_sslcommerz_session(registration, request=None) -> dict:
@@ -25,8 +40,7 @@ def initiate_sslcommerz_session(registration, request=None) -> dict:
     Returns:
         dict with keys: 'status' ('SUCCESS' or 'FAILED'), 'gateway_url', 'sessionkey', 'error'
     """
-    store_id = settings.SSLCOMMERZ_STORE_ID
-    store_pass = settings.SSLCOMMERZ_STORE_PASS
+    store_id, store_pass, is_sandbox = get_sslcommerz_config()
     backend_url = settings.BACKEND_URL.rstrip('/')
 
     post_data = {
@@ -86,10 +100,12 @@ def validate_sslcommerz_transaction(val_id: str) -> dict:
     if not val_id:
         return {'status': 'INVALID', 'error': 'Missing val_id'}
 
+    store_id, store_pass, _ = get_sslcommerz_config()
+
     params = {
         'val_id': val_id,
-        'store_id': settings.SSLCOMMERZ_STORE_ID,
-        'store_passwd': settings.SSLCOMMERZ_STORE_PASS,
+        'store_id': store_id,
+        'store_passwd': store_pass,
         'format': 'json',
     }
 

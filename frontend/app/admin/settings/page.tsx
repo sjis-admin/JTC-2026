@@ -6,7 +6,7 @@ import { Card, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck, Phone } from 'lucide-react';
+import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck, Phone, CreditCard } from 'lucide-react';
 
 const toInputDateTime = (val: string | null | undefined) => {
   if (!val) return '';
@@ -288,6 +288,60 @@ export default function AdminSettingsPage() {
               placeholder="https://youtube.com/..."
               value={settings?.youtube_url || ''}
               onChange={(e) => setSettings({ ...settings, youtube_url: e.target.value })}
+            />
+          </div>
+        </Card>
+
+        {/* SSLCommerz Payment Gateway Configuration */}
+        <Card glow="none" className="border border-surface-border bg-surface space-y-4">
+          <CardTitle className="text-lg flex items-center justify-between text-gold">
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-amber-400" /> SSLCommerz Instant Payment Gateway
+            </div>
+            {settings?.sslcommerz_is_sandbox ? (
+              <Badge variant="gold" size="sm">SANDBOX / TEST MODE</Badge>
+            ) : (
+              <Badge variant="teal" size="sm">LIVE PRODUCTION MODE</Badge>
+            )}
+          </CardTitle>
+
+          <div className="pt-1 flex flex-wrap items-center gap-6">
+            <label className="flex items-center gap-2 text-slate-200 text-xs font-semibold cursor-pointer">
+              <input
+                type="checkbox"
+                checked={settings?.sslcommerz_enabled !== false}
+                onChange={(e) => setSettings({ ...settings, sslcommerz_enabled: e.target.checked })}
+                className="accent-gold"
+              />
+              <span>Enable Instant Online Checkout (Cards / bKash / Nagad / Rocket)</span>
+            </label>
+
+            <label className="flex items-center gap-2 text-amber-300 text-xs font-semibold cursor-pointer">
+              <input
+                type="checkbox"
+                checked={settings?.sslcommerz_is_sandbox || false}
+                onChange={(e) => setSettings({ ...settings, sslcommerz_is_sandbox: e.target.checked })}
+                className="accent-amber-400"
+              />
+              <span>Sandbox / Testing Mode (Uncheck for Live Payments)</span>
+            </label>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Store ID (Merchant ID)"
+              placeholder="e.g. sjis2026live"
+              value={settings?.sslcommerz_store_id || ''}
+              onChange={(e) => setSettings({ ...settings, sslcommerz_store_id: e.target.value })}
+              helperText="Issued in your official SSLCommerz welcome email"
+            />
+            <Input
+              label="Store Password / Secret Key"
+              placeholder="Enter your store password"
+              type="password"
+              value={settings?.sslcommerz_store_pass || ''}
+              onChange={(e) => setSettings({ ...settings, sslcommerz_store_pass: e.target.value })}
+              helperText="Secret credential provided by SSLCommerz"
             />
           </div>
         </Card>

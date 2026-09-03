@@ -26,6 +26,12 @@ class SiteSettings(models.Model):
     youtube_url = models.URLField(blank=True)
     announcement_banner = models.TextField(blank=True, help_text='Scrolling announcement text (leave blank to hide)')
     
+    # SSLCommerz Online Payment Gateway settings
+    sslcommerz_enabled = models.BooleanField(default=True, help_text='Enable SSLCommerz instant card/bKash/Nagad gateway')
+    sslcommerz_store_id = models.CharField(max_length=100, blank=True, help_text='Merchant Store ID from SSLCommerz')
+    sslcommerz_store_pass = models.CharField(max_length=100, blank=True, help_text='Store Password / Secret Key')
+    sslcommerz_is_sandbox = models.BooleanField(default=False, help_text='Checked for Sandbox/Test mode, unchecked for Live production')
+
     # GreenWeb SMS settings (override from env)
     sms_enabled = models.BooleanField(default=False)
     sms_user = models.CharField(max_length=100, blank=True)
