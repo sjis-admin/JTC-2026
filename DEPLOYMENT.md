@@ -6,57 +6,60 @@ This guide details the complete process for deploying and maintaining the **Jose
 
 ## 🏗 Architecture Summary
 
-- **Frontend**: Next.js 14 Standalone Mode (Node 20 Alpine)
-- **Backend**: Django 5 + Django REST Framework + Gunicorn WSGI
-- **Database**: PostgreSQL 16 Alpine (Isolated on internal Docker network)
-- **Reverse Proxy & SSL**: Nginx 1.25 Alpine with Let's Encrypt / Cloudflare SSL
+- **Frontend**: Next.js 14 Standalone Mode on `127.0.0.1:3001`
+- **Backend**: Django 5 + Gunicorn WSGI on `127.0.0.1:8001`
+- **Database**: PostgreSQL 16 Alpine (Isolated internal Docker network)
+- **Reverse Proxy**: Host Nginx virtual host (`/etc/nginx/sites-available/jtc.sjis.edu.bd`)
+- **SSL**: Certbot via Host Nginx (`sudo certbot --nginx -d jtc.sjis.edu.bd`)
 - **Automation**: One-command updates via `./deploy.sh`
 
 ---
 
-## ⚡ First-Time Server Setup (5 Minutes)
+## ⚡ Deployment on Existing Server with Other Live Sites
 
-### Step 1: Create a DigitalOcean Droplet
-- **Image**: Ubuntu 22.04 LTS or 24.04 LTS
-- **Plan**: Basic Droplet (Regular SSD)
-  - Minimum: 1 GB RAM / 1 vCPU (with swap)
-  - Recommended: 2 GB RAM / 1 or 2 vCPUs
-- **Authentication**: SSH Key (Recommended) or Password
-- **Firewall**: Ensure ports `22` (SSH), `80` (HTTP), and `443` (HTTPS) are allowed.
+If your server is already running `portal.sjis.edu.bd`, `website`, etc., follow these simple steps to ensure **zero downtime or conflict** with your existing sites:
 
----
-
-### Step 2: Configure DNS Records
-Point your domain's DNS `A` records to your DigitalOcean Droplet IP address:
-```
-Type: A   | Name: @   | Value: <YOUR_DROPLET_IP> | TTL: Auto
-Type: A   | Name: www | Value: <YOUR_DROPLET_IP> | TTL: Auto
-```
-*(Example: `jtc.sjis.edu.bd` -> `<YOUR_DROPLET_IP>`)*
-
----
-
-### Step 3: Clone Repository & Run Server Initializer
-SSH into your Droplet and clone the repository:
-
+### Step 1: Clone Repository into `/var/www/jtc`
 ```bash
-ssh root@<YOUR_DROPLET_IP>
-
-# Clone repository
-git clone https://github.com/YOUR_USERNAME/JTC.git /var/www/jtc
-cd /var/www/jtc
-
-# Make scripts executable and run server initialization
-chmod +x setup_server.sh deploy.sh
-sudo ./setup_server.sh
+cd /var/www
+git clone https://github.com/sjis-admin/JTC-2026.git jtc
+cd jtc
 ```
 
-`setup_server.sh` will automatically:
-1. Update system packages.
-2. Install Docker & Docker Compose plugin.
-3. Configure a 2GB Swap file for smooth Next.js production builds.
-4. Configure Docker daemon log rotation (max 10MB per container).
-5. Enable and harden UFW firewall (SSH, HTTP 80, HTTPS 443).
+### Step 2: Configure Environment Variables
+```bash
+cp .env.prod.example .env.prod
+nano .env.prod
+```
+Fill in your database credentials, `SECRET_KEY`, and email/SMS keys.
+
+### Step 3: Launch JTC Containers & Seed Database
+```bash
+chmod +x deploy.sh
+./deploy.sh --seed
+./deploy.sh --create-admin
+```
+*(This starts PostgreSQL, Next.js on `127.0.0.1:3001`, and Django on `127.0.0.1:8001`)*
+
+### Step 4: Link Host Nginx Configuration
+```bash
+# Copy the virtual host config to host nginx
+sudo cp nginx/host-nginx-jtc.conf /etc/nginx/sites-available/jtc.sjis.edu.bd
+
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/jtc.sjis.edu.bd /etc/nginx/sites-enabled/
+
+# Test and reload Nginx
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### Step 5: Issue SSL Certificate via Certbot
+```bash
+sudo certbot --nginx -d jtc.sjis.edu.bd -d www.jtc.sjis.edu.bd
+```
+*(Your existing sites `portal.sjis.edu.bd`, `website`, etc. remain completely untouched and running!)*
+
 
 ---
 
