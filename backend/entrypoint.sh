@@ -50,12 +50,6 @@ print("Error: Could not connect to PostgreSQL within timeout.")
 sys.exit(1)
 END
 fi
-
-echo "=== [JTC Backend] Applying Database Migrations ==="
-python manage.py migrate --noinput
-
-echo "=== [JTC Backend] Collecting Static Files ==="
-python manage.py collectstatic --noinput --clear || python manage.py collectstatic --noinput
-
-echo "=== [JTC Backend] Ready. Executing command: $@ ==="
+echo "=== [JTC Backend] Database is ready. Executing command: $@ ==="
 exec "$@"
+
