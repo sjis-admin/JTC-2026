@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { EventItem } from '@/lib/api';
 import { Card, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
