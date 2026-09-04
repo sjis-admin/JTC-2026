@@ -9,6 +9,7 @@ import {
 import { Card, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import MarkdownRulesRenderer from '@/components/common/MarkdownRulesRenderer';
 import {
   Search,
   Filter,
@@ -404,8 +405,8 @@ ${ev.rules || 'Standard tournament rules apply.'}
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-gold flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5" /> Rules & Regulations
                   </h4>
-                  <div className="p-4 sm:p-5 rounded-xl bg-surface-elevated/70 border border-surface-border text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line font-sans">
-                    {event.rules}
+                  <div className="p-4 sm:p-6 rounded-xl bg-surface-elevated/70 border border-surface-border">
+                    <MarkdownRulesRenderer content={event.rules} />
                   </div>
                 </div>
               )}

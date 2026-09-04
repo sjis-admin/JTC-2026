@@ -102,14 +102,7 @@ class Command(BaseCommand):
                     "4. The prompt history must not include any other resource (such as uploaded images or files) other than text typed by the participant. Each instruction MUST be typed by the participant completely (autocorrect and suggestions are allowed; image-to-image cloning is forbidden).\n"
                     "5. Submission into the official Google Form link provided at the time of competition."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria (Total: 100 Marks)\n"
-                    "• Prompt Effectiveness: 35 Marks\n"
-                    "• Accuracy of Output: 25 Marks\n"
-                    "• Creativity & Innovation: 20 Marks\n"
-                    "• Prompt Structure & Clarity: 10 Marks\n"
-                    "• Efficiency (Fewest Effective Prompts): 10 Marks"
-                ),
+                'judging_criteria': "",
                 'faqs': [
                     ("Which AI platforms are permitted?", "Any major text-to-image generator including Midjourney, DALL-E 3, Stable Diffusion, Adobe Firefly, or Bing Image Creator."),
                     ("Can I upload reference pictures into the AI?", "No. Image-to-image cloning or uploaded files are strictly prohibited. All generation must be 100% prompt-driven from typed text.")
@@ -142,14 +135,7 @@ class Command(BaseCommand):
                     "- Submit the project folder through a physical pen drive on the first day of the fest.\n"
                     "- Participants must bring their physical artwork to the submission site on time if requested."
                 ),
-                'judging_criteria': (
-                    "🏆 Judgement Criteria (Total: 100 Marks)\n"
-                    "• Relevance to Theme: 30 Marks\n"
-                    "• Creativity & Originality: 25 Marks\n"
-                    "• Artistic Skill & Technique: 20 Marks\n"
-                    "• Visual Appeal / Presentation: 15 Marks\n"
-                    "• In-depth Message / Meaning: 10 Marks"
-                ),
+                'judging_criteria': "",
                 'faqs': [
                     ("Are AI generative tools allowed?", "No. AI generation is strictly banned. Raw layered files are inspected by the jury.")
                 ]
@@ -183,11 +169,7 @@ class Command(BaseCommand):
                     "- Video game lore, gaming history, game dev trivia, esports tournaments, and franchises.\n"
                     "- Tailored difficulty arranged according to academic groups (Group A to D)."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria\n"
-                    "• Qualifiers: Score out of 20 marks on MCQ OMR script.\n"
-                    "• Finals: Correct buzzer answers out of 10 stage rounds."
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -218,7 +200,7 @@ class Command(BaseCommand):
                     "### Judging\n"
                     "- The participants with the 3 highest recorded WPMs will be awarded."
                 ),
-                'judging_criteria': "Net Words Per Minute (WPM) scored on MonkeyType, with Accuracy percentage as tie-breaker.",
+                'judging_criteria': "",
                 'faqs': [
                     ("Can I bring my own mechanical keyboard?", "Yes, participants are permitted to bring their own USB keyboards.")
                 ]
@@ -249,12 +231,7 @@ class Command(BaseCommand):
                     "- Making an extra JS file for functionality is allowed and must be included with the webpage submission files.\n"
                     "- No internet browsing or AI tools permitted during the challenge."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Breakdown (Total: 100%)\n"
-                    "• Visual & Structural Accuracy: 60%\n"
-                    "• Interactive Functionality: 25%\n"
-                    "• Code Quality & Structure: 15%"
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -287,12 +264,7 @@ class Command(BaseCommand):
                     "### Student Information\n"
                     "The submitted pendrive folder should contain the video (.mp4) and a doc file (.doc/.pdf) with student personal info (Name, Class, Section, School, Group) and title of the video."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria (Auditorium Stage Screening)\n"
-                    "• Theme Relevance: 40%\n"
-                    "• Editing, Audio & Video Quality: 35%\n"
-                    "• Creativity & Storytelling: 25%"
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -336,13 +308,7 @@ class Command(BaseCommand):
                     "   - Photographs that are not laminated, incorrectly sized, or missing student information will not be considered.\n"
                     "   - **NO AI Generated photos will be allowed.**"
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria (Total: 100%)\n"
-                    "• Theme Relevance: 40%\n"
-                    "• Creativity & Originality: 30%\n"
-                    "• Composition: 20%\n"
-                    "• Technical Quality: 10%"
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -378,12 +344,7 @@ class Command(BaseCommand):
                     "- Finalists compete on stage. **Negative marking will apply in this round.**\n"
                     "- Top 2 scorers at the end of the final round declared the winners."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging & Scoring\n"
-                    "• Round 1: Max 20 marks.\n"
-                    "• Round 2: Buzzer accuracy across 20 questions (top 4 advance).\n"
-                    "• Round 3: High score with negative marking; top 2 winners."
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -415,7 +376,7 @@ class Command(BaseCommand):
                     "• **Round 4 — Encryption Challenge:** Teams solve a riddle to obtain a decryption string. Entering it on a webpage terminal reveals a URL.\n"
                     "• **Final Round — The Treasure:** The URL provides a combination of Key and box number that opens the stage treasure box housing the Bitcoin / Golden Code."
                 ),
-                'judging_criteria': "Fastest team to verify all 5 code fragments and open the treasure chest within 60 minutes.",
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -446,7 +407,7 @@ class Command(BaseCommand):
                     "4. **Timing:** Best valid solving time considered for final ranking.\n"
                     "5. **Fair Play:** No external notes, algorithms, or devices allowed during solving."
                 ),
-                'judging_criteria': "Fastest single valid 4×4 solve time recorded by official timer.",
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -488,13 +449,7 @@ class Command(BaseCommand):
                     "- **AI-generated presentations or fully AI-generated content will not be allowed.**\n"
                     "- Must clearly provide: Participant’s Name, School Name, Class & Section, Group (A/B/C/D), and Presentation Title."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria\n"
-                    "• Relevance to topic & content depth\n"
-                    "• Slide design & visual appeal\n"
-                    "• Effective use of PowerPoint features\n"
-                    "• Stage delivery, communication & time management"
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -522,12 +477,7 @@ class Command(BaseCommand):
                     "- Organizers provide official writing paper. Participants bring pens.\n"
                     "- Header must clearly list: Student's Name, School, Class & Section, Group (A/B/C/D), and Article Title."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria\n"
-                    "• Relevance to topic & quality of ideas\n"
-                    "• Structure, flow & paragraph organization\n"
-                    "• Language, grammar & clarity of expression"
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -554,13 +504,7 @@ class Command(BaseCommand):
                     "- Must be the original creative work of the participant. Submissions found to contain unauthorized or directly copied content will be disqualified.\n"
                     "- Provide: Student's Name, School, Class & Section, Group (A/B/C/D), and Caption of the Meme."
                 ),
-                'judging_criteria': (
-                    "🏆 Judging Criteria\n"
-                    "• Creativity and humor\n"
-                    "• Relevance to technology & CS culture\n"
-                    "• Originality of concept (audited against reposts)\n"
-                    "• Visual presentation and clarity"
-                ),
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -590,7 +534,7 @@ class Command(BaseCommand):
                     "- Any misconduct results in disqualification.\n"
                     "- The robots with the fastest times will be awarded. Ties handled by preferring the smaller/lighter robot."
                 ),
-                'judging_criteria': "Fastest course completion time minus track penalties. Smaller/lighter robot wins ties.",
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -621,7 +565,7 @@ class Command(BaseCommand):
                     "- Participants entering the active flight zone without permission will be disqualified.\n"
                     "- The drones with the fastest times will be awarded. Ties handled by redoing the course."
                 ),
-                'judging_criteria': "Fastest obstacle course time (flight time + penalty seconds).",
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -651,7 +595,7 @@ class Command(BaseCommand):
                     "- AI code generation assistants are strictly blocked and forbidden.\n"
                     "- All standard language libraries permitted."
                 ),
-                'judging_criteria': "Automated test cases passed, code efficiency, and submission time penalties.",
+                'judging_criteria': "",
                 'faqs': []
             },
             {
@@ -677,7 +621,7 @@ class Command(BaseCommand):
                     "- Hardware prototype must be functional and demonstrated live before the jury.\n"
                     "- Award: Prestigious Winner Crest + Certificate."
                 ),
-                'judging_criteria': "Innovation, technical complexity, live prototype demonstration, and jury defense.",
+                'judging_criteria': "",
                 'faqs': []
             },
         ]

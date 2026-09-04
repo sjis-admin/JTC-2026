@@ -6,6 +6,7 @@ import { EventItem } from '@/lib/api';
 import { Card, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import MarkdownRulesRenderer from '@/components/common/MarkdownRulesRenderer';
 import {
   Sparkles, Code, Palette, Keyboard, Presentation, Gamepad2, Globe, Film,
   Camera, FileText, HelpCircle, Smile, Box, Compass, Crosshair, Trophy, Bot, Cpu, Plane,
@@ -360,13 +361,11 @@ export default function EventsShowcase({
 
             {/* Quick Rules */}
             {quickViewEvent.rules && (
-              <div className="p-4 rounded-xl bg-surface border border-surface-border space-y-2">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-gold flex items-center gap-1.5">
+              <div className="p-4 rounded-xl bg-surface border border-surface-border space-y-2 max-h-80 overflow-y-auto pr-2">
+                <h4 className="text-xs uppercase font-bold tracking-wider text-gold flex items-center gap-1.5 sticky top-0 bg-surface/95 backdrop-blur-sm pb-1.5 border-b border-surface-border">
                   <CheckCircle2 className="w-4 h-4" /> Rules & Requirements
                 </h4>
-                <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed">
-                  {quickViewEvent.rules}
-                </div>
+                <MarkdownRulesRenderer content={quickViewEvent.rules} />
               </div>
             )}
 

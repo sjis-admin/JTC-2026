@@ -8,6 +8,7 @@ import { Card, CardTitle } from '@/components/ui/Card';
 import {
   ArrowLeft, MapPin, Users, User, Calendar, Trophy, Sparkles, CheckCircle2, HelpCircle
 } from 'lucide-react';
+import MarkdownRulesRenderer from '@/components/common/MarkdownRulesRenderer';
 
 import type { Metadata } from 'next';
 
@@ -119,9 +120,7 @@ export default async function EventDetailPage({ params }: EventPageProps) {
               <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-jtc-teal" /> Rules & Guidelines
               </h2>
-              <div className="text-sm text-slate-300 space-y-3 leading-relaxed whitespace-pre-line">
-                {event.rules}
-              </div>
+              <MarkdownRulesRenderer content={event.rules} />
             </Card>
           )}
 
