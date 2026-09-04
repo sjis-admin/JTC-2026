@@ -75,10 +75,9 @@ export default function EventsShowcase({
     { id: 'AI', label: 'AI & Machine', count: events.filter(e => e.category === 'AI').length },
     { id: 'CODING', label: 'Coding Marathon', count: events.filter(e => e.category === 'CODING').length },
     { id: 'ROBOTICS', label: 'Robotics & Drone', count: events.filter(e => e.category === 'ROBOTICS').length },
-    { id: 'ESPORTS', label: 'E-Sports Arena', count: events.filter(e => e.category === 'ESPORTS').length },
     { id: 'DIGITAL_ART', label: 'Digital Art & MV', count: events.filter(e => e.category === 'DIGITAL_ART').length },
     { id: 'CREATIVE', label: 'Creative & Photo', count: events.filter(e => ['CREATIVE', 'TYPING', 'OTHER'].includes(e.category)).length },
-    { id: 'QUIZ', label: 'Quizzes', count: events.filter(e => e.category === 'QUIZ').length },
+    { id: 'QUIZ', label: 'Quizzes & Trivia', count: events.filter(e => ['QUIZ', 'GAMING'].includes(e.category)).length },
   ], [events]);
 
   const groups = [
@@ -96,6 +95,8 @@ export default function EventsShowcase({
       if (selectedCategory !== 'ALL') {
         if (selectedCategory === 'CREATIVE') {
           if (!['CREATIVE', 'TYPING', 'OTHER'].includes(e.category)) return false;
+        } else if (selectedCategory === 'QUIZ') {
+          if (!['QUIZ', 'GAMING'].includes(e.category)) return false;
         } else if (e.category !== selectedCategory) {
           return false;
         }

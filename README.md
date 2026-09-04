@@ -33,7 +33,7 @@ A high-performance, dark-themed, glassmorphic registration platform and admin po
 │   ├── apps/
 │   │   ├── accounts/           # User authentication & roles
 │   │   ├── core/               # SiteSettings, Schools
-│   │   ├── events/             # Events (19 competitions), Groups (A-E), FAQs
+│   │   ├── events/             # Events (17 competitions), Groups (A-E), FAQs
 │   │   └── registrations/      # Participant data, payments, notifications
 │   ├── templates/emails/       # HTML confirmation email
 │   ├── manage.py
@@ -100,14 +100,14 @@ npm run dev
 
 ---
 
-## 🏆 Seeded Carnival Events (19 Total)
+## 🏆 Seeded Carnival Events (17 Total)
 
 1. **AI Prompting** (Individual • ৳200 • Grp A–E • BYOD & Zero-Glitch rules)
 2. **Coding Marathon** (Individual • ৳300 • Grp A–B Scratch, Grp C–D Python)
 3. **Tech-art Bonanza (Digital Art & Poster)** (Individual • ৳300 • Grp A–D • Pendrive submission)
 4. **SwiftType Blitz (Typing Competition)** (Individual • ৳200 • Grp A–D • Monkeytype)
 5. **PowerPoint Presentation** (Individual • ৳300 • Grp A–D • Stage Presentation)
-6. **Gaming Quiz** (Individual • ৳300 • Grp A–D • 3 Rounds)
+6. **Gaming Quiz** (Individual • ৳300 • Grp A–D • 2 Rounds: OMR & Stage Buzzer)
 7. **Webpage Creation** (Individual • ৳300 • Grp A–D • Lab code challenge)
 8. **Game Sync Symphony (Montage/AMV)** (Individual • ৳300 • Grp A–D • Video editing package)
 9. **Photography Competition** (Individual • ৳200 • Grp A–E • 7×9" laminated exhibition)
@@ -116,11 +116,9 @@ npm run dev
 12. **Tech Meme Contest** (Individual • ৳300 • Grp A–E • Online)
 13. **Rubik's Cube Speedcubing** (Individual • ৳200 • Grp A–D • Ao5)
 14. **Treasure Hunt** (Team • ৳500 • 3 members per team)
-15. **Valorant (E-Sports)** (Team • ৳500 • Online prelims + Stage LAN & FB Live)
-16. **EA FC (FIFA E-Sports)** (Individual • ৳200 • LAN on Fest Day)
-17. **Robo Showcase** (Individual ৳500 / Team ৳1000 max 3 • Grp C–E)
-18. **Line Follower Robot (LFR)** (Individual ৳500 / Team ৳1000 max 3 • Grp B–E)
-19. **Drone Competition (Design & Flight)** (Individual ৳500 / Team ৳1000 max 3 • Grp C–D)
+15. **Robo Showcase** (Individual ৳500 / Team ৳1000 max 3 • Grp C–E)
+16. **Line Follower Robot (LFR)** (Individual ৳500 / Team ৳1000 max 3 • Grp B–E)
+17. **Drone Competition (Design & Flight)** (Individual ৳500 / Team ৳1000 max 3 • Grp C–D)
 
 ---
 

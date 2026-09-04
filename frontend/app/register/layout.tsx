@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'JTC Pass Registration',
     'Coding Marathon Register',
     'Drone Competition Register',
-    'Valorant Registration Dhaka',
+    'Gaming Quiz Registration Dhaka',
   ],
   alternates: {
     canonical: 'https://jtc.sjis.edu.bd/register',

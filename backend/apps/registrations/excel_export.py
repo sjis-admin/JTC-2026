@@ -165,7 +165,7 @@ def generate_registrations_workbook(qs=None) -> bytes:
     ws2 = wb.create_sheet(title="Competitions Roster")
     ws2.views.sheetView[0].showGridLines = True
 
-    ws2['A1'] = "JOSEPHITE TECH CLUB — 19 COMPETITIONS PARTICIPANT ROSTER"
+    ws2['A1'] = "JOSEPHITE TECH CLUB — 17 COMPETITIONS PARTICIPANT ROSTER"
     ws2['A1'].font = title_font
     ws2['A2'] = f"Generated: {timezone.localtime().strftime('%B %d, %Y at %I:%M %p')}"
     ws2['A2'].font = meta_font

@@ -48,7 +48,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Fostering excellence in artificial intelligence, competitive programming, robotics, aeronautics, digital media, and esports.
+              Fostering excellence in artificial intelligence, competitive programming, robotics, aeronautics, digital media, and innovation.
             </p>
             <div className="flex items-center gap-3 pt-2">
               {fbUrl && (
@@ -76,9 +76,9 @@ export default function Footer() {
               <li><Link href="/events?category=AI" className="hover:text-gold transition-colors">AI Prompting & Engineering</Link></li>
               <li><Link href="/events?category=CODING" className="hover:text-gold transition-colors">Coding Marathon (Scratch & Python)</Link></li>
               <li><Link href="/events?category=ROBOTICS" className="hover:text-gold transition-colors">Robotics, LFR & Drone Arena</Link></li>
-              <li><Link href="/events?category=ESPORTS" className="hover:text-gold transition-colors">Valorant & EA FC E-Sports</Link></li>
               <li><Link href="/events?category=DIGITAL_ART" className="hover:text-gold transition-colors">Digital Art & Gaming Montages</Link></li>
               <li><Link href="/events?category=QUIZ" className="hover:text-gold transition-colors">Tech & Gaming Quizzes</Link></li>
+              <li><Link href="/events?category=CREATIVE" className="hover:text-gold transition-colors">Creative, Poster & Speedcubing</Link></li>
             </ul>
           </div>
 

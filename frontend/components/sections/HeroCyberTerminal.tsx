@@ -14,9 +14,9 @@ const DEMO_SEQUENCE = [
     cmd: 'events --featured',
     output: (
       <div className="space-y-1 text-slate-300">
-        <p className="text-gold font-bold">⚡ 19 Official Competitions Online:</p>
+        <p className="text-gold font-bold">⚡ 17 Official Competitions Online:</p>
         <p className="text-slate-300">• AI Prompting • Coding Marathon • Robotics & Drone Flight</p>
-        <p className="text-slate-300">• Valorant 5v5 • EA FC 24 • Tech Art Bonanza • SwiftType Blitz</p>
+        <p className="text-slate-300">• Gaming Quiz • Speedcubing • Tech Art Bonanza • SwiftType Blitz</p>
       </div>
     ),
   },
@@ -63,7 +63,7 @@ export default function HeroCyberTerminal() {
       cmd: 'fest --status',
       output: (
         <div className="space-y-1 text-slate-300">
-          <p className="text-gold-light">⚡ 19 Competitions Loaded • 5 Academic Groups Active</p>
+          <p className="text-gold-light">⚡ 17 Competitions Loaded • 5 Academic Groups Active</p>
           <p className="text-sky-300">📍 Venue: SJIS Campus, 97 Asad Avenue, Mohammadpur</p>
           <p className="text-slate-400">
             Type <span className="text-gold font-bold font-mono">"events"</span>,{' '}
@@ -173,9 +173,9 @@ export default function HeroCyberTerminal() {
     } else if (cleanCmd === 'events') {
       output = (
         <div className="space-y-1 text-xs">
-          <p className="text-gold font-bold">🔥 19 Competitions Registered:</p>
+          <p className="text-gold font-bold">🔥 17 Competitions Registered:</p>
           <p className="text-slate-300">• AI Prompting • Coding Marathon • Drone Competition • Robo Showcase</p>
-          <p className="text-slate-300">• Valorant 5v5 • EA FC 1v1 • SwiftType Blitz • Tech-Art • Photography</p>
+          <p className="text-slate-300">• Gaming Quiz • Speedcubing • SwiftType Blitz • Tech-Art • Photography</p>
           <Link href="/events" className="text-sky-400 hover:underline inline-block mt-1">
             → Click to browse full rules & catalogue
           </Link>
@@ -194,8 +194,8 @@ export default function HeroCyberTerminal() {
       output = (
         <div className="space-y-1 text-xs text-slate-300">
           <p className="text-gold font-bold">📅 Fest Dates: Oct 1 – 2, 2026</p>
-          <p>• Day 1 (Oct 1): Opening, AI Prompting, Robo Trials, Coding Marathon, Esports Prelims</p>
-          <p>• Day 2 (Oct 2): Drone Flights, Project Exhibition, Esports Finals, Gala Award Ceremony</p>
+          <p>• Day 1 (Oct 1): Opening, AI Prompting, Robo Trials, Coding Marathon, Gaming Quiz Prelims</p>
+          <p>• Day 2 (Oct 2): Drone Flights, Project Exhibition, Gaming Quiz Stage Finals, Gala Award Ceremony</p>
         </div>
       );
     } else if (cleanCmd === 'matrix') {

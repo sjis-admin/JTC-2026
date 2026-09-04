@@ -14,7 +14,7 @@ export const revalidate = 30;
 export const metadata: Metadata = {
   title: 'Official Rulebook & Compendium — SJIS Tech Carnival 2026',
   description:
-    'Download and explore the official festival rulebook, contest guidelines, submission formats, and eligibility rules for all 19 competitions at SJIS Inter-School Tech Carnival 2026.',
+    'Download and explore the official festival rulebook, contest guidelines, submission formats, and eligibility rules for all 17 competitions at SJIS Inter-School Tech Carnival 2026.',
   keywords: [
     'SJIS Rulebook 2026',
     'Tech Carnival Rules Bangladesh',
@@ -22,14 +22,14 @@ export const metadata: Metadata = {
     'Drone Competition Guidelines',
     '4x4 Rubiks Cube Rules SJIS',
     'AI Prompting Rules',
-    'Valorant Rulebook School Fest',
+    'Gaming Quiz Rulebook',
   ],
   alternates: {
     canonical: 'https://jtc.sjis.edu.bd/rulebook',
   },
   openGraph: {
     title: 'Official Rulebook & Compendium — SJIS Tech Carnival 2026',
-    description: 'Official rules, contest guidelines, and eligibility criteria for all 19 competitions.',
+    description: 'Official rules, contest guidelines, and eligibility criteria for all 17 competitions.',
     url: 'https://jtc.sjis.edu.bd/rulebook',
   },
 };

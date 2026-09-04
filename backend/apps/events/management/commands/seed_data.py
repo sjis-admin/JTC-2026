@@ -5,7 +5,7 @@ from datetime import date
 
 
 class Command(BaseCommand):
-    help = 'Seeds initial groups, schools, site settings, and all 19 carnival events'
+    help = 'Seeds initial groups, schools, site settings, and all 17 carnival events'
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.NOTICE('Starting seed process...'))
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         site.registration_open = True
         site.contact_email = 'jtc@sjis.edu.bd'
         site.contact_phone = '+880 2-9116271'
-        site.announcement_banner = '⚡ Registrations for SJIS Inter-School Tech Carnival 2026 are now open! Explore 19 exciting events and register today.'
+        site.announcement_banner = '⚡ Registrations for SJIS Inter-School Tech Carnival 2026 are now open! Explore 17 exciting events and register today.'
         site.save()
         self.stdout.write(self.style.SUCCESS('Site settings configured.'))
 
@@ -678,55 +678,6 @@ class Command(BaseCommand):
                     "- Award: Prestigious Winner Crest + Certificate."
                 ),
                 'judging_criteria': "Innovation, technical complexity, live prototype demonstration, and jury defense.",
-                'faqs': []
-            },
-            {
-                'name': 'Valorant (5v5 E-Sports)',
-                'slug': 'valorant-esports',
-                'short_name': 'Valorant (5v5)',
-                'category': 'ESPORTS',
-                'event_type': 'TEAM',
-                'individual_fee': 0,
-                'team_fee': 500,
-                'team_min': 5,
-                'team_max': 5,
-                'groups': ['C', 'D', 'E'],
-                'venue_detail': 'Online (Prelims) & Main Stage LAN (Semis/Finals)',
-                'submission_type': 'MIXED',
-                'highlight': True,
-                'icon': 'Crosshair',
-                'description': '5v5 tactical shooter showdown. Team of 5 (৳500). Semis and Grand Finals hosted on stage LAN with live broadcast. Winner awarded Prize Money & Model Cheque.',
-                'rules': (
-                    "### Tournament Structure\n"
-                    "- Team Size: Exactly 5 players per team (৳500 per team).\n"
-                    "- Prelims: Played online prior to LAN day.\n"
-                    "- Semi-Finals & Grand Finals: Played live on stage on high-performance LAN rigs with live streaming.\n"
-                    "- Award: Prize Money + Model Cheque + Champion Crest."
-                ),
-                'judging_criteria': "Official competitive tournament map pool and victory rules.",
-                'faqs': []
-            },
-            {
-                'name': 'EAFC 24 (FIFA E-Sports)',
-                'slug': 'eafc-esports',
-                'short_name': 'EAFC 24 (1v1)',
-                'category': 'ESPORTS',
-                'event_type': 'INDIVIDUAL',
-                'individual_fee': 300,
-                'team_fee': 0,
-                'groups': ['A', 'B', 'C', 'D', 'E'],
-                'venue_detail': 'Gaming Arena (Fest Day)',
-                'submission_type': 'PHYSICAL',
-                'highlight': True,
-                'icon': 'Trophy',
-                'description': '1v1 EA Sports FC console championship. Individual (৳300). Knockout rounds on LAN on Fest Day. Winner awarded Football Crest / Prize Money.',
-                'rules': (
-                    "### Tournament Structure\n"
-                    "- Format: 1v1 knockout tournament (৳300).\n"
-                    "- Platform: PlayStation 5 / PC LAN on Fest Day.\n"
-                    "- Award: Football Crest / Prize Money + Certificate."
-                ),
-                'judging_criteria': "Standard 6-minute halves with Extra Time and Penalties on tie.",
                 'faqs': []
             },
         ]

@@ -136,7 +136,7 @@ export default function AdminDashboardPage() {
             {stats?.total_events_booked || 0}
           </div>
           <span className="text-[11px] text-slate-400 block mt-1">
-            Across 19 Competitions
+            Across 17 Competitions
           </span>
         </Card>
       </div>
@@ -209,7 +209,7 @@ export default function AdminDashboardPage() {
               </Link>
               <Link href="/admin/events" className="block">
                 <Button variant="secondary" size="sm" className="w-full justify-between text-xs py-2.5">
-                  <span>Configure 19 Competitions</span>
+                  <span>Configure 17 Competitions</span>
                   <ArrowRight className="w-4 h-4 text-slate-400" />
                 </Button>
               </Link>

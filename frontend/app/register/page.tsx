@@ -523,7 +523,7 @@ function RegisterForm() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/events">
               <Button variant="glow" size="lg" className="w-full sm:w-auto font-bold">
-                Browse All 19 Competitions
+                Browse All 17 Competitions
               </Button>
             </Link>
             <Link href="/">

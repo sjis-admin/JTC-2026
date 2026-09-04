@@ -106,7 +106,7 @@ export default function Image() {
               fontWeight: 700,
             }}
           >
-            ⚡ 18 Competitions
+            ⚡ 17 Competitions
           </div>
           <div
             style={{

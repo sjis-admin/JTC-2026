@@ -57,7 +57,7 @@ const CATEGORY_FILTERS = [
   { label: 'Digital Art & Media', value: 'DIGITAL_ART' },
   { label: 'Quizzes & Olympiads', value: 'QUIZ' },
   { label: 'Creative & Writing', value: 'CREATIVE' },
-  { label: 'Gaming & E-Sports', value: 'ESPORTS_GAMING' },
+  { label: 'Gaming Quiz', value: 'GAMING' },
 ];
 
 const GROUP_FILTERS = [
@@ -80,8 +80,8 @@ export default function RulebookViewer({ events }: RulebookViewerProps) {
     return events.filter((ev) => {
       // 1. Category Filter
       if (selectedCategory !== 'ALL') {
-        if (selectedCategory === 'ESPORTS_GAMING') {
-          if (ev.category !== 'ESPORTS' && ev.category !== 'GAMING') return false;
+        if (selectedCategory === 'CREATIVE') {
+          if (!['CREATIVE', 'TYPING', 'OTHER'].includes(ev.category)) return false;
         } else if (ev.category !== selectedCategory) {
           return false;
         }

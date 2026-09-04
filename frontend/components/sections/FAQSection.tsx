@@ -25,7 +25,7 @@ export default function FAQSection() {
       a: 'Please bring your Student ID Card, your Registration Confirmation Code (received via Email & SMS), and any specific hardware required for your event (e.g. laptop for AI Prompting, custom drone for Drone Competition, robot for LFR/Showcase, or laminated photos).',
     },
     {
-      q: 'How does team registration work for Drone, Robotics, or Valorant?',
+      q: 'How does team registration work for Drone, Robotics, or Treasure Hunt?',
       a: 'For team events, the team leader fills out the registration form, selects the team event, provides the Team Name and teammate names, and pays the corresponding team registration fee.',
     },
   ];
