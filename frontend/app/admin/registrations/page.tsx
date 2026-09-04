@@ -305,7 +305,7 @@ export default function AdminRegistrationsPage() {
                       </td>
                       <td className="p-3.5">
                         <span className="uppercase font-semibold block">{r.payment_method}</span>
-                        <span className="font-mono text-[10px] text-gold-light">{r.payment_reference || 'Cash at Desk'}</span>
+                        <span className="font-mono text-[10px] text-slate-400">{r.payment_reference || 'Online Gateway Trx'}</span>
                       </td>
                       <td className="p-3.5">
                         <Badge
@@ -382,7 +382,7 @@ export default function AdminRegistrationsPage() {
               <div><strong>Phone:</strong> {selectedReg.participant_phone}</div>
               <div><strong>Institution:</strong> {selectedReg.participant_school}</div>
               <div><strong>Academic Level:</strong> {selectedReg.participant_grade}</div>
-              <div><strong>TrxID / Reference:</strong> <span className="font-mono text-gold font-bold">{selectedReg.payment_reference || 'Cash at Desk'}</span></div>
+              <div><strong>TrxID / Reference:</strong> <span className="font-mono text-gold font-bold">{selectedReg.payment_reference || 'Online Gateway Trx'}</span></div>
               <div><strong>Payment Method:</strong> {selectedReg.payment_method}</div>
               <div><strong>Registered At:</strong> {new Date(selectedReg.registered_at).toLocaleString()}</div>
             </div>

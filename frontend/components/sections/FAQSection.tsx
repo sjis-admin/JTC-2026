@@ -14,7 +14,7 @@ export default function FAQSection() {
     },
     {
       q: 'How do I pay the registration fee?',
-      a: 'You can pay via bKash / Nagad / Bank Transfer to the official JTC account number shown during registration. Enter your Transaction ID (TrxID) in the form. Once submitted, your status will be "Pending Verification" until confirmed by our finance desk.',
+      a: 'All festival registrations are processed 100% online through our secure SSLCommerz payment gateway. You can pay instantly using bKash, Nagad, Rocket, Upay, debit/credit cards, or internet banking. No cash payments are accepted. Your digital delegate pass is activated automatically upon successful payment.',
     },
     {
       q: 'Can I participate in multiple events?',

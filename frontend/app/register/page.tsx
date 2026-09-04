@@ -115,7 +115,7 @@ function RegisterForm() {
     };
   }>({});
 
-  const [paymentMethod, setPaymentMethod] = useState<'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK' | 'CASH'>('SSLCOMMERZ');
+  const [paymentMethod, setPaymentMethod] = useState<'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK'>('SSLCOMMERZ');
   const [paymentReference, setPaymentReference] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [draftRestored, setDraftRestored] = useState<boolean>(false);

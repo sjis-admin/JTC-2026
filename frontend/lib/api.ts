@@ -97,7 +97,7 @@ export interface RegistrationPayload {
     team_name?: string;
     team_members?: string;
   }[];
-  payment_method: 'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK' | 'CASH';
+  payment_method: 'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK';
   payment_reference: string;
   turnstile_token?: string;
 }

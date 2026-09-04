@@ -48,7 +48,7 @@ class RegistrationCreateSerializer(serializers.Serializer):
     events = RegistrationEventCreateSerializer(many=True)
     # Payment
     payment_method = serializers.ChoiceField(
-        choices=['SSLCOMMERZ', 'BKASH', 'NAGAD', 'BANK', 'CASH'], default='BKASH'
+        choices=['SSLCOMMERZ', 'BKASH', 'NAGAD', 'BANK'], default='SSLCOMMERZ'
     )
     payment_reference = serializers.CharField(max_length=200, required=False, allow_blank=True)
     # Bot Defense
