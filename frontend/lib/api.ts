@@ -158,6 +158,8 @@ export async function fetchSiteSettings(): Promise<SiteSettingsData> {
   }
 }
 
+import { CARNIVAL_EVENTS } from './carnivalEvents';
+
 export async function fetchEvents(): Promise<EventItem[]> {
   try {
     const res = await fetch(`${getApiBase()}/events/`, {
@@ -165,10 +167,11 @@ export async function fetchEvents(): Promise<EventItem[]> {
     });
     if (!res.ok) throw new Error('Failed to fetch events');
     const data = await res.json();
-    return Array.isArray(data) ? data : data.results || [];
+    const list = Array.isArray(data) ? data : data.results || [];
+    return list.length > 0 ? list : CARNIVAL_EVENTS;
   } catch (err) {
-    console.error('API fetchEvents failed:', err);
-    return [];
+    console.warn('API fetchEvents failed or offline, using official Holy Grail events fallback:', err);
+    return CARNIVAL_EVENTS;
   }
 }
 
@@ -177,12 +180,14 @@ export async function fetchEventBySlug(slug: string): Promise<EventItem | null> 
     const res = await fetch(`${getApiBase()}/events/${slug}/`, {
       next: { revalidate: 30 },
     });
-    if (!res.ok) return null;
-    return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.slug) return data;
+    }
   } catch (err) {
-    console.error(`API fetchEventBySlug(${slug}) failed:`, err);
-    return null;
+    console.warn(`API fetchEventBySlug(${slug}) fallback:`, err);
   }
+  return CARNIVAL_EVENTS.find((e) => e.slug === slug) || null;
 }
 
 export async function fetchSchools(): Promise<SchoolItem[]> {

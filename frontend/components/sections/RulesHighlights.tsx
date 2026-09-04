@@ -1,40 +1,53 @@
 import React from 'react';
 import { Card } from '@/components/ui/Card';
-import { ShieldAlert, Image, Gamepad, Sparkles, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Sparkles, Camera, Presentation, Box, CheckCircle, ArrowRight, BookOpen } from 'lucide-react';
+import Link from 'next/link';
 
 export default function RulesHighlights() {
   const highlights = [
     {
       title: 'AI Prompting Guidelines',
       icon: <Sparkles className="w-5 h-5 text-amber-400" />,
-      tag: 'BYOD & Zero-Glitch',
+      tag: 'Group B–E • BYOD & Text-Only',
       points: [
-        'Bring Your Own Device (Laptop/Tablet/Phone) with personal internet.',
-        'Submitted prompt MUST be in one continuous paragraph (no bullet points, no line breaks, no buzzword stuffing).',
-        'Image-to-image cloning and reverse-engineered prompt uploads lead to instant disqualification.',
-        'Judges will test-run winning prompts to verify 100% reproducibility.',
+        'Bring Your Own Device (laptop/tablet/phone) with personal mobile hotspot.',
+        'Must start a fresh new chat/session of AI model for the competition.',
+        'Text-only prompts: uploading images or reference files leads to instant disqualification.',
+        'Prompt history will be test-run by judges to verify 100% output reproducibility.',
       ],
     },
     {
-      title: 'Photography Exhibition Rules',
-      icon: <Image className="w-5 h-5 text-cyan-400" />,
-      tag: 'Hardcopy Specifications',
+      title: 'Photography Specifications',
+      icon: <Camera className="w-5 h-5 text-cyan-400" />,
+      tag: '7×9 In • Mandatory Lamination',
       points: [
         'Hardcopy print strictly in 7 × 9 inches (18 × 23 cm) size.',
-        'Photograph must be laminated properly. Do NOT mount on foam board or frame (hanging clips used).',
-        'Write Name, Class & Section, House, and Title clearly on the BACK SIDE.',
-        'Up to 2 photographs per participant (each rated 0–10, total out of 20 marks).',
+        'Photograph must be properly laminated before submission (do NOT mount on foam board or frame).',
+        'Write Name, Class & Section, Group (A–E), and Title on the BACK SIDE before laminating.',
+        'NO AI-generated or AI-synthesized photos allowed. Displayed using gallery hanging clips.',
       ],
     },
     {
-      title: 'E-Sports LAN & Stage Rules',
-      icon: <Gamepad className="w-5 h-5 text-rose-400" />,
-      tag: 'Valorant & EA FC',
+      title: 'PowerPoint & Digital Art',
+      icon: <Presentation className="w-5 h-5 text-rose-400" />,
+      tag: 'Zero-AI & Group-Specific Topics',
       points: [
-        'Valorant: Knockouts online before fest; Semi-finals & Grand Finals live on Stage LAN & Facebook Live.',
-        'EA FC: 1v1 console knockouts on fest day LAN; Stage finals with commentary.',
-        'Participants may bring own keyboards/mice/controllers for stage matches.',
-        'Sponsored by leading gaming hardware brands.',
+        'PowerPoint: Choose strictly 1 assigned topic according to your Group (A, B, C, or D).',
+        'AI-generated slide decks (Gamma, Tome, etc.) are strictly prohibited.',
+        'Digital Art: Submit high-res export and raw layered project file (.psd, .ai, .procreate) for layer verification.',
+        'All artwork and presentations must be 100% human-created original works.',
+      ],
+    },
+    {
+      title: 'Robotics & 4×4 Speedcube',
+      icon: <Box className="w-5 h-5 text-emerald-400" />,
+      tag: 'Strict Dimensions & Scrambling',
+      points: [
+        'Rubik’s Showdown: Standard 4×4 Rubik’s Cube only; official scrambled sequences by judges.',
+        'Line Robot: Maximum dimensions 25cm × 25cm × 25cm; must navigate 100% autonomously.',
+        'Drone Competition: Maneuver obstacle course within flight zone; 5-second penalty per missed gate.',
+        'Webpage Creation: 30 minutes in lab using offline code editors (HTML/CSS/JS).',
       ],
     },
   ];
@@ -42,44 +55,58 @@ export default function RulesHighlights() {
   return (
     <section id="rules" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="text-center max-w-3xl mx-auto mb-14">
-        <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold tracking-widest text-rose-400 uppercase mb-2">
-          <span>Important Contest Rules</span>
+        <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold tracking-widest text-gold uppercase mb-2">
+          <BookOpen className="w-3.5 h-3.5" />
+          <span>Official Contest Regulations</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-display">
-          Key Participant Instructions
+          Key Submission & Fair-Play Directives
         </h2>
-        <p className="text-slate-400 text-sm sm:text-base mt-2">
-          Please review these critical event-specific submission criteria carefully to prevent disqualification.
+        <p className="text-slate-300 text-sm sm:text-base mt-2">
+          Review these critical segment submission criteria and technical limits from the official Holy Grail Rulebook.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {highlights.map((item, idx) => (
           <Card
             key={idx}
             glow="none"
-            className="border border-surface-border bg-surface/50 backdrop-blur-md"
+            className="border border-surface-border bg-surface/70 backdrop-blur-md flex flex-col justify-between"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center">
-                {item.icon}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center">
+                  {item.icon}
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white leading-snug">{item.title}</h3>
+                  <span className="text-[10px] font-mono text-gold uppercase block">{item.tag}</span>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base font-bold text-white">{item.title}</h3>
-                <span className="text-[11px] font-mono text-jtc-cyan uppercase">{item.tag}</span>
-              </div>
-            </div>
 
-            <ul className="space-y-3 text-xs text-slate-300">
-              {item.points.map((pt, pIdx) => (
-                <li key={pIdx} className="flex items-start gap-2.5 leading-relaxed">
-                  <CheckCircle className="w-4 h-4 text-jtc-teal shrink-0 mt-0.5" />
-                  <span>{pt}</span>
-                </li>
-              ))}
-            </ul>
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                {item.points.map((pt, pIdx) => (
+                  <li key={pIdx} className="flex items-start gap-2 leading-relaxed">
+                    <CheckCircle className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+                    <span>{pt}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Card>
         ))}
+      </div>
+
+      {/* Direct link to Rulebook */}
+      <div className="text-center mt-10">
+        <Link href="/rulebook">
+          <Button variant="glow" size="md" className="font-bold inline-flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            <span>Read Full 19-Competition Official Rulebook</span>
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </Link>
       </div>
     </section>
   );

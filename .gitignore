@@ -59,3 +59,4 @@ Thumbs.db
 
 # Google OAuth client secret (never commit)
 backend/secrets/
+*.tsbuildinfo

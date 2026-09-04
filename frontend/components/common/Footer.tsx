@@ -86,6 +86,7 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-gold-light">Contestant Portal</h4>
             <ul className="space-y-2 text-xs">
+              <li><Link href="/rulebook" className="hover:text-gold transition-colors font-semibold text-gold">Official Rulebook (Compendium)</Link></li>
               <li><Link href="/register" className="hover:text-gold transition-colors">Online Registration</Link></li>
               <li><Link href="/verify" className="hover:text-gold transition-colors">Verify Confirmation Pass</Link></li>
               <li><Link href="/#groups" className="hover:text-gold transition-colors">Academic Group Criteria</Link></li>
