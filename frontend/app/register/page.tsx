@@ -14,7 +14,7 @@ import {
 import { Turnstile } from '@/components/ui/Turnstile';
 import {
   CheckCircle2, AlertCircle, User, Trophy, CreditCard, ShieldCheck, ArrowRight,
-  ArrowLeft, Copy, Check, Info, Users, Sparkles, ShoppingBag, Trash2, Phone, Mail, School, ExternalLink, Zap
+  ArrowLeft, Copy, Check, Info, Users, Sparkles, ShoppingBag, Trash2, Phone, Mail, School, ExternalLink, Zap, Lock
 } from 'lucide-react';
 import AuthGate from './AuthGate';
 
@@ -466,7 +466,7 @@ function RegisterForm() {
   }
 
   return (
-    <div className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div className="pt-24 sm:pt-28 pb-20 sm:pb-24 px-3 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       {/* Title */}
       <div className="text-center mb-8 space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/40 text-xs font-semibold text-gold">
@@ -484,9 +484,9 @@ function RegisterForm() {
             {authPicture ? (
               <Image src={authPicture} alt="" width={18} height={18} className="rounded-full" />
             ) : (
-              <ShieldCheck className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-4 h-4 text-green-400" />
             )}
-            Identity verified — {email || name}
+            <span>Verified: <strong>{email}</strong></span>
           </div>
         )}
       </div>
@@ -512,19 +512,15 @@ function RegisterForm() {
 
       {/* Dynamic Registration Closed / Scheduled Gate */}
       {siteSettings && !siteSettings.registration_open && (
-        <Card glow="gold" className="p-8 sm:p-12 text-center max-w-2xl mx-auto my-8 border border-gold/40 bg-surface-elevated/95 space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold mx-auto shadow-lg shadow-gold/20">
-            <AlertCircle className="w-8 h-8" />
+        <Card glow="none" className="p-8 text-center border-rose-500/50 bg-rose-950/20 max-w-2xl mx-auto mb-10">
+          <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
+            <Lock className="w-8 h-8" />
           </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-black text-white font-display">
-              Registration Not Available
-            </h2>
-            <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
-              {siteSettings.registration_status_message || 'Online registrations are currently not accepting submissions.'}
-            </p>
-          </div>
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <CardTitle className="text-2xl text-rose-300 mb-2">Registration is Currently Closed</CardTitle>
+          <CardDescription className="text-slate-300 max-w-md mx-auto mb-6">
+            Online registration for SJIS Inter-School Tech Carnival 2026 has either concluded or has not opened yet. Please stay tuned to our official channels.
+          </CardDescription>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/events">
               <Button variant="glow" size="lg" className="w-full sm:w-auto font-bold">
                 Browse All 19 Competitions
@@ -542,8 +538,8 @@ function RegisterForm() {
       {/* Stepper Progress */}
       {(!siteSettings || siteSettings.registration_open) && (
         <>
-          <div className="flex items-center justify-between max-w-lg mx-auto mb-10 relative px-2">
-        <div className="absolute top-5 left-8 right-8 h-0.5 bg-surface-border -translate-y-1/2 -z-0" />
+          <div className="flex items-center justify-between max-w-lg mx-auto mb-8 sm:mb-10 relative px-1 sm:px-2">
+        <div className="absolute top-5 left-6 right-6 h-0.5 bg-surface-border -translate-y-1/2 -z-0" />
         {[
           { num: 1, label: 'Personal Info' },
           { num: 2, label: 'Competitions' },
@@ -552,7 +548,7 @@ function RegisterForm() {
           const isDone = step > s.num;
           const isCurrent = step === s.num;
           return (
-            <div key={s.num} className="flex flex-col items-center relative z-10 bg-background px-2 text-center min-w-[85px] sm:min-w-[110px]">
+            <div key={s.num} className="flex flex-col items-center relative z-10 bg-background px-1 sm:px-2 text-center min-w-[70px] sm:min-w-[110px]">
               <div
                 className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-mono font-bold text-xs sm:text-sm transition-all duration-300 ${
                   isDone
@@ -565,7 +561,7 @@ function RegisterForm() {
                 {isDone ? <Check className="w-4 h-4" /> : s.num}
               </div>
               <span
-                className={`text-[11px] sm:text-xs font-bold mt-2 leading-tight block ${
+                className={`text-[10px] sm:text-xs font-bold mt-1.5 sm:mt-2 leading-tight block ${
                   isCurrent ? 'text-gold-light' : 'text-slate-400'
                 }`}
               >
@@ -818,27 +814,27 @@ function RegisterForm() {
                       }`}
                       onClick={() => toggleEvent(ev)}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
+                      <div className="flex items-start justify-between gap-2 sm:gap-3">
+                        <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => {}}
-                            className="mt-1 w-4 h-4 rounded text-gold accent-gold cursor-pointer"
+                            className="mt-1 w-4 h-4 rounded text-gold accent-gold cursor-pointer shrink-0"
                           />
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-white text-sm sm:text-base">{ev.name}</span>
-                              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-gold-light">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                              <span className="font-bold text-white text-sm sm:text-base break-words">{ev.name}</span>
+                              <span className="text-[10px] uppercase font-mono px-1.5 sm:px-2 py-0.5 rounded bg-surface border border-surface-border text-gold-light whitespace-nowrap">
                                 {ev.category.replace('_', ' ')}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-300 mt-1">{ev.description}</p>
+                            <p className="text-xs text-slate-300 mt-1 break-words">{ev.description}</p>
                           </div>
                         </div>
 
-                        <div className="text-right shrink-0">
-                          <span className="text-sm font-mono font-bold text-gold">
+                        <div className="text-right shrink-0 pl-1">
+                          <span className="text-xs sm:text-sm font-mono font-bold text-gold whitespace-nowrap">
                             {ev.fee_display}
                           </span>
                         </div>
@@ -851,7 +847,7 @@ function RegisterForm() {
                           onClick={(e) => e.stopPropagation()}
                         >
                           {ev.event_type === 'BOTH' && (
-                            <div className="flex items-center gap-4 text-xs font-semibold text-slate-200 mb-2">
+                            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-semibold text-slate-200 mb-2">
                               <label className="flex items-center gap-1.5 cursor-pointer">
                                 <input
                                   type="radio"
@@ -1035,35 +1031,35 @@ function RegisterForm() {
           </div>
 
           {/* Registration Review Summary */}
-          <div className="p-5 rounded-2xl bg-surface/80 border border-surface-border text-xs space-y-3">
+          <div className="p-4 sm:p-5 rounded-2xl bg-surface/80 border border-surface-border text-xs space-y-3">
             <span className="font-bold text-slate-200 uppercase tracking-wider text-[11px] block border-b border-surface-border pb-2">
               Contestant & Arena Manifest:
             </span>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Contestant:</span>
-              <strong className="text-white">{name} ({GRADE_OPTIONS.find(g => g.value === grade)?.label})</strong>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-slate-300 gap-1">
+              <span className="text-slate-400 shrink-0">Contestant:</span>
+              <strong className="text-white text-left sm:text-right">{name} ({GRADE_OPTIONS.find(g => g.value === grade)?.label})</strong>
             </div>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Institution:</span>
-              <strong className="text-white">{schoolId === 'other' ? schoolOther : schools.find(s => s.id === parseInt(schoolId))?.name}</strong>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-slate-300 gap-1">
+              <span className="text-slate-400 shrink-0">Institution:</span>
+              <strong className="text-white text-left sm:text-right break-words">{schoolId === 'other' ? schoolOther : schools.find(s => s.id === parseInt(schoolId))?.name}</strong>
             </div>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Selected Events ({Object.keys(selectedEvents).length}):</span>
-              <span className="text-slate-200 font-semibold truncate max-w-[280px]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-slate-300 gap-1">
+              <span className="text-slate-400 shrink-0">Selected Events ({Object.keys(selectedEvents).length}):</span>
+              <span className="text-slate-200 font-semibold text-left sm:text-right break-words">
                 {Object.keys(selectedEvents).map(id => events.find(e => e.id === parseInt(id))?.name).join(', ')}
               </span>
             </div>
-            <div className="flex justify-between text-slate-200 border-t border-surface-border pt-3 text-sm">
+            <div className="flex justify-between items-center text-slate-200 border-t border-surface-border pt-3 text-sm">
               <span className="font-bold text-white">Grand Total Fee:</span>
               <strong className="text-gold font-mono text-xl font-black text-glow-gold">৳{totalFee} BDT</strong>
             </div>
           </div>
 
           {/* SSLCommerz Gateway Channel Container */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-surface via-[#001f4d] to-surface-elevated border border-gold/40 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between">
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-surface via-[#001f4d] to-surface-elevated border border-gold/40 space-y-4 shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gold/20 flex items-center justify-center text-gold border border-gold/40">
+                <div className="w-8 h-8 rounded-xl bg-gold/20 flex items-center justify-center text-gold border border-gold/40 shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
@@ -1071,7 +1067,7 @@ function RegisterForm() {
                   <p className="text-[11px] text-slate-300">Official Payment Gateway Partner of JTC 2026</p>
                 </div>
               </div>
-              <span className="text-[10px] uppercase font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600 font-extrabold tracking-wider">
+              <span className="text-[10px] uppercase font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600 font-extrabold tracking-wider self-start sm:self-auto">
                 Instant Pass Activation ⚡
               </span>
             </div>
@@ -1121,9 +1117,9 @@ function RegisterForm() {
               size="lg"
               isLoading={loading}
               onClick={handleSubmit}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-black text-sm sm:text-base shadow-2xl shadow-amber-500/30 group flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-5 sm:px-8 py-3.5 rounded-xl font-black text-xs sm:text-base shadow-2xl shadow-amber-500/30 group flex items-center justify-center gap-2 text-center"
             >
-              <Zap className="w-4 h-4 text-slate-950" />
+              <Zap className="w-4 h-4 text-slate-950 shrink-0" />
               <span>Proceed to SSLCommerz Checkout (৳{totalFee} BDT)</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
             </Button>
