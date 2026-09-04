@@ -371,7 +371,7 @@ ${ev.rules || 'Standard tournament rules apply.'}
                     {event.fee_display}
                   </span>
                 </div>
-                <Link href={`/events/${event.slug}`} className="print:hidden">
+                <Link href={`/events/${event.slug}`} prefetch={true} className="print:hidden">
                   <Button variant="outline" size="sm" className="border-gold/50 text-gold hover:bg-gold hover:text-surface-dark font-mono text-xs flex items-center gap-1">
                     <span>Event Details</span>
                     <ArrowRight className="w-3.5 h-3.5" />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { fetchEventBySlug, fetchEvents } from '@/lib/api';
@@ -17,10 +17,22 @@ interface EventPageProps {
 }
 
 export const dynamicParams = true;
-export const revalidate = 30;
+export const revalidate = 60;
+
+// Deduplicate fetch within the same request lifecycle (generateMetadata + page render)
+const getCachedEvent = cache(async (slug: string) => {
+  return await fetchEventBySlug(slug);
+});
+
+export async function generateStaticParams() {
+  const events = await fetchEvents();
+  return events.map((event) => ({
+    slug: event.slug,
+  }));
+}
 
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
-  const event = await fetchEventBySlug(params.slug);
+  const event = await getCachedEvent(params.slug);
   if (!event) {
     return {
       title: 'Competition Not Found',
@@ -71,7 +83,7 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 }
 
 export default async function EventDetailPage({ params }: EventPageProps) {
-  const event = await fetchEventBySlug(params.slug);
+  const event = await getCachedEvent(params.slug);
 
   if (!event) {
     notFound();

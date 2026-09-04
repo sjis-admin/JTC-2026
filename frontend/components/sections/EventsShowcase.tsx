@@ -268,7 +268,9 @@ export default function EventsShowcase({
                 </div>
 
                 <CardTitle className="text-xl group-hover:text-gold-light transition-colors line-clamp-1">
-                  {event.name}
+                  <Link href={`/events/${event.slug}`} prefetch={true} className="hover:underline">
+                    {event.name}
+                  </Link>
                 </CardTitle>
 
                 <CardDescription className="line-clamp-2 mt-2 text-xs leading-relaxed text-slate-300">
@@ -372,7 +374,8 @@ export default function EventsShowcase({
             <div className="flex items-center justify-between pt-4 border-t border-surface-border">
               <Link
                 href={`/events/${quickViewEvent.slug}`}
-                className="text-xs font-semibold text-slate-400 hover:text-gold hover:underline"
+                prefetch={true}
+                className="text-xs font-semibold text-slate-400 hover:text-gold hover:underline inline-flex items-center gap-1 transition-colors"
               >
                 Open Full Dedicated Page →
               </Link>
