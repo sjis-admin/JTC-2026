@@ -183,6 +183,64 @@ SIMPLE_JWT = {
 CLOUDFLARE_TURNSTILE_ENABLED = os.environ.get('CLOUDFLARE_TURNSTILE_ENABLED', 'False') == 'True'
 CLOUDFLARE_TURNSTILE_SECRET_KEY = os.environ.get('CLOUDFLARE_TURNSTILE_SECRET_KEY', '')
 
+# ─── Google OAuth (Sign in with Google) ───────────────────────────────────────
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+
+# ─── Session JWT (Short-lived token issued after Google/Guest OTP auth) ───────
+# Used to gate the registration form. Separate from Django's SECRET_KEY.
+#
+# Priority:
+#   1. SESSION_JWT_SECRET env var  → use it (recommended for production)
+#   2. Not set in production       → auto-generate a secure 32-byte hex secret
+#                                    (changes on every restart — acceptable since
+#                                     tokens are only 1-hour-lived gate tokens,
+#                                     not persistent user sessions)
+#   3. Not set in development      → falls back to SECRET_KEY (fine for dev)
+import secrets as _secrets
+import logging as _logging
+
+_jwt_env = os.environ.get('SESSION_JWT_SECRET', '')
+
+if _jwt_env:
+    # Explicitly provided — best case
+    SESSION_JWT_SECRET = _jwt_env
+elif not DEBUG:
+    # Production without explicit secret → auto-generate at startup
+    SESSION_JWT_SECRET = _secrets.token_hex(32)
+    _logging.getLogger('django').warning(
+        'SESSION_JWT_SECRET not set in environment. '
+        'A random secret was generated for this process. '
+        'Set SESSION_JWT_SECRET in your production .env to make it '
+        'persistent across restarts (avoids users needing to re-verify '
+        'after a server restart).'
+    )
+else:
+    # Development fallback — fine for local testing
+    SESSION_JWT_SECRET = SECRET_KEY
+
+SESSION_JWT_EXPIRY_MINUTES = 60  # 1-hour token validity
+
+
+# ─── Django Cache Framework ────────────────────────────────────────────────────
+# Used to store OTP codes server-side (10-minute TTL).
+# Dev: LocMemCache (single-process, resets on restart) — fine for development.
+# Prod: Override with Redis/Memcached by setting CACHE_BACKEND env var.
+_cache_backend = os.environ.get('CACHE_BACKEND', '')
+if _cache_backend:
+    CACHES = {
+        'default': {
+            'BACKEND': _cache_backend,
+            'LOCATION': os.environ.get('CACHE_LOCATION', ''),
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'jtc-otp-store',
+        }
+    }
+
 # ─── Email ────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')

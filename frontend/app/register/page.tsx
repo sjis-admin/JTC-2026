@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Card, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -15,6 +16,7 @@ import {
   CheckCircle2, AlertCircle, User, Trophy, CreditCard, ShieldCheck, ArrowRight,
   ArrowLeft, Copy, Check, Info, Users, Sparkles, ShoppingBag, Trash2, Phone, Mail, School, ExternalLink, Zap
 } from 'lucide-react';
+import AuthGate from './AuthGate';
 
 const GRADE_OPTIONS = [
   { value: '3', label: 'Grade 3 (Group A)' },
@@ -61,6 +63,26 @@ function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedEventId = searchParams.get('event');
+
+  // ─── Auth Gate State ──────────────────────────────────────────────────────
+  const [authUnlocked, setAuthUnlocked] = useState<boolean>(false);
+  const [authPicture, setAuthPicture] = useState<string>('');
+
+  // Check if session already exists (e.g. user refreshed the page mid-flow)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = sessionStorage.getItem('jtc_reg_session');
+      if (token) setAuthUnlocked(true);
+    }
+  }, []);
+
+  const handleAuthUnlock = (unlockedEmail: string, unlockedName: string, picture?: string) => {
+    // Pre-fill form fields from verified identity
+    if (unlockedEmail) setEmail(unlockedEmail);
+    if (unlockedName) setName(unlockedName);
+    if (picture) setAuthPicture(picture);
+    setAuthUnlocked(true);
+  };
 
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -438,6 +460,11 @@ function RegisterForm() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // ─── Auth Gate: show gate if not yet verified ──────────────────────────────────
+  if (!authUnlocked) {
+    return <AuthGate onUnlock={handleAuthUnlock} />;
+  }
+
   return (
     <div className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
       {/* Title */}
@@ -451,6 +478,17 @@ function RegisterForm() {
         <p className="text-slate-300 text-xs sm:text-sm">
           Josephite Tech Club • St. Joseph International School
         </p>
+        {/* Verified identity badge */}
+        {(name || email) && (
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/30 text-xs font-semibold text-green-400 mt-1">
+            {authPicture ? (
+              <Image src={authPicture} alt="" width={18} height={18} className="rounded-full" />
+            ) : (
+              <ShieldCheck className="w-3.5 h-3.5" />
+            )}
+            Identity verified — {email || name}
+          </div>
+        )}
       </div>
 
       {/* Auto-Restored Draft Banner */}

@@ -199,9 +199,17 @@ export async function fetchSchools(): Promise<SchoolItem[]> {
 }
 
 export async function submitRegistration(payload: RegistrationPayload): Promise<RegistrationResponse> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+
+  // Attach the registration gate session token if present (non-blocking if missing)
+  if (typeof window !== 'undefined') {
+    const sessionToken = sessionStorage.getItem('jtc_reg_session');
+    if (sessionToken) headers['X-Auth-Session'] = sessionToken;
+  }
+
   const res = await fetch(`${getApiBase()}/registrations/`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
   const data = await res.json();
@@ -216,6 +224,62 @@ export async function lookupRegistration(code: string): Promise<RegistrationResp
   const res = await fetch(`${getApiBase()}/registrations/${code}/`);
   if (!res.ok) throw new Error('Registration not found');
   return await res.json();
+}
+
+// ─── Auth Gate API Helpers ─────────────────────────────────────────────────────
+
+export interface AuthSessionResult {
+  session_token: string;
+  email: string;
+  name?: string;
+  picture?: string;
+  auth_method: 'google' | 'guest';
+}
+
+/** Verifies a Google ID token with our backend and returns a session JWT. */
+export async function verifyGoogleToken(credential: string): Promise<AuthSessionResult> {
+  const res = await fetch(`${getApiBase()}/auth/google/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ credential }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Google verification failed.');
+  return data as AuthSessionResult;
+}
+
+/** Sends a 6-digit OTP to the provided guest email. */
+export async function sendGuestOtp(email: string): Promise<{ detail: string }> {
+  const res = await fetch(`${getApiBase()}/auth/guest/otp/send/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to send OTP.');
+  return data;
+}
+
+/** Verifies the OTP and returns a session JWT on success. */
+export async function verifyGuestOtp(email: string, otp: string): Promise<AuthSessionResult> {
+  const res = await fetch(`${getApiBase()}/auth/guest/otp/verify/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'OTP verification failed.');
+  return data as AuthSessionResult;
+}
+
+/** Stores the session token in sessionStorage (cleared on tab close). */
+export function storeRegSession(token: string): void {
+  if (typeof window !== 'undefined') sessionStorage.setItem('jtc_reg_session', token);
+}
+
+/** Clears the registration session token. */
+export function clearRegSession(): void {
+  if (typeof window !== 'undefined') sessionStorage.removeItem('jtc_reg_session');
 }
 
 export async function initiateSSLCommerzPayment(code: string): Promise<{ gateway_url: string; status: string }> {

@@ -32,12 +32,12 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: `
       default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com;
-      frame-src 'self' https://challenges.cloudflare.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://accounts.google.com;
+      frame-src 'self' https://challenges.cloudflare.com https://sandbox.sslcommerz.com https://securepay.sslcommerz.com https://accounts.google.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com;
       font-src 'self' https://fonts.gstatic.com data:;
       img-src 'self' data: blob: https: http:;
-      connect-src 'self' http://127.0.0.1:8000 http://localhost:8000 https://jtc.sjis.edu.bd https://challenges.cloudflare.com;
+      connect-src 'self' http://127.0.0.1:8000 http://localhost:8000 https://jtc.sjis.edu.bd https://challenges.cloudflare.com https://oauth2.googleapis.com https://accounts.google.com;
     `.replace(/\s{2,}/g, ' ').trim(),
   },
 ];
@@ -74,6 +74,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
       },
     ],

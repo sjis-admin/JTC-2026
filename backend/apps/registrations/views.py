@@ -7,10 +7,104 @@ from django.utils import timezone
 from .models import Participant, Registration, RegistrationEvent, GRADE_TO_GROUP
 from .serializers import RegistrationCreateSerializer, RegistrationReadSerializer
 from .notifications import send_confirmation_email, send_confirmation_sms
+from .guest_auth import (
+    GoogleTokenVerifier, OTPStore,
+    generate_session_jwt, verify_session_jwt, is_valid_email,
+)
 from apps.core.models import School, SiteSettings
 from apps.core.serializers import SchoolSerializer
 from apps.events.models import EventGroup
 from apps.core.throttles import RegistrationRateThrottle, BurstAnonThrottle, VerifyRateThrottle
+
+
+# ─── Auth Gate Endpoints ───────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def auth_google(request):
+    """
+    Verifies a Google ID token from the frontend GSI SDK.
+    Returns a short-lived session JWT + user info on success.
+    POST body: { "credential": "<google_id_token>" }
+    """
+    credential = request.data.get('credential', '').strip()
+    if not credential:
+        return Response({'error': 'Missing Google credential token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user_info = GoogleTokenVerifier.verify(credential)
+    except ValueError as exc:
+        return Response({'error': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = generate_session_jwt(
+        email=user_info['email'],
+        name=user_info['name'],
+        auth_method='google',
+    )
+    return Response({
+        'session_token': token,
+        'email': user_info['email'],
+        'name': user_info['name'],
+        'picture': user_info['picture'],
+        'auth_method': 'google',
+    })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def auth_guest_otp_send(request):
+    """
+    Generates and emails a 6-digit OTP to the provided guest email.
+    POST body: { "email": "user@example.com" }
+    Rate-limited on the frontend; backend validates format only.
+    """
+    email = request.data.get('email', '').strip().lower()
+    if not email or not is_valid_email(email):
+        return Response({'error': 'Please provide a valid email address.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    otp = OTPStore.generate_and_store(email)
+
+    try:
+        OTPStore.send_otp_email(email, otp)
+    except Exception:
+        return Response(
+            {'error': 'Failed to send verification email. Please check the address and try again.'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+    return Response({'detail': 'Verification code sent. Please check your inbox (and spam folder).'})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def auth_guest_otp_verify(request):
+    """
+    Validates the OTP entered by the guest and issues a session JWT on success.
+    POST body: { "email": "user@example.com", "otp": "123456" }
+    """
+    email = request.data.get('email', '').strip().lower()
+    otp_input = request.data.get('otp', '').strip()
+
+    if not email or not is_valid_email(email):
+        return Response({'error': 'Please provide a valid email address.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not otp_input or not otp_input.isdigit() or len(otp_input) != 6:
+        return Response({'error': 'OTP must be a 6-digit number.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        valid = OTPStore.validate(email, otp_input)
+    except ValueError as exc:
+        return Response({'error': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not valid:
+        return Response({'error': 'Incorrect verification code. Please try again.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = generate_session_jwt(email=email, name='', auth_method='guest')
+    return Response({
+        'session_token': token,
+        'email': email,
+        'auth_method': 'guest',
+    })
 
 
 @api_view(['GET'])

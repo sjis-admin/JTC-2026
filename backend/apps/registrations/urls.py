@@ -3,19 +3,25 @@ from . import views
 from . import payment_views
 
 urlpatterns = [
+    # --- Auth Gate (Registration Form Guard) ----------------------------------
+    path('auth/google/', views.auth_google, name='auth-google'),
+    path('auth/guest/otp/send/', views.auth_guest_otp_send, name='auth-guest-otp-send'),
+    path('auth/guest/otp/verify/', views.auth_guest_otp_verify, name='auth-guest-otp-verify'),
+
+    # --- Public ---------------------------------------------------------------
     path('schools/', views.school_list, name='school-list'),
     path('settings/', views.site_settings_public, name='site-settings-public'),
     path('registrations/', views.RegistrationCreateView.as_view(), name='registration-create'),
     path('registrations/<str:code>/', views.registration_lookup, name='registration-lookup'),
-    
-    # SSLCommerz Payment Gateway Endpoints
+
+    # --- SSLCommerz Payment Gateway -------------------------------------------
     path('payments/sslcommerz/initiate/<str:code>/', payment_views.sslcommerz_initiate, name='sslcommerz-initiate'),
     path('payments/sslcommerz/success/', payment_views.sslcommerz_success, name='sslcommerz-success'),
     path('payments/sslcommerz/fail/', payment_views.sslcommerz_fail, name='sslcommerz-fail'),
     path('payments/sslcommerz/cancel/', payment_views.sslcommerz_cancel, name='sslcommerz-cancel'),
     path('payments/sslcommerz/ipn/', payment_views.sslcommerz_ipn, name='sslcommerz-ipn'),
 
-    # Admin
+    # --- Admin ----------------------------------------------------------------
     path('admin/registrations/export/excel/', views.admin_export_excel, name='admin-registrations-export-excel'),
     path('admin/registrations/', views.admin_registrations_list, name='admin-registrations'),
     path('admin/registrations/<str:pk>/payment/', views.admin_update_payment, name='admin-payment-update'),
