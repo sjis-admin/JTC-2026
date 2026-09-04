@@ -6,7 +6,7 @@ import { Card, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck, Phone, CreditCard } from 'lucide-react';
+import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck, Phone, CreditCard, Eye, EyeOff } from 'lucide-react';
 
 const toInputDateTime = (val: string | null | undefined) => {
   if (!val) return '';
@@ -20,6 +20,7 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [showStorePass, setShowStorePass] = useState(false);
 
   useEffect(() => {
     adminFetch('/admin/settings/')
@@ -335,14 +336,36 @@ export default function AdminSettingsPage() {
               onChange={(e) => setSettings({ ...settings, sslcommerz_store_id: e.target.value })}
               helperText="Issued in your official SSLCommerz welcome email"
             />
-            <Input
-              label="Store Password / Secret Key"
-              placeholder="Enter your store password"
-              type="password"
-              value={settings?.sslcommerz_store_pass || ''}
-              onChange={(e) => setSettings({ ...settings, sslcommerz_store_pass: e.target.value })}
-              helperText="Secret credential provided by SSLCommerz"
-            />
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold text-slate-200 uppercase tracking-wider">
+                  Store Password / Secret Key
+                </label>
+                {settings?.sslcommerz_store_pass && (
+                  <span className="text-[10px] text-emerald-400 font-mono font-bold flex items-center gap-1">
+                    <Check className="w-3 h-3" /> Saved & Active
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  type={showStorePass ? 'text' : 'password'}
+                  placeholder="Enter your store password"
+                  value={settings?.sslcommerz_store_pass || ''}
+                  onChange={(e) => setSettings({ ...settings, sslcommerz_store_pass: e.target.value })}
+                  className="w-full bg-surface border border-surface-border focus:border-gold/60 focus:ring-1 focus:ring-gold/60 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-500 transition-all pr-10 font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowStorePass(!showStorePass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-gold transition-colors cursor-pointer"
+                  title={showStorePass ? 'Hide password' : 'Show password'}
+                >
+                  {showStorePass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-1">Secret credential provided by SSLCommerz</p>
+            </div>
           </div>
         </Card>
 

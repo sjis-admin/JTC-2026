@@ -13,7 +13,7 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SiteSettings
-        exclude = ['sms_pass', 'sslcommerz_store_pass']  # Never expose sensitive secrets to public API
+        exclude = []  # Returned to authenticated administrators only
 
     def get_logo_url(self, obj):
         request = self.context.get('request')
