@@ -184,7 +184,10 @@ CLOUDFLARE_TURNSTILE_ENABLED = os.environ.get('CLOUDFLARE_TURNSTILE_ENABLED', 'F
 CLOUDFLARE_TURNSTILE_SECRET_KEY = os.environ.get('CLOUDFLARE_TURNSTILE_SECRET_KEY', '')
 
 # ─── Google OAuth (Sign in with Google) ───────────────────────────────────────
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_ID = os.environ.get(
+    'GOOGLE_CLIENT_ID',
+    '557068883318-78gk6amnr0fsm75nnslh9n5pq2mrnkn2.apps.googleusercontent.com',
+)
 
 # ─── Session JWT (Short-lived token issued after Google/Guest OTP auth) ───────
 # Used to gate the registration form. Separate from Django's SECRET_KEY.

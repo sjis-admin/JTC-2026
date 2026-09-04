@@ -22,7 +22,7 @@ import {
 } from '@/lib/api';
 import { Mail, ArrowRight, Shield, RefreshCw, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '557068883318-78gk6amnr0fsm75nnslh9n5pq2mrnkn2.apps.googleusercontent.com';
 
 // ─── Email regex (same as in page.tsx) ────────────────────────────────────────
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
