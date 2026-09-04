@@ -19,7 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     const token = getAdminToken();
     if (!token) {
-      router.push(ADMIN_AUTH_PATH);
+      router.replace('/');
       return;
     }
 
@@ -34,12 +34,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           setAuthorized(true);
         } else {
           clearAdminToken();
-          router.push(ADMIN_AUTH_PATH);
+          router.replace('/');
         }
       })
       .catch(() => {
         clearAdminToken();
-        router.push(ADMIN_AUTH_PATH);
+        router.replace('/');
       });
   }, [router, authorized, user]);
 
@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = () => {
     clearAdminToken();
-    router.push(ADMIN_AUTH_PATH);
+    router.push('/');
   };
 
   return (

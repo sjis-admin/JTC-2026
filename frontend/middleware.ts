@@ -29,13 +29,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Protect all /admin/* subroutes
+  // 3. Protect all /admin and /admin/* subroutes
   if (pathname === '/admin' || pathname.startsWith('/admin/')) {
     if (!token) {
-      const loginUrl = new URL(ADMIN_AUTH_GATEWAY, request.url);
-      const fullPath = search ? `${pathname}${search}` : pathname;
-      loginUrl.searchParams.set('from', fullPath);
-      return NextResponse.redirect(loginUrl);
+      // Never redirect or leak the secret auth gateway to probes or scanners.
+      // Render standard 404 Page Not Found as if /admin does not exist.
+      return NextResponse.rewrite(new URL('/_not-found', request.url), {
+        status: 404,
+      });
     }
   }
 

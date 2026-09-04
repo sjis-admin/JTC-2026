@@ -18,7 +18,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/admin',
           '/admin/*',
-          '/jtc-portal-auth-2026',
           '/api/*',
           '/_next/*',
         ],
@@ -29,7 +28,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/admin',
           '/admin/*',
-          '/jtc-portal-auth-2026',
           '/api/*',
         ],
       },
