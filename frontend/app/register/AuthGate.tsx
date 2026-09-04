@@ -73,9 +73,9 @@ function AuthGateInner({ onUnlock }: AuthGateInnerProps) {
         </div>
 
         {/* Card */}
-        <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 rounded-2xl p-7 shadow-2xl space-y-6">
+        <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 rounded-2xl p-5 sm:p-7 shadow-2xl space-y-6 overflow-hidden">
           {/* Sign In Button Area */}
-          <div className="relative">
+          <div className="w-full flex justify-center">
             <GoogleSignInButton
               onCredential={handleGoogleCredential}
               loading={loading}
@@ -128,11 +128,36 @@ function GoogleSignInButton({
   setLoading: (v: boolean) => void;
 }) {
   const [GoogleLogin, setGoogleLogin] = useState<any>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [buttonWidth, setButtonWidth] = useState<string>('280');
 
   useEffect(() => {
     import('@react-oauth/google').then((mod) => {
       setGoogleLogin(() => mod.GoogleLogin);
     });
+  }, []);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const updateWidth = () => {
+      if (containerRef.current) {
+        const clientWidth = containerRef.current.clientWidth;
+        if (clientWidth > 0) {
+          // Google GSI button width must be between 200 and 400 pixels
+          const clamped = Math.min(380, Math.max(200, clientWidth));
+          setButtonWidth(String(Math.floor(clamped)));
+        }
+      }
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(() => {
+      updateWidth();
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   if (!GoogleLogin) {
@@ -142,8 +167,12 @@ function GoogleSignInButton({
   }
 
   return (
-    <div className="relative flex justify-center">
+    <div
+      ref={containerRef}
+      className="relative w-full flex justify-center items-center overflow-hidden min-h-[44px]"
+    >
       <GoogleLogin
+        key={buttonWidth}
         onSuccess={(credentialResponse: { credential?: string }) => {
           setLoading(true);
           onCredential(credentialResponse);
@@ -152,14 +181,14 @@ function GoogleSignInButton({
           setLoading(false);
         }}
         size="large"
-        width="380"
+        width={buttonWidth}
         text="continue_with"
         shape="rectangular"
         theme="filled_black"
         locale="en"
       />
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 rounded-lg z-10">
           <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
         </div>
       )}
