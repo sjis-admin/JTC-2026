@@ -385,39 +385,50 @@ def admin_dashboard_stats(request):
 @permission_classes([IsAdminUser])
 def admin_export_excel(request):
     """Admin: Export all registrations, students, and payment records as an Excel workbook (.xlsx)."""
+    import logging
     from django.http import HttpResponse
-    from .excel_export import generate_registrations_workbook
+    logger = logging.getLogger(__name__)
 
-    qs = Registration.objects.select_related(
-        'participant', 'participant__school', 'participant__group', 'payment_verified_by'
-    ).prefetch_related('registration_events__event').all()
+    try:
+        from .excel_export import generate_registrations_workbook
 
-    status_filter = request.query_params.get('status')
-    if status_filter and status_filter != 'ALL':
-        qs = qs.filter(payment_status=status_filter)
+        qs = Registration.objects.select_related(
+            'participant', 'participant__school', 'participant__group', 'payment_verified_by'
+        ).prefetch_related('registration_events__event').all()
 
-    search = request.query_params.get('search')
-    if search:
-        qs = qs.filter(
-            participant__name__icontains=search
-        ) | qs.filter(
-            participant__email__icontains=search
-        ) | qs.filter(
-            participant__phone__icontains=search
-        ) | qs.filter(
-            confirmation_code__icontains=search
-        ) | qs.filter(
-            payment_reference__icontains=search
+        status_filter = request.query_params.get('status')
+        if status_filter and status_filter != 'ALL':
+            qs = qs.filter(payment_status=status_filter)
+
+        search = request.query_params.get('search')
+        if search:
+            qs = qs.filter(
+                participant__name__icontains=search
+            ) | qs.filter(
+                participant__email__icontains=search
+            ) | qs.filter(
+                participant__phone__icontains=search
+            ) | qs.filter(
+                confirmation_code__icontains=search
+            ) | qs.filter(
+                payment_reference__icontains=search
+            )
+
+        excel_bytes = generate_registrations_workbook(qs.order_by('-registered_at'))
+        timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"JTC2026_Registrations_{timestamp}.xlsx"
+
+        response = HttpResponse(
+            excel_bytes,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-
-    excel_bytes = generate_registrations_workbook(qs.order_by('-registered_at'))
-    timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"JTC2026_Registrations_{timestamp}.xlsx"
-
-    response = HttpResponse(
-        excel_bytes,
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    return response
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        return response
+    except Exception as exc:
+        logger.exception("Failed to generate Excel export")
+        return Response(
+            {"error": f"Failed to generate Excel export: {str(exc)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 

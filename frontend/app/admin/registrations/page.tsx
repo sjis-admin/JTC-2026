@@ -120,22 +120,35 @@ export default function AdminRegistrationsPage() {
 
       const res = await adminFetch(url);
       if (!res.ok) {
-        throw new Error('Failed to generate Excel export.');
+        let errMsg = 'Failed to generate Excel export.';
+        try {
+          const errJson = await res.json();
+          if (errJson.error) errMsg = errJson.error;
+        } catch (_) {}
+        throw new Error(errMsg);
       }
 
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      const timestamp = new Date().toISOString().slice(0, 10);
-      link.setAttribute('download', `JTC2026_Student_Registrations_${timestamp}.xlsx`);
+
+      // Extract filename from header or fallback
+      const disposition = res.headers.get('Content-Disposition');
+      let filename = `JTC2026_Student_Registrations_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      if (disposition && disposition.includes('filename=')) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) filename = match[1];
+      }
+
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(downloadUrl);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Excel Export Error:', err);
-      alert('Unable to export Excel file. Please try again.');
+      alert(err.message || 'Unable to export Excel file. Please try again.');
     } finally {
       setExportingExcel(false);
     }

@@ -107,23 +107,30 @@ def generate_registrations_workbook(qs=None) -> bytes:
 
     current_row = 5
     for reg in qs:
-        p = reg.participant
+        p = getattr(reg, 'participant', None)
         events_str = ", ".join([
             f"{re.event.name} ({'Team: ' + re.team_name if re.is_team and re.team_name else 'Individual'})"
-            for re in reg.registration_events.all()
+            for re in reg.registration_events.all() if re.event
         ])
         verified_by_str = reg.payment_verified_by.username if reg.payment_verified_by else "-"
+
+        student_name = p.name if p else "N/A"
+        student_email = p.email if p else "N/A"
+        student_phone = p.phone if p else "N/A"
+        student_school = p.school_display if p else "N/A"
+        student_grade = (p.get_grade_display() if hasattr(p, 'get_grade_display') else p.grade) if p else "-"
+        student_group = (f"Group {p.group.code}" if (p and p.group) else (f"Grade {p.grade}" if p else "-"))
 
         row_data = [
             reg.short_code,
             str(reg.confirmation_code),
             timezone.localtime(reg.registered_at).strftime('%Y-%m-%d %H:%M') if reg.registered_at else "-",
-            p.name,
-            p.email,
-            p.phone,
-            p.school_display,
-            p.get_grade_display() if hasattr(p, 'get_grade_display') else p.grade,
-            f"Group {p.group.code}" if p.group else f"Grade {p.grade}",
+            student_name,
+            student_email,
+            student_phone,
+            student_school,
+            student_grade,
+            student_group,
             reg.total_fee,
             reg.payment_status,
             reg.get_payment_method_display() if hasattr(reg, 'get_payment_method_display') else reg.payment_method,
@@ -199,23 +206,36 @@ def generate_registrations_workbook(qs=None) -> bytes:
     current_row_2 = 5
     reg_events = RegistrationEvent.objects.select_related(
         'event', 'registration', 'registration__participant', 'registration__participant__school'
-    ).order_by('event__order', 'event__name', '-registration__registered_at')
+    )
+    if qs is not None:
+        reg_events = reg_events.filter(registration__in=qs)
+    reg_events = reg_events.order_by('event__order', 'event__name', '-registration__registered_at')
 
     for re in reg_events:
-        r = re.registration
-        p = r.participant
-        ev = re.event
+        r = getattr(re, 'registration', None)
+        if not r:
+            continue
+        p = getattr(r, 'participant', None)
+        ev = getattr(re, 'event', None)
+        if not ev:
+            continue
+
+        student_name = p.name if p else "N/A"
+        student_email = p.email if p else "N/A"
+        student_phone = p.phone if p else "N/A"
+        student_school = p.school_display if p else "N/A"
+        student_grade = (p.get_grade_display() if hasattr(p, 'get_grade_display') else p.grade) if p else "-"
 
         row_data_2 = [
             ev.id,
             ev.name,
             ev.get_category_display() if hasattr(ev, 'get_category_display') else ev.category,
             r.short_code,
-            p.name,
-            p.email,
-            p.phone,
-            p.school_display,
-            p.get_grade_display() if hasattr(p, 'get_grade_display') else p.grade,
+            student_name,
+            student_email,
+            student_phone,
+            student_school,
+            student_grade,
             "Team" if re.is_team else "Individual",
             re.team_name or "-",
             re.team_members or "-",
