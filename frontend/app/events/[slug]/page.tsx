@@ -125,18 +125,6 @@ export default async function EventDetailPage({ params }: EventPageProps) {
             </Card>
           )}
 
-          {/* Judging Criteria */}
-          {event.judging_criteria && (
-            <Card glow="none" className="border border-surface-border bg-surface/50">
-              <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-amber-400" /> Judging Criteria
-              </h2>
-              <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
-                {event.judging_criteria}
-              </div>
-            </Card>
-          )}
-
           {/* FAQs */}
           {event.faqs && event.faqs.length > 0 && (
             <div className="space-y-4">

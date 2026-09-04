@@ -35,7 +35,7 @@ class EventDetailSerializer(EventListSerializer):
     faqs = EventFAQSerializer(many=True, read_only=True)
 
     class Meta(EventListSerializer.Meta):
-        fields = EventListSerializer.Meta.fields + ['rules', 'judging_criteria', 'faqs']
+        fields = EventListSerializer.Meta.fields + ['rules', 'faqs']
 
 
 class EventAdminSerializer(serializers.ModelSerializer):

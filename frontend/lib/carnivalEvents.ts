@@ -122,12 +122,7 @@ Based on an on-the-spot secret theme, contestants must craft text prompts to gen
 3. **Reproducibility Check:** The prompt history must match the generated image. Prompts will be test-run by judges if any suspicion arises to validate prompt authenticity.
 4. **Text-Only Rule:** The prompt history must NOT include any uploaded image or file other than text typed by the participant. Each instruction MUST be typed by the participant completely (autocorrect and suggestions are allowed; image-to-image cloning is prohibited).
 5. **Submission:** Completed output and prompt history must be submitted via the official Google Form link provided at competition time.`,
-    judging_criteria: `🏆 Judging Criteria (Total: 100 Marks)
-• Prompt Effectiveness: 35 Marks
-• Accuracy of Output: 25 Marks
-• Creativity & Innovation: 20 Marks
-• Prompt Structure & Clarity: 10 Marks
-• Efficiency (Fewest Effective Prompts): 10 Marks`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Which AI platforms are permitted?',
@@ -174,12 +169,7 @@ Contestants will create an artwork or poster based on the given technology theme
 - **Copyright:** Using trademarked or copyrighted characters or assets is forbidden. Participants must use self-made assets or verified royalty-free elements.
 - **Submission Mode:** Submit the project folder via pen drive on the first day of the fest at the submission desk.
 - Participants must bring their physical artwork print/display to the submission site on time if requested.`,
-    judging_criteria: `🏆 Judgement Criteria (Total: 100 Marks)
-• Relevance to Theme: 30 Marks
-• Creativity & Originality: 25 Marks
-• Artistic Skill & Technique: 20 Marks
-• Visual Appeal & Presentation: 15 Marks
-• In-depth Message & Meaning: 10 Marks`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Are AI tools allowed for digital art?',
@@ -226,9 +216,7 @@ Contestants will create an artwork or poster based on the given technology theme
 ### Syllabus
 - Video game history, game development trivia, iconic franchises, esports championships, console hardware, and character lore.
 - Tailored difficulty arranged according to academic groups (Group A to D).`,
-    judging_criteria: `🏆 Judging Criteria
-• Qualifiers: Total score out of 20 on MCQ OMR Answer Script.
-• Finals: Number of correct buzzer answers on stage (highest correct out of 10 rounds).`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -268,9 +256,7 @@ Participants will have timed attempts on MonkeyType to type as rapidly and accur
 
 ### Judging & Awards
 - The contestants with the 3 highest recorded Net Words Per Minute (WPM) will be awarded official carnival medals and certificates.`,
-    judging_criteria: `🏆 Judging Criteria
-• Net WPM (Words Per Minute) scored on MonkeyType.
-• Accuracy percentage used as tie-breaker for identical WPM scores.`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Can I bring my custom mechanical keyboard?',
@@ -312,10 +298,7 @@ Participants will have to recreate a given target webpage using HTML and CSS (in
 - **Functionality:** Any interactive functionality in the reference webpage will be specified. Participants must recreate the visual structure and behavior as accurately as possible.
 - **Script Files:** Creating an extra separate JavaScript file (.js) for interactivity is allowed and must be included in the submission folder.
 - **No Internet Assistance:** External templates, AI tools, or internet browsing are blocked during the contest.`,
-    judging_criteria: `🏆 Judging Breakdown (Total: 100%)
-• Visual & Layout Accuracy: 60%
-• Interactive Functionality: 25%
-• Code Quality & Semantic Structure: 15%`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Can I use CSS frameworks like Bootstrap or Tailwind?',
@@ -366,11 +349,7 @@ Participants must produce an original video based on the carnival technology the
 The submitted pendrive folder must contain:
 1. The video file (.mp4).
 2. A document file (.doc / .pdf) containing the student's full personal info (Name, Class, Section, School, Group) and the title/concept of the video.`,
-    judging_criteria: `🏆 Judging Criteria (Total: 100%)
-The shortlisted videos will be reviewed by judges and screened on the auditorium stage:
-• Theme Relevance: 40%
-• Editing, Audio & Video Quality: 35%
-• Creativity & Storytelling: 25%`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -426,11 +405,7 @@ Participants must take original photographs based on the festival theme and subm
 
 5. **Anti-AI Policy:**
    - **NO AI-generated or AI-synthesized photos will be allowed.** Submissions must be captured with a camera or phone by the participant.`,
-    judging_criteria: `🏆 Judging Criteria (Total: 100%)
-• Theme Relevance: 40%
-• Creativity & Originality: 30%
-• Composition & Framing: 20%
-• Technical Quality & Exposure: 10%`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Can I frame my photograph with glass or cardboard?',
@@ -488,10 +463,7 @@ ICT Olympiad — Technology Quiz Competition. This is an individual competition 
 
 #### 🏆 Tie-Breaker
 In case of a tie affecting qualification or podium places, a rapid-fire question round will be conducted. Judges' decisions are final and binding.`,
-    judging_criteria: `🏆 Judging & Progression
-• Round 1: Max 20 marks (accuracy + explanation).
-• Round 2: Buzzer accuracy across 20 questions (top 4 advance).
-• Round 3: High score with negative marking; top 2 crowned winners.`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -529,9 +501,7 @@ In case of a tie affecting qualification or podium places, a rapid-fire question
 3. **Round 3 — Hidden Message:** Teams receive an image concealing steganographic visual clues. Deciphering the clue unlocks the decryption cipher.
 4. **Round 4 — Encryption Challenge:** Teams solve a cryptography riddle to obtain a decryption string. Entering it into an online web terminal uncovers a secret destination URL.
 5. **Final Round — The Stage Treasure:** The URL yields the master Key and Box number that unlocks the physical treasure chest on stage containing the Bitcoin / Golden Code.`,
-    judging_criteria: `🏆 Judging Criteria
-• Fastest team to successfully unlock the stage treasure chest within the 60-minute countdown.
-• Integrity check: All 5 intermediate code fragments must be verified by the game masters.`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'How many members can be in a Treasure Hunt team?',
@@ -589,9 +559,7 @@ Participants must solve a standard 4×4 Rubik’s Cube within the given time. Th
 
 4. **Fair Play:**
    - No external notes, algorithmic cheat sheets, smartwatches, or phones permitted during solve.`,
-    judging_criteria: `🏆 Judging Criteria
-• Fastest single valid solve time recorded by official timer.
-• In case of a tie, the median time of secondary attempts will be evaluated.`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Can I use a magnetic 4x4 cube?',
@@ -653,14 +621,7 @@ Participants must solve a standard 4×4 Rubik’s Cube within the given time. Th
 - **Anti-AI Policy:** **AI-generated presentations or fully AI-generated slide content are strictly prohibited.**
 - **Slide Count & Timing:** Time limit and slide expectations will be confirmed by organizers at the venue. Exceeding time limits incurs mark deductions.
 - **Required Slide Info:** The presentation must clearly feature: Participant’s Name, School Name, Class & Section, Group (A/B/C/D), and Presentation Title.`,
-    judging_criteria: `🏆 Judging Criteria
-• Relevance to the selected group topic
-• Creativity and originality
-• Quality and accuracy of technical content
-• Slide design, typography, and visual appeal
-• Effective use of Microsoft PowerPoint features
-• Stage delivery, communication, and Q&A handling
-• Time management`,
+    judging_criteria: "",
     faqs: [
       {
         question: 'Can I use Gamma or Tome AI to generate my slides?',
@@ -703,13 +664,7 @@ Participants will write an original technology-related article on the spot based
 4. **Word Limit:** Specified by the organizers prior to writing. Articles falling significantly above or below the limit incur penalties.
 5. **Materials:** Organizers provide official writing paper/answer sheets. Participants must bring their own pens.
 6. **Identification Header:** Must include Student's Name, School, Class & Section, Group (A/B/C/D), and Article Title.`,
-    judging_criteria: `🏆 Judging Criteria
-• Relevance to the assigned topic
-• Depth and quality of ideas
-• Creativity and perspective
-• Organization, paragraph flow, and structure
-• English language, grammar, and vocabulary
-• Clarity and overall presentation`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -747,12 +702,7 @@ Participants must create and submit an original technology-related meme based on
 4. **Originality & Copyright:** Memes must be the original creative work of the participant. Direct reposts from Reddit, Instagram, or past competitions are disqualified. Standard meme templates may be utilized provided the joke/text is original.
 5. **Appropriateness:** Offensive, defamatory, or discriminatory content is strictly banned.
 6. **Required Info:** Submissions must include Student's Name, School, Class & Section, Group (A/B/C/D), and Meme Title/Caption.`,
-    judging_criteria: `🏆 Judging Criteria
-• Creativity and humor
-• Relevance to technology & computer science
-• Originality of concept (anti-repost audit)
-• Visual punchline delivery and clarity
-• Audience engagement and comedic impact`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -789,9 +739,7 @@ Participants must design, build, and program an autonomous line-following robot 
 - **Autonomous Operation:** The robot must operate 100% autonomously after the start button is pressed. No physical contact or wireless/electronic communication is permitted during the run.
 - **Track Penalties:** If the robot leaves the black track, a time penalty will be added to the final score as decided by the judges.
 - **Conduct:** Any intentional track damage or unsportsmanlike behavior results in immediate disqualification.`,
-    judging_criteria: `🏆 Judging Criteria
-• Fastest clean course completion time.
-• Ties are resolved by favoring the smaller, lighter robot.`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -831,9 +779,7 @@ Pilots must control and maneuver custom drones through an intricate 3D obstacle 
   • Sabotaging or colliding intentionally with other participants’ drones.
   • Flying outside the boundary of the flight zone.
   • Any participant physically entering the active flight arena without referee authorization results in instant disqualification.`,
-    judging_criteria: `🏆 Judging Criteria
-• Fastest total flight time (raw time + obstacle penalties).
-• Ties are handled by a sudden-death course re-fly.`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -871,9 +817,7 @@ BDRO Coding Marathon tests algorithmic logic, computational efficiency, and clea
 - Contest conducted in the SJIS Computer Lab.
 - External code generation assistants (ChatGPT, Copilot, Cursor) are strictly blocked and banned.
 - Standard language libraries are fully permitted.`,
-    judging_criteria: `🏆 Judging Criteria
-• Automated test cases passed.
-• Code efficiency, time complexity, and submission time penalties.`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -908,11 +852,7 @@ Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT
 ### Presentation Rules
 - Hardware must be demonstrated live in front of the judging panel.
 - Teams must be prepared for a 5-minute technical presentation followed by a jury Q&A on schematics, components, code, and practical impact.`,
-    judging_criteria: `🏆 Judging Criteria
-• Innovation and originality of the hardware system
-• Technical complexity and execution quality
-• Working prototype demonstration and reliability
-• Commercial/societal viability and jury Q&A defense`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -942,9 +882,7 @@ Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT
 - **Preliminaries:** Conducted online via dedicated tournament Discord/bracket prior to LAN day.
 - **Semi-Finals & Grand Finals:** Hosted live on auditorium Stage LAN gaming rigs with live audience screening and caster commentary.
 - **Peripherals:** Players may bring their own mice, mechanical keyboards, mousepads, and headsets.`,
-    judging_criteria: `🏆 Tournament Rules
-• Official competitive map pool and overtime rules.
-• Winners advance by direct match victory.`,
+    judging_criteria: "",
     faqs: [],
   },
   {
@@ -974,8 +912,7 @@ Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT
 - Played on official PlayStation 5 / PC consoles in the Carnival Gaming Lounge.
 - Standard 6-minute halves with Tactical Defending. Extra Time and Penalty Shootouts on tie.
 - Participants may bring their own certified controllers.`,
-    judging_criteria: `🏆 Tournament Rules
-• Direct match winner advances to next knockout round.`,
+    judging_criteria: "",
     faqs: [],
   },
 ];

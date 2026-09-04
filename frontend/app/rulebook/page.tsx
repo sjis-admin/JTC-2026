@@ -14,7 +14,7 @@ export const revalidate = 30;
 export const metadata: Metadata = {
   title: 'Official Rulebook & Compendium — SJIS Tech Carnival 2026',
   description:
-    'Download and explore the official festival rulebook, scoring rubrics, submission formats, and eligibility rules for all 19 competitions at SJIS Inter-School Tech Carnival 2026.',
+    'Download and explore the official festival rulebook, contest guidelines, submission formats, and eligibility rules for all 19 competitions at SJIS Inter-School Tech Carnival 2026.',
   keywords: [
     'SJIS Rulebook 2026',
     'Tech Carnival Rules Bangladesh',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Official Rulebook & Compendium — SJIS Tech Carnival 2026',
-    description: 'Official rules, scoring rubrics, and eligibility criteria for all 19 competitions.',
+    description: 'Official rules, contest guidelines, and eligibility criteria for all 19 competitions.',
     url: 'https://jtc.sjis.edu.bd/rulebook',
   },
 };
@@ -49,7 +49,7 @@ export default async function RulebookPage() {
             Official Carnival Rulebook
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl">
-            The definitive compendium containing segment rules, 100-mark judging rubrics, submission specifications,
+            The definitive compendium containing segment guidelines, submission specifications,
             and academic eligibility for Josephite Tech Club Inter-School Tech Carnival 2026.
           </p>
         </div>

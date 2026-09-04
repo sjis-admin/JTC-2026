@@ -369,18 +369,6 @@ export default function EventsShowcase({
               </div>
             )}
 
-            {/* Judging Criteria */}
-            {quickViewEvent.judging_criteria && (
-              <div className="p-4 rounded-xl bg-surface border border-surface-border space-y-2">
-                <h4 className="text-xs uppercase font-bold tracking-wider text-amber-400 flex items-center gap-1.5">
-                  <Award className="w-4 h-4" /> Judging Criteria
-                </h4>
-                <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed">
-                  {quickViewEvent.judging_criteria}
-                </div>
-              </div>
-            )}
-
             <div className="flex items-center justify-between pt-4 border-t border-surface-border">
               <Link
                 href={`/events/${quickViewEvent.slug}`}

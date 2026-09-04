@@ -125,9 +125,6 @@ ${ev.description}
 
 ## Rules & Guidelines
 ${ev.rules || 'Standard tournament rules apply.'}
-
-## Judging Criteria
-${ev.judging_criteria || 'Jury evaluation.'}
 --------------------------------------------------\n\n`;
       })
       .join('');
@@ -488,18 +485,6 @@ ${ev.judging_criteria || 'Jury evaluation.'}
                         </div>
                       </div>
                     ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Judging Criteria */}
-              {event.judging_criteria && (
-                <div className="space-y-2">
-                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                    <Trophy className="w-3.5 h-3.5" /> Judging Rubrics & Evaluation Criteria
-                  </h4>
-                  <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line font-mono">
-                    {event.judging_criteria}
                   </div>
                 </div>
               )}

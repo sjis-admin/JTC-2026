@@ -150,7 +150,7 @@ export default function HeroCyberTerminal() {
         <div className="space-y-1 text-slate-300 text-xs">
           <p>Available interactive commands:</p>
           <p><span className="text-gold font-mono font-bold">events</span> - List all 19 featured competitions</p>
-          <p><span className="text-gold font-mono font-bold">rules</span> / <span className="text-gold font-mono font-bold">rulebook</span> - View official festival rulebook & rubrics</p>
+          <p><span className="text-gold font-mono font-bold">rules</span> / <span className="text-gold font-mono font-bold">rulebook</span> - View official festival rulebook & guidelines</p>
           <p><span className="text-gold font-mono font-bold">register</span> - Open contestant registration portal</p>
           <p><span className="text-gold font-mono font-bold">schedule</span> - Festival itinerary & dates</p>
           <p><span className="text-gold font-mono font-bold">matrix</span> - Show Grade Groups (A to E)</p>
@@ -162,7 +162,7 @@ export default function HeroCyberTerminal() {
       output = (
         <div className="space-y-1 text-xs">
           <p className="text-gold font-bold">📖 Official Carnival Rulebook (19 Arenas):</p>
-          <p className="text-slate-300">• 100-mark judging rubrics for AI Prompting, Tech-Art & Photography</p>
+          <p className="text-slate-300">• Complete rules, submission specs & guidelines for all segments</p>
           <p className="text-slate-300">• Assigned PowerPoint presentation topics for Groups A to D</p>
           <p className="text-slate-300">• BDRO regulations for Line-Robot (25×25×25cm) and Drone flight zones</p>
           <Link href="/rulebook" className="text-gold font-bold hover:underline inline-flex items-center gap-1 mt-1">
