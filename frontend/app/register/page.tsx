@@ -814,29 +814,30 @@ function RegisterForm() {
                       }`}
                       onClick={() => toggleEvent(ev)}
                     >
-                      <div className="flex items-start justify-between gap-2 sm:gap-3">
-                        <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => {}}
-                            className="mt-1 w-4 h-4 rounded text-gold accent-gold cursor-pointer shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                              <span className="font-bold text-white text-sm sm:text-base break-words">{ev.name}</span>
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => {}}
+                          className="mt-1 w-4 h-4 rounded text-gold accent-gold cursor-pointer shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-3">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
+                              <span className="font-bold text-white text-sm sm:text-base leading-snug">{ev.name}</span>
                               <span className="text-[10px] uppercase font-mono px-1.5 sm:px-2 py-0.5 rounded bg-surface border border-surface-border text-gold-light whitespace-nowrap">
                                 {ev.category.replace('_', ' ')}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-300 mt-1 break-words">{ev.description}</p>
-                          </div>
-                        </div>
 
-                        <div className="text-right shrink-0 pl-1">
-                          <span className="text-xs sm:text-sm font-mono font-bold text-gold whitespace-nowrap">
-                            {ev.fee_display}
-                          </span>
+                            <div className="shrink-0 self-start sm:self-auto">
+                              <span className="inline-block text-xs sm:text-sm font-mono font-bold text-gold">
+                                {ev.fee_display}
+                              </span>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">{ev.description}</p>
                         </div>
                       </div>
 
