@@ -97,7 +97,7 @@ function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [schoolId, setSchoolId] = useState<string>('1');
+  const [schoolId, setSchoolId] = useState<string>('');
   const [schoolOther, setSchoolOther] = useState('');
   const [grade, setGrade] = useState('9');
 
@@ -299,7 +299,9 @@ function RegisterForm() {
     }
 
     // School Validation
-    if (schoolId === 'other' && (!schoolOther.trim() || schoolOther.trim().length < 3)) {
+    if (!schoolId) {
+      errors.school = 'Please select your institution / school.';
+    } else if (schoolId === 'other' && (!schoolOther.trim() || schoolOther.trim().length < 3)) {
       errors.schoolOther = 'Please enter your school / college / university name (min 3 chars).';
     }
 
@@ -370,6 +372,7 @@ function RegisterForm() {
       name: true,
       email: true,
       phone: true,
+      school: true,
       schoolOther: true,
     });
 
@@ -700,9 +703,22 @@ function RegisterForm() {
                 </label>
                 <select
                   value={schoolId}
-                  onChange={(e) => setSchoolId(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-surface border border-surface-border text-white text-sm focus:outline-none focus:border-gold cursor-pointer"
+                  onChange={(e) => {
+                    setSchoolId(e.target.value);
+                    markTouched('school');
+                  }}
+                  onBlur={() => markTouched('school')}
+                  className={`w-full px-4 py-2.5 rounded-xl bg-surface border text-sm focus:outline-none focus:border-gold cursor-pointer transition-all ${
+                    (touched.school || submitAttempted) && validationErrors.school
+                      ? 'border-rose-500 ring-1 ring-rose-500 bg-rose-950/20 text-white'
+                      : schoolId === ''
+                      ? 'border-surface-border text-slate-400'
+                      : 'border-surface-border text-white'
+                  }`}
                 >
+                  <option value="" disabled className="bg-surface text-slate-400">
+                    -- Select your School / College --
+                  </option>
                   {schools.map((sch) => (
                     <option key={sch.id} value={sch.id} className="bg-surface text-white">
                       {sch.name}
@@ -712,6 +728,11 @@ function RegisterForm() {
                     -- Other Institution (Type Name Below) --
                   </option>
                 </select>
+                {(touched.school || submitAttempted) && validationErrors.school && (
+                  <p className="text-[11px] text-rose-400 font-medium flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5" /> {validationErrors.school}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1.5">
