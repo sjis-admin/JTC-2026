@@ -282,21 +282,3 @@ if not DEBUG:
     CSRF_COOKIE_HTTPONLY = True
 
 
-# ─── Sentry Error Monitoring ─────────────────────────────────────────────────
-SENTRY_DSN = os.environ.get('SENTRY_DSN', '').strip()
-if SENTRY_DSN:
-    try:
-        import sentry_sdk
-        from sentry_sdk.integrations.django import DjangoIntegration
-
-        sentry_sdk.init(
-            dsn=SENTRY_DSN,
-            integrations=[DjangoIntegration()],
-            traces_sample_rate=float(os.environ.get('SENTRY_TRACES_SAMPLE_RATE', '0.1')),
-            send_default_pii=False,
-            environment=os.environ.get('ENVIRONMENT', 'production' if not DEBUG else 'development'),
-        )
-    except ImportError:
-        pass
-
-
