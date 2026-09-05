@@ -6,8 +6,10 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { AdminLoader } from '@/components/ui/AdminLoader';
 import {
-  Search, CheckCircle2, XCircle, Clock, Filter, Check, Eye, Download, FileSpreadsheet, RefreshCw, X, ShieldCheck, Sparkles, FileText
+  Search, CheckCircle2, XCircle, Clock, Filter, Check, Eye, Download, FileSpreadsheet, RefreshCw, X, ShieldCheck, Sparkles, FileText,
+  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 
 interface RegistrationItem {
@@ -35,23 +37,37 @@ interface RegistrationItem {
 export default function AdminRegistrationsPage() {
   const [registrations, setRegistrations] = useState<RegistrationItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const [exportingExcel, setExportingExcel] = useState(false);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedReg, setSelectedReg] = useState<RegistrationItem | null>(null);
   const [updatingCode, setUpdatingCode] = useState<string | null>(null);
 
-  const loadRegistrations = async () => {
+  const loadRegistrations = async (
+    targetPage = page,
+    targetPageSize = pageSize,
+    targetSearch = search,
+    targetStatus = statusFilter
+  ) => {
     setLoading(true);
-    let url = '/admin/registrations/?';
-    if (statusFilter) url += `status=${statusFilter}&`;
-    if (search) url += `search=${encodeURIComponent(search)}&`;
+    let url = `/admin/registrations/?page=${targetPage}&page_size=${targetPageSize}&`;
+    if (targetStatus) url += `status=${targetStatus}&`;
+    if (targetSearch.trim()) url += `search=${encodeURIComponent(targetSearch.trim())}&`;
 
     try {
       const res = await adminFetch(url);
       if (res.ok) {
         const data = await res.json();
-        setRegistrations(Array.isArray(data) ? data : data.results || []);
+        if (Array.isArray(data)) {
+          setRegistrations(data);
+          setTotalCount(data.length);
+        } else {
+          setRegistrations(data.results || []);
+          setTotalCount(data.count || 0);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -61,12 +77,56 @@ export default function AdminRegistrationsPage() {
   };
 
   useEffect(() => {
-    loadRegistrations();
+    setPage(1);
+    loadRegistrations(1, pageSize, search, statusFilter);
   }, [statusFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loadRegistrations();
+    setPage(1);
+    loadRegistrations(1, pageSize, search, statusFilter);
+  };
+
+  const handleClearSearch = () => {
+    setSearch('');
+    setPage(1);
+    loadRegistrations(1, pageSize, '', statusFilter);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages || newPage === page) return;
+    setPage(newPage);
+    loadRegistrations(newPage, pageSize, search, statusFilter);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+    loadRegistrations(1, newSize, search, statusFilter);
+  };
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (page > 3) {
+        pages.push('...');
+      }
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      if (page < totalPages - 2) {
+        pages.push('...');
+      }
+      pages.push(totalPages);
+    }
+    return pages;
   };
 
   // 1-Click Inline Status Update
@@ -216,7 +276,7 @@ export default function AdminRegistrationsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <Button variant="secondary" size="sm" onClick={loadRegistrations} disabled={loading}>
+          <Button variant="secondary" size="sm" onClick={() => loadRegistrations(page, pageSize, search, statusFilter)} disabled={loading}>
             <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
           
@@ -240,7 +300,7 @@ export default function AdminRegistrationsPage() {
             disabled={registrations.length === 0 || loading}
             className="text-xs text-slate-300"
           >
-            <Download className="w-3.5 h-3.5 mr-1" /> CSV
+            <Download className="w-3.5 h-3.5 mr-1" /> CSV (Page)
           </Button>
         </div>
       </div>
@@ -248,12 +308,24 @@ export default function AdminRegistrationsPage() {
       {/* Filter & Search Bar */}
       <Card glow="none" className="p-4 border border-surface-border bg-surface">
         <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
-          <Input
-            placeholder="Search by contestant name, phone, school, or confirmation code..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1"
-          />
+          <div className="relative flex-1">
+            <Input
+              placeholder="Search by contestant name, phone, school, or confirmation code..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pr-8"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-full hover:bg-surface-elevated transition-colors"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <select
               value={statusFilter}
@@ -274,7 +346,14 @@ export default function AdminRegistrationsPage() {
       </Card>
 
       {/* Registrations Table */}
-      <Card glow="none" className="p-0 border border-surface-border bg-surface overflow-hidden">
+      <Card glow="none" className="p-0 border border-surface-border bg-surface overflow-hidden relative min-h-[380px]">
+        {loading && (
+          <AdminLoader
+            variant="overlay"
+            title="SYNCHRONIZING ATTENDEE ROSTER"
+            subtitle={`Loading page ${page} of ${totalPages}...`}
+          />
+        )}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
             <thead className="bg-surface-elevated text-slate-400 border-b border-surface-border font-semibold uppercase tracking-wider text-[10px]">
@@ -373,6 +452,105 @@ export default function AdminRegistrationsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Controls Bar */}
+        <div className="border-t border-surface-border px-4 py-3.5 bg-surface-elevated/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-400">
+          <div className="flex items-center gap-2">
+            <span>
+              Showing{' '}
+              <strong className="text-white font-mono">
+                {totalCount === 0 ? 0 : (page - 1) * pageSize + 1}
+              </strong>
+              {' '}-{' '}
+              <strong className="text-white font-mono">
+                {Math.min(page * pageSize, totalCount)}
+              </strong>
+              {' '}of{' '}
+              <strong className="text-gold font-mono">{totalCount}</strong> registrations
+            </span>
+          </div>
+
+          <div className="flex items-center flex-wrap gap-3">
+            {/* Page Size Selector */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-400 text-xs">Per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                className="px-2 py-1 rounded-lg bg-surface border border-surface-border text-xs text-white focus:outline-none focus:border-gold cursor-pointer"
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+
+            {/* Page Navigation Buttons */}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => handlePageChange(1)}
+                disabled={page <= 1 || loading}
+                className="p-1.5 rounded-lg border border-surface-border hover:bg-surface-elevated hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                title="First Page"
+              >
+                <ChevronsLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page <= 1 || loading}
+                className="p-1.5 rounded-lg border border-surface-border hover:bg-surface-elevated hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-1 px-1">
+                {getPageNumbers().map((p, idx) =>
+                  p === '...' ? (
+                    <span key={`ellipsis-${idx}`} className="px-1.5 text-slate-500 select-none">
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={`page-${p}`}
+                      type="button"
+                      onClick={() => handlePageChange(Number(p))}
+                      disabled={loading}
+                      className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-mono font-bold transition-all ${
+                        p === page
+                          ? 'bg-gold text-slate-950 shadow-sm shadow-gold/30'
+                          : 'hover:bg-surface-elevated text-slate-300 border border-surface-border/80'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page >= totalPages || loading}
+                className="p-1.5 rounded-lg border border-surface-border hover:bg-surface-elevated hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                title="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={page >= totalPages || loading}
+                className="p-1.5 rounded-lg border border-surface-border hover:bg-surface-elevated hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                title="Last Page"
+              >
+                <ChevronsRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </Card>
 

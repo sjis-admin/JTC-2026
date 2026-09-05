@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { getAdminToken, clearAdminToken, adminFetch, ADMIN_AUTH_PATH } from '@/lib/api';
+import { AdminLoader } from '@/components/ui/AdminLoader';
 import {
   LayoutDashboard, Users, CalendarDays, School, Settings, LogOut, Cpu, ArrowLeft, Menu, X, QrCode, ShieldCheck
 } from 'lucide-react';
@@ -15,6 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [authorized, setAuthorized] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  const [isPageSwitching, setIsPageSwitching] = useState(false);
 
   useEffect(() => {
     const token = getAdminToken();
@@ -43,14 +46,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       });
   }, [router, authorized, user]);
 
+  // Reset page switching loader when pathname updates
+  useEffect(() => {
+    setIsPageSwitching(false);
+  }, [pathname]);
+
+  // Detect navigation clicks targeting any /admin route
+  useEffect(() => {
+    const handleLinkClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
+      if (
+        href &&
+        href.startsWith('/admin') &&
+        href !== pathname &&
+        !anchor.getAttribute('target') &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.shiftKey
+      ) {
+        setIsPageSwitching(true);
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    return () => document.removeEventListener('click', handleLinkClick);
+  }, [pathname]);
+
   if (!authorized) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center text-gold font-mono">
-        <div className="flex items-center gap-3">
-          <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
-          <span>Authenticating Admin Session...</span>
-        </div>
-      </div>
+      <AdminLoader
+        variant="fullscreen"
+        title="AUTHENTICATING SESSION"
+        subtitle="Verifying executive security clearance..."
+      />
     );
   }
 
@@ -138,7 +168,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content Area - Only This Panel Scrolls */}
-      <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative">
+        {/* Sleek Golden Topbar Progress Loader when switching pages */}
+        {isPageSwitching && <AdminLoader variant="topbar" />}
+
+        {/* Floating Page Switching Pill */}
+        {isPageSwitching && (
+          <div className="fixed top-4 right-6 z-50 flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-elevated/95 border border-gold/50 text-gold shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-none">
+            <div className="relative w-3.5 h-3.5 flex items-center justify-center">
+              <div className="w-3.5 h-3.5 rounded-full border-2 border-gold/30 border-t-gold animate-spin" />
+              <div className="absolute w-1.5 h-1.5 rounded-full bg-gold animate-ping" />
+            </div>
+            <span className="font-mono text-[11px] font-black tracking-wider text-glow-gold">
+              SWITCHING CONSOLE...
+            </span>
+          </div>
+        )}
+
         {/* Top bar for mobile */}
         <header className="lg:hidden bg-surface border-b border-surface-border p-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
@@ -177,9 +223,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         )}
 
-        {/* Scrollable Viewport */}
+        {/* Scrollable Viewport with Motion Page Transition */}
         <main className="flex-1 h-full p-4 sm:p-8 lg:p-10 overflow-y-auto">
-          {children}
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="min-h-full"
+          >
+            {children}
+          </motion.div>
         </main>
       </div>
     </div>

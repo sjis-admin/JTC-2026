@@ -349,7 +349,9 @@ def admin_registrations_list(request):
 
     from rest_framework.pagination import PageNumberPagination
     paginator = PageNumberPagination()
-    paginator.page_size = 100
+    paginator.page_size = 25
+    paginator.page_size_query_param = 'page_size'
+    paginator.max_page_size = 200
     page = paginator.paginate_queryset(qs.order_by('-registered_at'), request)
     serializer = RegistrationReadSerializer(page, many=True, context={'request': request})
     return paginator.get_paginated_response(serializer.data)
