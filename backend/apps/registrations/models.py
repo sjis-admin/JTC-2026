@@ -28,8 +28,8 @@ class Participant(models.Model):
     TSHIRT_CHOICES = [('S', 'S'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('XXL', 'XXL')]
 
     name = models.CharField(max_length=200)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
+    email = models.EmailField(db_index=True)
+    phone = models.CharField(max_length=20, db_index=True)
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True)
     school_name_other = models.CharField(max_length=300, blank=True, help_text='If school not in list')
     grade = models.CharField(max_length=10, choices=GRADE_CHOICES)
@@ -61,6 +61,7 @@ class Registration(models.Model):
         ('PENDING', 'Pending Verification'),
         ('VERIFIED', 'Verified'),
         ('REJECTED', 'Rejected'),
+        ('EXPIRED', 'Expired'),
         ('REFUNDED', 'Refunded'),
     ]
     PAYMENT_METHOD = [
@@ -73,9 +74,9 @@ class Registration(models.Model):
     confirmation_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name='registrations')
     total_fee = models.PositiveIntegerField(default=0)
-    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD, default='BKASH')
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD, default='BKASH')
     payment_reference = models.CharField(max_length=200, blank=True, help_text='bKash/Nagad/Bank transaction ID')
-    payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS, default='PENDING')
+    payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS, default='PENDING', db_index=True)
     payment_verified_at = models.DateTimeField(null=True, blank=True)
     payment_verified_by = models.ForeignKey(
         'auth.User', on_delete=models.SET_NULL, null=True, blank=True,
@@ -84,7 +85,7 @@ class Registration(models.Model):
     admin_notes = models.TextField(blank=True)
     email_sent = models.BooleanField(default=False)
     sms_sent = models.BooleanField(default=False)
-    registered_at = models.DateTimeField(auto_now_add=True)
+    registered_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -112,6 +113,11 @@ class RegistrationEvent(models.Model):
     team_name = models.CharField(max_length=200, blank=True)
     team_members = models.TextField(blank=True, help_text='Comma-separated member names')
     fee_charged = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['registration', 'event']),
+        ]
 
     def __str__(self):
         return f'{self.registration.short_code} → {self.event.name}'

@@ -1,4 +1,5 @@
 import logging
+from django.db import transaction
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -22,27 +23,27 @@ logger = logging.getLogger(__name__)
 def sslcommerz_initiate(request, code):
     """
     Public endpoint: Initiates an SSLCommerz payment session for a given confirmation code.
-    Returns JSON: { 'status': 'SUCCESS', 'gateway_url': 'https://...' }
+    Returns: {"gateway_url": "https://..."} or {"error": "..."}
     """
     try:
-        registration = Registration.objects.select_related('participant').get(confirmation_code=code)
+        registration = Registration.objects.get(confirmation_code=code)
     except Registration.DoesNotExist:
         return Response({'error': 'Registration not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    if registration.total_fee <= 0:
-        return Response({'error': 'This registration has a fee of 0 BDT. No online payment required.'}, status=status.HTTP_400_BAD_REQUEST)
+    if registration.payment_status == 'VERIFIED':
+        return Response({'error': 'This registration has already been verified and paid.'}, status=status.HTTP_400_BAD_REQUEST)
 
     result = initiate_sslcommerz_session(registration, request)
-    if result.get('status') == 'SUCCESS':
+    if result.get('status') == 'SUCCESS' and result.get('gateway_url'):
         return Response({
-            'status': 'SUCCESS',
-            'gateway_url': result.get('gateway_url'),
-            'sessionkey': result.get('sessionkey'),
+            'gateway_url': result['gateway_url'],
+            'sessionkey': result.get('sessionkey', ''),
+            'status': 'SUCCESS'
         })
     else:
         return Response({
-            'status': 'FAILED',
             'error': result.get('error', 'Failed to initiate SSLCommerz gateway session.'),
+            'status': 'FAILED'
         }, status=status.HTTP_502_BAD_GATEWAY)
 
 
@@ -51,6 +52,7 @@ def sslcommerz_success(request):
     """
     SSLCommerz Success Callback URL.
     Validates the transaction with SSLCommerz servers, verifies exact payment amount, and marks verified.
+    Idempotent and protected against race conditions using select_for_update().
     """
     frontend_url = settings.FRONTEND_URL.rstrip('/')
     tran_id = request.POST.get('tran_id') or request.GET.get('tran_id')
@@ -64,53 +66,61 @@ def sslcommerz_success(request):
     if not tran_id:
         return HttpResponseRedirect(f"{frontend_url}/register/success?payment=failed&reason=missing_tran_id")
 
-    try:
-        registration = Registration.objects.get(confirmation_code=tran_id)
-    except Registration.DoesNotExist:
-        return HttpResponseRedirect(f"{frontend_url}/register/success?payment=failed&reason=reg_not_found")
+    with transaction.atomic():
+        try:
+            registration = Registration.objects.select_for_update().get(confirmation_code=tran_id)
+        except Registration.DoesNotExist:
+            return HttpResponseRedirect(f"{frontend_url}/register/success?payment=failed&reason=reg_not_found")
 
-    # Anti-Tampering Check: Validate transaction directly with SSLCommerz API
-    validation_data = validate_sslcommerz_transaction(val_id)
-    val_status = validation_data.get('status', '').upper()
-    val_amount_raw = validation_data.get('amount') or amount
-
-    # Check for amount tampering
-    try:
-        paid_amount = float(val_amount_raw)
-        if abs(paid_amount - float(registration.total_fee)) > 0.01:
-            logger.critical(
-                f"SECURITY ALERT - PAYMENT AMOUNT TAMPERING DETECTED: "
-                f"Registration {registration.confirmation_code} expected {registration.total_fee} BDT but paid {paid_amount} BDT"
-            )
-            registration.payment_status = 'REJECTED'
-            registration.admin_notes = f"SECURITY ALERT: Tampered Amount. Expected {registration.total_fee}, Gateway reported {paid_amount} (val_id: {val_id})"
-            registration.save()
+        # Idempotency check: If already verified, do not re-verify or duplicate notifications
+        if registration.payment_status == 'VERIFIED':
+            logger.info(f"Payment already verified for tran_id={tran_id}. Idempotently redirecting.")
             return HttpResponseRedirect(
-                f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=failed&reason=amount_tampered"
+                f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=success&method={card_type}"
             )
-    except (ValueError, TypeError) as e:
-        logger.warning(f"Could not parse amount during validation: {e}")
 
-    if val_status in ['VALID', 'VALIDATED'] or (settings.SSLCOMMERZ_IS_SANDBOX and val_id):
-        registration.payment_status = 'VERIFIED'
-        registration.payment_method = 'SSLCOMMERZ'
-        registration.payment_reference = bank_tran_id or val_id
-        registration.payment_verified_at = timezone.now()
-        registration.admin_notes = f"Verified via SSLCommerz ({card_type}) • val_id: {val_id}"
-        registration.save()
+        # Anti-Tampering Check: Validate transaction directly with SSLCommerz API
+        validation_data = validate_sslcommerz_transaction(val_id)
+        val_status = validation_data.get('status', '').upper()
+        val_amount_raw = validation_data.get('amount') or amount
 
-        # Send confirmation notifications
-        send_confirmation_email(registration)
-        send_confirmation_sms(registration)
+        # Check for amount tampering
+        try:
+            paid_amount = float(val_amount_raw)
+            if abs(paid_amount - float(registration.total_fee)) > 0.01:
+                logger.critical(
+                    f"SECURITY ALERT - PAYMENT AMOUNT TAMPERING DETECTED: "
+                    f"Registration {registration.confirmation_code} expected {registration.total_fee} BDT but paid {paid_amount} BDT"
+                )
+                registration.payment_status = 'REJECTED'
+                registration.admin_notes = f"SECURITY ALERT: Tampered Amount. Expected {registration.total_fee}, Gateway reported {paid_amount} (val_id: {val_id})"
+                registration.save()
+                return HttpResponseRedirect(
+                    f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=failed&reason=amount_tampered"
+                )
+        except (ValueError, TypeError) as e:
+            logger.warning(f"Could not parse amount during validation: {e}")
 
-        return HttpResponseRedirect(
-            f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=success&method={card_type}"
-        )
-    else:
-        logger.warning(f"SSLCommerz transaction validation failed for val_id: {val_id}")
-        return HttpResponseRedirect(
-            f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=failed&reason=validation_failed"
-        )
+        if val_status in ['VALID', 'VALIDATED'] or (settings.SSLCOMMERZ_IS_SANDBOX and val_id):
+            registration.payment_status = 'VERIFIED'
+            registration.payment_method = 'SSLCOMMERZ'
+            registration.payment_reference = bank_tran_id or val_id
+            registration.payment_verified_at = timezone.now()
+            registration.admin_notes = f"Verified via SSLCommerz ({card_type}) • val_id: {val_id}"
+            registration.save()
+
+            # Send confirmation notifications
+            send_confirmation_email(registration)
+            send_confirmation_sms(registration)
+
+            return HttpResponseRedirect(
+                f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=success&method={card_type}"
+            )
+        else:
+            logger.warning(f"SSLCommerz transaction validation failed for val_id: {val_id}")
+            return HttpResponseRedirect(
+                f"{frontend_url}/register/success?code={registration.confirmation_code}&payment=failed&reason=validation_failed"
+            )
 
 
 @csrf_exempt
@@ -144,6 +154,7 @@ def sslcommerz_cancel(request):
 def sslcommerz_ipn(request):
     """
     SSLCommerz Instant Payment Notification (IPN) server-to-server webhook.
+    Idempotent and protected against race conditions using select_for_update().
     """
     val_id = request.POST.get('val_id')
     tran_id = request.POST.get('tran_id')
@@ -154,35 +165,42 @@ def sslcommerz_ipn(request):
     if not tran_id or not val_id:
         return Response({'status': 'IGNORED'}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        registration = Registration.objects.get(confirmation_code=tran_id)
-        if registration.payment_status != 'VERIFIED':
-            validation_data = validate_sslcommerz_transaction(val_id)
-            val_status = validation_data.get('status', '').upper()
-            val_amount_raw = validation_data.get('amount')
+    with transaction.atomic():
+        try:
+            registration = Registration.objects.select_for_update().get(confirmation_code=tran_id)
+        except Registration.DoesNotExist:
+            return Response({'status': 'NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
-            # Anti-Tampering Check
-            if val_amount_raw:
-                try:
-                    paid_amount = float(val_amount_raw)
-                    if abs(paid_amount - float(registration.total_fee)) > 0.01:
-                        logger.critical(f"IPN AMOUNT TAMPERING: expected {registration.total_fee}, paid {paid_amount}")
-                        registration.payment_status = 'REJECTED'
-                        registration.admin_notes = f"IPN ALERT: Tampered Amount ({paid_amount} vs {registration.total_fee})"
-                        registration.save()
-                        return Response({'status': 'AMOUNT_MISMATCH'}, status=status.HTTP_400_BAD_REQUEST)
-                except (ValueError, TypeError):
-                    pass
+        # Idempotency check: If already verified, do nothing and return SUCCESS immediately
+        if registration.payment_status == 'VERIFIED':
+            logger.info(f"IPN: tran_id={tran_id} already marked VERIFIED. Idempotent return.")
+            return Response({'status': 'ALREADY_VERIFIED'})
 
-            if val_status in ['VALID', 'VALIDATED']:
-                registration.payment_status = 'VERIFIED'
-                registration.payment_method = 'SSLCOMMERZ'
-                registration.payment_reference = bank_tran_id or val_id
-                registration.payment_verified_at = timezone.now()
-                registration.admin_notes = f"Verified via SSLCommerz IPN • val_id: {val_id}"
-                registration.save()
-                send_confirmation_email(registration)
-                send_confirmation_sms(registration)
+        validation_data = validate_sslcommerz_transaction(val_id)
+        val_status = validation_data.get('status', '').upper()
+        val_amount_raw = validation_data.get('amount')
+
+        # Anti-Tampering Check
+        if val_amount_raw:
+            try:
+                paid_amount = float(val_amount_raw)
+                if abs(paid_amount - float(registration.total_fee)) > 0.01:
+                    logger.critical(f"IPN AMOUNT TAMPERING: expected {registration.total_fee}, paid {paid_amount}")
+                    registration.payment_status = 'REJECTED'
+                    registration.admin_notes = f"IPN ALERT: Tampered Amount ({paid_amount} vs {registration.total_fee})"
+                    registration.save()
+                    return Response({'status': 'AMOUNT_MISMATCH'}, status=status.HTTP_400_BAD_REQUEST)
+            except (ValueError, TypeError):
+                pass
+
+        if val_status in ['VALID', 'VALIDATED']:
+            registration.payment_status = 'VERIFIED'
+            registration.payment_method = 'SSLCOMMERZ'
+            registration.payment_reference = bank_tran_id or val_id
+            registration.payment_verified_at = timezone.now()
+            registration.admin_notes = f"Verified via SSLCommerz IPN • val_id: {val_id}"
+            registration.save()
+            send_confirmation_email(registration)
+            send_confirmation_sms(registration)
+
         return Response({'status': 'SUCCESS'})
-    except Registration.DoesNotExist:
-        return Response({'status': 'NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)

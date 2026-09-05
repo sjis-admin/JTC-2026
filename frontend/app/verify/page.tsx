@@ -96,16 +96,26 @@ function VerifyContent() {
           <div className={`shadow-2xl ${isVerified ? 'gradient-border-gold shadow-amber-500/15' : 'border border-amber-500/60'}`}>
             <div className="glass-card rounded-[13px] p-6 sm:p-8 bg-surface-elevated/95 space-y-6">
               
-              {/* Unverified Alert Banner */}
+              {/* Unverified / Expired Alert Banner */}
               {!isVerified && (
-                <div className="p-4 rounded-xl bg-amber-950/80 border border-amber-500/70 text-amber-200 text-xs sm:text-sm flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className={`p-4 rounded-xl border text-xs sm:text-sm flex items-start gap-3 ${
+                  result.payment_status === 'EXPIRED'
+                    ? 'bg-slate-900/90 border-slate-700 text-slate-300'
+                    : 'bg-amber-950/80 border-amber-500/70 text-amber-200'
+                }`}>
+                  <AlertTriangle className={`w-5 h-5 shrink-0 mt-0.5 ${
+                    result.payment_status === 'EXPIRED' ? 'text-slate-400' : 'text-amber-400'
+                  }`} />
                   <div className="space-y-1">
                     <span className="font-bold text-white block">
-                      ⚠️ Payment Unverified — Not Admissible at Entrance Gate
+                      {result.payment_status === 'EXPIRED'
+                        ? '⚠️ Registration Expired — Entry Pass Void'
+                        : '⚠️ Payment Unverified — Not Admissible at Entrance Gate'}
                     </span>
                     <p>
-                      This contestant registration requires cleared payment of <strong>৳{result.total_fee} BDT</strong> before entrance kits and tournament badges can be issued.
+                      {result.payment_status === 'EXPIRED'
+                        ? 'This registration expired because online payment was not completed within 24 hours. A new registration is required.'
+                        : `This contestant registration requires cleared payment of ৳${result.total_fee} BDT before entrance kits and tournament badges can be issued.`}
                     </p>
                   </div>
                 </div>
@@ -137,7 +147,9 @@ function VerifyContent() {
                     <span className="text-sm font-bold text-white">{result.participant_grade}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block font-semibold">Contact Email & Phone</span>
+                    <span className="text-slate-400 block font-semibold flex items-center gap-1.5">
+                      Contact Email & Phone <span className="text-[10px] text-slate-500 font-normal">(Masked for privacy)</span>
+                    </span>
                     <span className="text-xs font-mono text-slate-200 block">{result.participant_email}</span>
                     <span className="text-xs font-mono text-slate-200 block">{result.participant_phone}</span>
                   </div>

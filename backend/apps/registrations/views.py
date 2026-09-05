@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes, throttle_cla
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from .models import Participant, Registration, RegistrationEvent, GRADE_TO_GROUP
 from .serializers import RegistrationCreateSerializer, RegistrationReadSerializer
@@ -158,6 +159,29 @@ class RegistrationCreateView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         events = data['_events']
+        email = data['email'].strip().lower()
+        phone = data['phone'].strip()
+        requested_event_ids = [e.id for e in events]
+
+        # Duplicate Registration Guard:
+        # Prevent double registration for the same event if there is an active (PENDING or VERIFIED) registration.
+        # EXPIRED or REJECTED registrations do not block re-registration.
+        existing_event_regs = RegistrationEvent.objects.filter(
+            Q(registration__participant__email__iexact=email) | Q(registration__participant__phone=phone),
+            registration__payment_status__in=['PENDING', 'VERIFIED'],
+            event_id__in=requested_event_ids
+        ).select_related('event', 'registration')
+
+        if existing_event_regs.exists():
+            conflict_names = list({re.event.name for re in existing_event_regs})
+            conflict_str = ", ".join(conflict_names)
+            return Response(
+                {
+                    'error': f'An active registration (Pending or Verified) already exists for this email/phone in: {conflict_str}. '
+                             f'If your previous payment failed or expired, please check your status or contact support.'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Get or create school
         school = None

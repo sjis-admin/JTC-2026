@@ -69,13 +69,20 @@ def send_confirmation_sms(registration):
     if not phone.startswith('0'):
         phone = '0' + phone
 
-    message = (
-        f"JTC SJIS: Hi {participant.name.split()[0]}, "
-        f"your registration is confirmed! "
-        f"Code: {registration.short_code}. "
-        f"Total: BDT {registration.total_fee}. "
-        f"Payment: {registration.get_payment_status_display()}."
-    )
+    first_name = participant.name.split()[0][:14] if participant.name else 'Student'
+    frontend_base = getattr(settings, 'FRONTEND_URL', 'https://jtc.sjis.edu.bd').rstrip('/')
+    pass_url = f"{frontend_base}/verify?code={registration.short_code}"
+
+    if registration.payment_status == 'VERIFIED' or registration.total_fee == 0:
+        message = (
+            f"JTC SJIS: Hi {first_name}, registration & payment verified! "
+            f"Code: {registration.short_code}. Pass: {pass_url}"
+        )
+    else:
+        message = (
+            f"JTC SJIS: Hi {first_name}, reg received ({registration.short_code}). "
+            f"Payment: {registration.get_payment_status_display().upper()}. Verify: {pass_url}"
+        )
 
     try:
         resp = requests.get(

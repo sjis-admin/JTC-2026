@@ -113,7 +113,7 @@ export interface RegistrationResponse {
   total_fee: number;
   payment_method: string;
   payment_reference: string;
-  payment_status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'REFUNDED';
+  payment_status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'REFUNDED' | 'EXPIRED';
   payment_status_display: string;
   email_sent: boolean;
   sms_sent: boolean;

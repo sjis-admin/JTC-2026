@@ -178,6 +178,28 @@ function SuccessContent() {
           </div>
         )}
 
+        {/* State 5: Registration Expired (TTL) */}
+        {data.payment_status === 'EXPIRED' && (
+          <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-700 text-slate-300 text-xs sm:text-sm flex items-start gap-3 shadow-xl">
+            <Clock className="w-6 h-6 text-slate-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <span className="font-bold text-white block text-sm">
+                ⚠️ Registration Expired
+              </span>
+              <p>
+                The payment window for this registration has expired due to non-completion within 24 hours. You may submit a new registration.
+              </p>
+              <div className="pt-2">
+                <Link href="/register">
+                  <Button variant="glow" size="sm" className="font-bold">
+                    Start New Registration
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header Hero Text */}
         <div className="text-center space-y-2">
           <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full mb-1 ring-8 ${

@@ -140,15 +140,49 @@ class RegistrationEventReadSerializer(serializers.ModelSerializer):
         fields = ['event', 'is_team', 'team_name', 'team_members', 'fee_charged']
 
 
+def mask_email(email: str) -> str:
+    if not email or '@' not in email:
+        return '***'
+    user_part, domain = email.split('@', 1)
+    if len(user_part) <= 2:
+        masked_user = user_part[0] + '***'
+    else:
+        masked_user = user_part[:2] + '*' * min(len(user_part) - 2, 6)
+    return f"{masked_user}@{domain}"
+
+
+def mask_phone(phone: str) -> str:
+    if not phone:
+        return '***'
+    clean = str(phone).strip()
+    if len(clean) <= 6:
+        return '***' + clean[-2:]
+    return clean[:3] + '*' * (len(clean) - 6) + clean[-3:]
+
+
 class RegistrationReadSerializer(serializers.ModelSerializer):
     participant_name = serializers.CharField(source='participant.name')
-    participant_email = serializers.CharField(source='participant.email')
-    participant_phone = serializers.CharField(source='participant.phone')
+    participant_email = serializers.SerializerMethodField()
+    participant_phone = serializers.SerializerMethodField()
     participant_grade = serializers.CharField(source='participant.get_grade_display')
     participant_school = serializers.CharField(source='participant.school_display')
     registration_events = RegistrationEventReadSerializer(many=True, read_only=True)
     payment_status_display = serializers.CharField(source='get_payment_status_display')
     short_code = serializers.ReadOnlyField()
+
+    def get_participant_email(self, obj):
+        request = self.context.get('request')
+        email = obj.participant.email if obj.participant else ''
+        if request and request.user and (request.user.is_staff or request.user.is_superuser):
+            return email
+        return mask_email(email)
+
+    def get_participant_phone(self, obj):
+        request = self.context.get('request')
+        phone = obj.participant.phone if obj.participant else ''
+        if request and request.user and (request.user.is_staff or request.user.is_superuser):
+            return phone
+        return mask_phone(phone)
 
     class Meta:
         model = Registration
