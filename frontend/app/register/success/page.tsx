@@ -4,14 +4,15 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
-import { lookupRegistration, RegistrationResponse } from '@/lib/api';
+import { lookupRegistration, initiateSSLCommerzPayment, RegistrationResponse } from '@/lib/api';
 import { Card, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import QRCodeSVG from '@/components/ui/QRCodeSVG';
 import {
   CheckCircle2, Printer, ArrowRight, ShieldCheck, Mail, Phone, Calendar,
-  MapPin, QrCode, Download, FileText, Sparkles, Building2, User, Award, Check
+  MapPin, QrCode, Download, FileText, Sparkles, Building2, User, Award, Check,
+  Lock, AlertCircle, Clock, Zap, AlertTriangle
 } from 'lucide-react';
 
 function SuccessContent() {
@@ -19,21 +20,29 @@ function SuccessContent() {
   const code = searchParams.get('code');
   const [data, setData] = useState<RegistrationResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [retryingPayment, setRetryingPayment] = useState(false);
   const [activeTab, setActiveTab] = useState<'pass' | 'receipt'>('pass');
 
-  useEffect(() => {
-    try {
-      confetti({
-        particleCount: 140,
-        spread: 90,
-        origin: { y: 0.6 },
-        colors: ['#F5B700', '#FFE58F', '#0052CC', '#353f4aff', '#10B981'],
-      });
-    } catch (e) { }
+  const paymentParam = searchParams.get('payment');
+  const paymentMethodParam = searchParams.get('method');
 
+  useEffect(() => {
     if (code) {
       lookupRegistration(code)
-        .then((res) => setData(res))
+        .then((res) => {
+          setData(res);
+          // Only trigger celebratory confetti if payment is genuinely verified or total fee is 0
+          if (res.payment_status === 'VERIFIED' || res.total_fee === 0) {
+            try {
+              confetti({
+                particleCount: 140,
+                spread: 90,
+                origin: { y: 0.6 },
+                colors: ['#F5B700', '#FFE58F', '#0052CC', '#353f4aff', '#10B981'],
+              });
+            } catch (e) {}
+          }
+        })
         .catch((err) => console.error(err))
         .finally(() => setLoading(false));
     } else {
@@ -45,7 +54,7 @@ function SuccessContent() {
     return (
       <div className="pt-36 text-center text-slate-300 font-mono space-y-3">
         <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin mx-auto" />
-        <p>Generating verified digital entry pass & payment receipt...</p>
+        <p>Verifying registration and payment status...</p>
       </div>
     );
   }
@@ -61,71 +70,166 @@ function SuccessContent() {
     );
   }
 
+  const isVerified = data.payment_status === 'VERIFIED' || data.total_fee === 0;
+
+  const handleRetryPayment = async () => {
+    if (!data) return;
+    setRetryingPayment(true);
+    try {
+      const res = await initiateSSLCommerzPayment(data.confirmation_code);
+      if (res.gateway_url) {
+        window.location.href = res.gateway_url;
+      } else {
+        alert('Could not initiate payment gateway session. Please contact organizers.');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Payment initiation failed.');
+    } finally {
+      setRetryingPayment(false);
+    }
+  };
+
   const verifyUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/verify?code=${data.confirmation_code}`
     : `https://jtc.sjis.edu.bd/verify?code=${data.confirmation_code}`;
 
-  const paymentParam = searchParams.get('payment');
-  const paymentMethodParam = searchParams.get('method');
-
   const handlePrint = () => {
+    if (!isVerified) {
+      alert('Contestant Entry Pass and official receipt can only be printed after payment is verified.');
+      return;
+    }
     window.print();
   };
 
   return (
     <div className="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-6">
-      {/* Top Interactive Banner (Hidden on Print) */}
+      {/* Top Interactive Status Banner */}
       <div className="print:hidden space-y-6">
-        {paymentParam === 'success' && (
+        {/* State 1: Payment Successfully Verified */}
+        {isVerified && (
           <div className="p-4 rounded-2xl bg-emerald-950/90 border border-emerald-500 text-emerald-200 text-xs sm:text-sm flex items-center gap-3 shadow-xl">
             <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
             <div>
-              <span className="font-bold text-white block text-sm">🎉 Payment Verified Successfully via SSLCommerz!</span>
-              <span>Your transaction was confirmed. Your digital entry pass and official festival receipt have been issued and authenticated.</span>
+              <span className="font-bold text-white block text-sm">🎉 Payment Verified Successfully!</span>
+              <span>Your entry fee of ৳{data.total_fee} BDT was authenticated. Your official contestant admit card and festival payment receipt are issued.</span>
             </div>
           </div>
         )}
 
-        {paymentParam === 'failed' && (
+        {/* State 2: Payment Cancelled or Incomplete via SSLCommerz */}
+        {!isVerified && (paymentParam === 'cancelled' || paymentParam === 'failed' || data.payment_method === 'SSLCOMMERZ') && (
+          <div className="p-5 rounded-2xl bg-amber-950/90 border border-amber-500/80 text-amber-200 text-xs sm:text-sm space-y-3 shadow-2xl">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <span className="font-bold text-white block text-base">
+                  {paymentParam === 'cancelled' ? '⚠️ Payment Cancelled at Gateway' : '⚠️ Online Payment Pending'}
+                </span>
+                <p className="text-amber-200 leading-relaxed">
+                  Your registration information is reserved under reference <strong className="text-gold font-mono">{data.short_code}</strong>, but your online payment of <strong className="text-white font-mono">৳{data.total_fee} BDT</strong> was not completed.
+                </p>
+                <p className="text-amber-300 font-semibold text-xs">
+                  🔒 Your official Entry Pass and Gate QR Code remain locked until payment is verified.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-amber-500/30 flex flex-wrap items-center gap-3">
+              <Button
+                variant="glow"
+                size="md"
+                onClick={handleRetryPayment}
+                isLoading={retryingPayment}
+                className="font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/30 flex items-center gap-2"
+              >
+                <Zap className="w-4 h-4 text-slate-950" />
+                <span>Complete Payment Now (৳{data.total_fee} BDT via SSLCommerz)</span>
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* State 3: Manual Payment (bKash/Nagad/Bank) Awaiting Review */}
+        {!isVerified && data.payment_method !== 'SSLCOMMERZ' && data.payment_status === 'PENDING' && (
+          <div className="p-4 rounded-2xl bg-sky-950/90 border border-sky-500 text-sky-200 text-xs sm:text-sm flex items-start gap-3 shadow-xl">
+            <Clock className="w-6 h-6 text-sky-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <span className="font-bold text-white block text-sm">
+                ⏳ Manual Payment Verification in Progress
+              </span>
+              <p>
+                We received your registration and transaction ID (<strong className="font-mono text-white">{data.payment_reference || 'Submitted'}</strong>). Our accounts desk is verifying your payment with the provider.
+              </p>
+              <p className="text-sky-300">
+                Your Entry Pass and QR Code will unlock once approved. You will also receive an SMS and email notification.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* State 4: Payment Rejected */}
+        {data.payment_status === 'REJECTED' && (
           <div className="p-4 rounded-2xl bg-rose-950/90 border border-rose-600 text-rose-200 text-xs sm:text-sm flex items-center gap-3 shadow-xl">
-            <ShieldCheck className="w-6 h-6 text-rose-400 shrink-0" />
+            <AlertCircle className="w-6 h-6 text-rose-400 shrink-0" />
             <div>
-              <span className="font-bold text-white block">Online Payment Incomplete</span>
-              <span>The online transaction did not complete. Please retry your payment to activate your entry pass.</span>
+              <span className="font-bold text-white block text-sm">✕ Payment Rejected</span>
+              <span>The payment transaction for this registration was rejected. Please contact the JTC organizing committee or submit a new registration.</span>
             </div>
           </div>
         )}
 
+        {/* Header Hero Text */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gold/20 text-gold ring-8 ring-gold/10 mb-1">
-            <CheckCircle2 className="w-8 h-8" />
+          <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full mb-1 ring-8 ${
+            isVerified ? 'bg-gold/20 text-gold ring-gold/10' : 'bg-amber-500/20 text-amber-400 ring-amber-500/10'
+          }`}>
+            {isVerified ? <CheckCircle2 className="w-8 h-8" /> : <Lock className="w-8 h-8" />}
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-display">
-            Registration Confirmed!
+            {isVerified ? 'Registration & Payment Verified!' : 'Registration Saved — Payment Required'}
           </h1>
           <p className="text-slate-300 text-xs sm:text-sm max-w-lg mx-auto">
-            Your official contestant pass and payment invoice are ready. You can download or print the PDF receipt below.
+            {isVerified
+              ? 'Your official contestant pass and payment receipt are ready. You can download or print your admit card below.'
+              : 'Your entry pass and gate QR code will unlock automatically once your payment of ৳' + data.total_fee + ' BDT is verified.'}
           </p>
 
           {/* Action Bar */}
           <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
-            <Button
-              variant="glow"
-              size="lg"
-              onClick={handlePrint}
-              className="px-6 py-3 rounded-xl font-black text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center gap-2"
-            >
-              <Download className="w-4 h-4 text-slate-950" />
-              <span>Download Official Pass & Receipt (PDF)</span>
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handlePrint}
-              className="text-xs font-bold flex items-center gap-1.5"
-            >
-              <Printer className="w-4 h-4" /> Print Document
-            </Button>
+            {isVerified ? (
+              <>
+                <Button
+                  variant="glow"
+                  size="lg"
+                  onClick={handlePrint}
+                  className="px-6 py-3 rounded-xl font-black text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4 text-slate-950" />
+                  <span>Download Official Pass & Receipt (PDF)</span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={handlePrint}
+                  className="text-xs font-bold flex items-center gap-1.5"
+                >
+                  <Printer className="w-4 h-4" /> Print Document
+                </Button>
+              </>
+            ) : (
+              data.payment_method === 'SSLCOMMERZ' && (
+                <Button
+                  variant="glow"
+                  size="lg"
+                  onClick={handleRetryPayment}
+                  isLoading={retryingPayment}
+                  className="px-6 py-3 rounded-xl font-black text-xs sm:text-sm shadow-xl shadow-amber-500/20 flex items-center gap-2"
+                >
+                  <Zap className="w-4 h-4 text-slate-950" />
+                  <span>Pay ৳{data.total_fee} BDT Online to Unlock Pass</span>
+                </Button>
+              )
+            )}
             <Link href="/">
               <Button variant="secondary" size="md" className="text-xs">
                 Back to Home <ArrowRight className="w-3.5 h-3.5 ml-1" />
@@ -144,7 +248,8 @@ function SuccessContent() {
                 : 'bg-surface text-slate-300 hover:text-white border border-surface-border'
             }`}
           >
-            <Award className="w-3.5 h-3.5" /> Contestant Entry Pass
+            <Award className="w-3.5 h-3.5" />
+            Contestant Entry Pass {!isVerified && '(Locked)'}
           </button>
           <button
             onClick={() => setActiveTab('receipt')}
@@ -154,7 +259,8 @@ function SuccessContent() {
                 : 'bg-surface text-slate-300 hover:text-white border border-surface-border'
             }`}
           >
-            <FileText className="w-3.5 h-3.5" /> Official Payment Receipt
+            <FileText className="w-3.5 h-3.5" />
+            {isVerified ? 'Official Payment Receipt' : 'Payment Invoice'}
           </button>
         </div>
       </div>
@@ -164,8 +270,19 @@ function SuccessContent() {
       {/* ========================================================================= */}
       <div className="space-y-6">
         {/* DOCUMENT PART 1: Official Entry Pass (Admit Card) */}
-        <div className={`print:block ${activeTab === 'pass' ? 'block' : 'hidden'} gradient-border-gold shadow-2xl shadow-amber-500/10 print:shadow-none print:border-2 print:border-slate-800 print:rounded-2xl print:p-0`}>
+        <div className={`print:block ${activeTab === 'pass' ? 'block' : 'hidden'} ${
+          isVerified ? 'gradient-border-gold' : 'border border-amber-500/50'
+        } shadow-2xl shadow-amber-500/10 print:shadow-none print:border-2 print:border-slate-800 print:rounded-2xl print:p-0`}>
           <div className="rounded-[13px] p-6 sm:p-8 bg-surface-elevated/95 space-y-6 print:bg-white print:text-slate-950 print:p-6">
+            
+            {/* Locked Notice Watermark when Unverified */}
+            {!isVerified && (
+              <div className="p-3 rounded-xl bg-amber-950/80 border border-amber-500/80 text-amber-200 text-center text-xs font-mono font-bold flex items-center justify-center gap-2 print:border-slate-400 print:bg-slate-100 print:text-slate-900">
+                <Lock className="w-4 h-4 text-amber-400" />
+                <span>ENTRY PASS LOCKED — PAYMENT STATUS: {data.payment_status_display.toUpperCase()} (৳{data.total_fee} BDT)</span>
+              </div>
+            )}
+
             {/* Pass Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-surface-border print:border-slate-300 gap-4">
               <div className="space-y-1">
@@ -213,13 +330,27 @@ function SuccessContent() {
                 </div>
               </div>
 
-              {/* Scannable Gate QR Code */}
-              <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface print:bg-slate-50 border border-gold/40 print:border-slate-300 text-center space-y-2">
-                <QRCodeSVG value={verifyUrl} size={110} />
-                <span className="text-[10px] font-mono text-gold-light print:text-slate-700 font-bold flex items-center gap-1">
-                  <QrCode className="w-3 h-3 text-gold print:text-amber-700" /> Gate Scan Verified
-                </span>
-              </div>
+              {/* QR Code Section: Valid QR when paid, Locked when unpaid */}
+              {isVerified ? (
+                <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface print:bg-slate-50 border border-gold/40 print:border-slate-300 text-center space-y-2">
+                  <QRCodeSVG value={verifyUrl} size={110} />
+                  <span className="text-[10px] font-mono text-gold-light print:text-slate-700 font-bold flex items-center gap-1">
+                    <QrCode className="w-3 h-3 text-gold print:text-amber-700" /> Gate Scan Verified
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-surface/80 print:bg-slate-50 border border-amber-500/40 print:border-slate-300 text-center space-y-2 min-h-[140px]">
+                  <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 mb-1">
+                    <Lock className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-bold text-amber-300 print:text-slate-900 uppercase tracking-wider block">
+                    QR Code Locked
+                  </span>
+                  <span className="text-[10px] text-slate-400 print:text-slate-600 max-w-[130px] leading-tight block">
+                    Unlocks upon payment of ৳{data.total_fee} BDT
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Registered Competitions */}
@@ -254,25 +385,34 @@ function SuccessContent() {
                 <li>Report at the SJIS Main Entrance Registration Desk by 08:30 AM on the festival day.</li>
                 <li>Bring your physical School/College Student ID Card for contestant kit collection.</li>
                 <li>Coding & Gaming segment participants must bring their own laptops / peripherals.</li>
+                <li className={isVerified ? 'text-emerald-400 print:text-emerald-700 font-semibold' : 'text-amber-400 print:text-amber-800 font-semibold'}>
+                  {isVerified
+                    ? '✓ Entry pass is verified and valid for festival gate admission.'
+                    : '⚠️ Entry passes must be VERIFIED with payment cleared before festival kit issuance.'}
+                </li>
               </ul>
             </div>
           </div>
         </div>
 
         {/* DOCUMENT PART 2: Official Payment Receipt & Tax Invoice */}
-        <div className={`print:block ${activeTab === 'receipt' ? 'block' : 'hidden'} gradient-border-gold shadow-2xl shadow-amber-500/10 print:shadow-none print:border-2 print:border-slate-800 print:rounded-2xl print:p-0`}>
+        <div className={`print:block ${activeTab === 'receipt' ? 'block' : 'hidden'} ${
+          isVerified ? 'gradient-border-gold' : 'border border-surface-border'
+        } shadow-2xl shadow-amber-500/10 print:shadow-none print:border-2 print:border-slate-800 print:rounded-2xl print:p-0`}>
           <div className="rounded-[13px] p-6 sm:p-8 bg-surface-elevated/95 space-y-6 print:bg-white print:text-slate-950 print:p-6">
             {/* Invoice Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-surface-border print:border-slate-300 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-400 print:text-emerald-700 font-extrabold block">
-                  Official Payment Receipt & Tax Invoice
+                <span className={`text-[10px] uppercase font-mono tracking-widest font-extrabold block ${
+                  isVerified ? 'text-emerald-400 print:text-emerald-700' : 'text-amber-400 print:text-amber-800'
+                }`}>
+                  {isVerified ? 'Official Payment Receipt & Tax Invoice' : 'Festival Registration Invoice (Unpaid)'}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-black text-white print:text-slate-950 font-mono">
                   JOSEPHITE TECH CLUB
                 </h2>
                 <p className="text-xs text-slate-300 print:text-slate-600">
-                  SJIS Inter-School Tech Carnival 2026 • SSLCommerz Authenticated
+                  SJIS Inter-School Tech Carnival 2026 • St. Joseph International School
                 </p>
               </div>
 
@@ -281,7 +421,7 @@ function SuccessContent() {
                   Invoice Date: {new Date(data.registered_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                 </span>
                 <Badge
-                  variant={data.payment_status === 'VERIFIED' ? 'gold' : 'champagne'}
+                  variant={isVerified ? 'gold' : data.payment_status === 'REJECTED' ? 'red' : 'champagne'}
                   size="md"
                   className="font-bold font-mono"
                 >
@@ -302,8 +442,8 @@ function SuccessContent() {
               <div className="sm:text-right space-y-1">
                 <span className="text-slate-400 print:text-slate-500 font-bold block uppercase text-[10px]">Payment Details:</span>
                 <div>
-                  <span className="text-slate-400 print:text-slate-600">Gateway: </span>
-                  <strong className="text-white print:text-slate-900">{data.payment_method} (SSLCommerz)</strong>
+                  <span className="text-slate-400 print:text-slate-600">Method: </span>
+                  <strong className="text-white print:text-slate-900">{data.payment_method}</strong>
                 </div>
                 {data.payment_reference && (
                   <div className="font-mono text-slate-300 print:text-slate-700 text-[11px]">
@@ -346,7 +486,9 @@ function SuccessContent() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-surface-border print:border-slate-400 text-sm">
-                    <th colSpan={2} className="py-3 text-right font-bold text-white print:text-slate-950">Grand Total Paid:</th>
+                    <th colSpan={2} className="py-3 text-right font-bold text-white print:text-slate-950">
+                      {isVerified ? 'Grand Total Paid:' : 'Grand Total Due:'}
+                    </th>
                     <th className="py-3 text-right font-mono font-black text-gold print:text-slate-950 text-base">
                       ৳{data.total_fee} BDT
                     </th>
@@ -356,20 +498,45 @@ function SuccessContent() {
             </div>
 
             {/* Verification Stamp */}
-            <div className="p-4 rounded-xl bg-emerald-950/40 print:bg-emerald-50 border border-emerald-500/40 print:border-emerald-300 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-emerald-400 print:text-emerald-700" />
-                <div>
-                  <strong className="text-emerald-300 print:text-emerald-800 block">Payment Authenticated & Recorded</strong>
-                  <span className="text-emerald-200 print:text-emerald-700 text-[11px]">
-                    This is an electronically generated valid receipt. No signature required.
-                  </span>
+            {isVerified ? (
+              <div className="p-4 rounded-xl bg-emerald-950/40 print:bg-emerald-50 border border-emerald-500/40 print:border-emerald-300 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <Check className="w-5 h-5 text-emerald-400 print:text-emerald-700" />
+                  <div>
+                    <strong className="text-emerald-300 print:text-emerald-800 block">Payment Authenticated & Recorded</strong>
+                    <span className="text-emerald-200 print:text-emerald-700 text-[11px]">
+                      This is an electronically generated valid receipt. No signature required.
+                    </span>
+                  </div>
                 </div>
+                <span className="font-mono text-emerald-400 print:text-emerald-800 font-extrabold text-sm uppercase">
+                  PAID ✓
+                </span>
               </div>
-              <span className="font-mono text-emerald-400 print:text-emerald-800 font-extrabold text-sm uppercase">
-                PAID ✓
-              </span>
-            </div>
+            ) : (
+              <div className="p-4 rounded-xl bg-amber-950/40 print:bg-amber-50 border border-amber-500/40 print:border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-3">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 print:text-amber-700 shrink-0" />
+                  <div>
+                    <strong className="text-amber-300 print:text-amber-800 block">Payment Pending / Unpaid</strong>
+                    <span className="text-amber-200 print:text-amber-700 text-[11px]">
+                      This invoice is currently unpaid. Complete payment to obtain an authenticated official receipt.
+                    </span>
+                  </div>
+                </div>
+                {data.payment_method === 'SSLCOMMERZ' && (
+                  <Button
+                    variant="glow"
+                    size="sm"
+                    onClick={handleRetryPayment}
+                    isLoading={retryingPayment}
+                    className="font-bold shrink-0 print:hidden"
+                  >
+                    <Zap className="w-3.5 h-3.5 mr-1" /> Pay ৳{data.total_fee} Now
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

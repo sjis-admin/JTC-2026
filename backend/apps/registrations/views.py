@@ -211,9 +211,22 @@ class RegistrationCreateView(generics.CreateAPIView):
                 fee_charged=fee,
             )
 
-        # Send notifications (best-effort)
-        send_confirmation_email(registration)
-        send_confirmation_sms(registration)
+        # Auto-verify free events (total_fee == 0)
+        if total_fee == 0:
+            registration.payment_status = 'VERIFIED'
+            registration.admin_notes = 'Free carnival event registration'
+            registration.payment_verified_at = timezone.now()
+            registration.save(update_fields=['payment_status', 'admin_notes', 'payment_verified_at'])
+            send_confirmation_email(registration)
+            send_confirmation_sms(registration)
+        elif registration.payment_method in ['BKASH', 'NAGAD', 'BANK']:
+            # Send notification acknowledging receipt of manual transaction reference
+            send_confirmation_email(registration)
+            send_confirmation_sms(registration)
+        # For SSLCOMMERZ with fee > 0:
+        # DO NOT send confirmation email/SMS yet!
+        # The user must complete online payment on the gateway first.
+        # Once verified, sslcommerz_success & sslcommerz_ipn will send the official confirmation.
 
         return Response(
             RegistrationReadSerializer(registration, context={'request': request}).data,
