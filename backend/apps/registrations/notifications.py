@@ -12,30 +12,48 @@ logger = logging.getLogger(__name__)
 
 
 def send_confirmation_email(registration):
-    """Send HTML confirmation email to participant."""
+    """Send HTML confirmation email with official receipt and pass link to participant."""
     site = SiteSettings.get()
     if not site.email_confirmation_enabled:
         return False
     try:
         participant = registration.participant
-        events = [re.event for re in registration.registration_events.select_related('event')]
-        subject = f'Registration Confirmed — {site.carnival_name} | Code: {registration.short_code}'
+        reg_events = list(registration.registration_events.select_related('event'))
+        frontend_base = getattr(settings, 'FRONTEND_URL', 'https://jtc.sjis.edu.bd').rstrip('/')
+        pass_url = f"{frontend_base}/verify?code={registration.short_code}"
+        receipt_url = f"{frontend_base}/register/success?code={registration.confirmation_code}"
+        is_paid = registration.payment_status == 'VERIFIED' or registration.total_fee == 0
+
+        subject = (
+            f"Payment Verified & Entry Pass — {site.carnival_name} | {registration.short_code}"
+            if is_paid else
+            f"Registration Received (Payment: {registration.get_payment_status_display()}) — {site.carnival_name} | {registration.short_code}"
+        )
+
         html_message = render_to_string('emails/registration_confirmation.html', {
             'registration': registration,
             'participant': participant,
-            'events': events,
+            'reg_events': reg_events,
             'site': site,
+            'pass_url': pass_url,
+            'receipt_url': receipt_url,
+            'is_paid': is_paid,
         })
         plain_message = (
             f"Hi {participant.name},\n\n"
-            f"Your registration for {site.carnival_name} is confirmed!\n"
-            f"Confirmation Code: {registration.short_code}\n"
-            f"Events: {', '.join(e.name for e in events)}\n"
-            f"Total Fee: ৳{registration.total_fee}\n"
-            f"Payment Status: {registration.get_payment_status_display()}\n\n"
+            f"Your registration for {site.carnival_name} has been received!\n\n"
+            f"Pass Code: {registration.short_code}\n"
+            f"Payment Status: {registration.get_payment_status_display().upper()}\n"
+            f"Total Registration Fee: ৳{registration.total_fee} BDT\n"
+            f"Payment Method: {registration.payment_method}\n"
+            f"{'Transaction Ref: ' + registration.payment_reference if registration.payment_reference else ''}\n\n"
+            f"Authorized Events:\n"
+            + "\n".join(f" - {re.event.name}: ৳{re.fee_charged} BDT" for re in reg_events) + "\n\n"
+            f"View & Download Official Entry Pass: {pass_url}\n"
+            f"View Official Payment Receipt: {receipt_url}\n\n"
             f"Venue: {site.venue}\n"
-            f"Contact: {site.contact_email}\n\n"
-            "Thank you!\nJosephite Tech Club"
+            f"Contact: {site.contact_email} | {site.contact_phone}\n\n"
+            f"Josephite Tech Club\nSt. Joseph International School"
         )
         send_mail(
             subject=subject,

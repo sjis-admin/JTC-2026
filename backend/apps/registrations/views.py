@@ -372,12 +372,19 @@ def admin_update_payment(request, pk):
     if new_status not in ['PENDING', 'VERIFIED', 'REJECTED', 'REFUNDED']:
         return Response({'error': 'Invalid status.'}, status=status.HTTP_400_BAD_REQUEST)
 
+    previous_status = reg.payment_status
     reg.payment_status = new_status
     reg.admin_notes = notes
     if new_status == 'VERIFIED':
         reg.payment_verified_at = timezone.now()
         reg.payment_verified_by = request.user
     reg.save()
+
+    # Notify participant when admin verifies manual payment (bKash/Nagad/Bank)
+    if new_status == 'VERIFIED' and previous_status != 'VERIFIED':
+        send_confirmation_email(reg)
+        send_confirmation_sms(reg)
+
     return Response(RegistrationReadSerializer(reg, context={'request': request}).data)
 
 

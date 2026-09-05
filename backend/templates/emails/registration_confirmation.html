@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Confirmation — {{ site.carnival_name }}</title>
+  <title>Registration Confirmation & Receipt — {{ site.carnival_name }}</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -24,7 +24,7 @@
       background: linear-gradient(135deg, #00183F 0%, #003366 100%);
       padding: 30px 20px;
       text-align: center;
-      border-bottom: 2px solid #00c9b1;
+      border-bottom: 2px solid #f59e0b;
     }
     .header h1 {
       margin: 0;
@@ -34,26 +34,38 @@
     }
     .header p {
       margin: 8px 0 0;
-      color: #00c9b1;
+      color: #f59e0b;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
     }
     .body {
       padding: 30px 24px;
     }
-    .badge {
+    .badge-verified {
       display: inline-block;
-      background-color: #00c9b1;
-      color: #050e1f;
-      padding: 6px 14px;
+      background-color: #10b981;
+      color: #ffffff;
+      padding: 6px 16px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       border-radius: 20px;
       margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .badge-pending {
+      display: inline-block;
+      background-color: #f59e0b;
+      color: #0f172a;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
     }
     .code-box {
       background: #030814;
-      border: 1px dashed #00c9b1;
+      border: 1px dashed #f59e0b;
       padding: 16px;
       text-align: center;
       border-radius: 8px;
@@ -68,7 +80,7 @@
     .code-box .code {
       font-size: 28px;
       font-weight: 800;
-      color: #00c9b1;
+      color: #f59e0b;
       letter-spacing: 3px;
       margin-top: 4px;
       font-family: 'Courier New', Courier, monospace;
@@ -85,36 +97,95 @@
     }
     .details-table td.label {
       color: #94a3b8;
-      width: 40%;
+      width: 42%;
     }
     .details-table td.value {
       color: #f1f5f9;
       font-weight: 600;
       text-align: right;
     }
-    .events-list {
-      margin: 15px 0;
-      padding: 0;
-      list-style-type: none;
+    .receipt-box {
+      background: #071324;
+      border: 1px solid #1e3a8a;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 24px 0;
     }
-    .events-list li {
-      background: #0f172a;
-      border-left: 3px solid #00c9b1;
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      border-radius: 0 6px 6px 0;
+    .receipt-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #f59e0b;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #1e3a8a;
+      padding-bottom: 8px;
+    }
+    .receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .receipt-table th {
+      text-align: left;
+      color: #94a3b8;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .receipt-table th.right, .receipt-table td.right {
+      text-align: right;
+    }
+    .receipt-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid #0f233a;
+      color: #e2e8f0;
+    }
+    .receipt-table tr.total-row td {
+      font-weight: 800;
+      font-size: 15px;
+      color: #f59e0b;
+      border-top: 1px solid #1e3a8a;
+      padding-top: 12px;
+    }
+    .btn-container {
+      text-align: center;
+      margin: 28px 0;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: #f59e0b;
+      color: #020617 !important;
+      text-decoration: none;
+      font-weight: 800;
       font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      margin: 6px 4px;
+    }
+    .btn-secondary {
+      display: inline-block;
+      background: #1e293b;
+      color: #e2e8f0 !important;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      margin: 6px 4px;
     }
     .footer {
       background: #030814;
-      padding: 20px;
+      padding: 24px;
       text-align: center;
       font-size: 12px;
       color: #64748b;
       border-top: 1px solid #1e293b;
+      line-height: 1.6;
     }
     .footer a {
-      color: #00c9b1;
+      color: #f59e0b;
       text-decoration: none;
     }
   </style>
@@ -126,15 +197,36 @@
       <p>{{ site.carnival_name }}</p>
     </div>
     <div class="body">
-      <div class="badge">Registration Received</div>
-      <p>Dear <strong>{{ participant.name }}</strong>,</p>
-      <p>Thank you for registering for the <strong>{{ site.carnival_name }}</strong>! We are excited to have you join us at St. Joseph International School.</p>
+      {% if is_paid %}
+        <div class="badge-verified">✓ Payment Verified &amp; Confirmed</div>
+      {% else %}
+        <div class="badge-pending">⏳ Registration Received — Payment Pending</div>
+      {% endif %}
 
+      <p style="font-size: 15px;">Dear <strong>{{ participant.name }}</strong>,</p>
+      {% if is_paid %}
+        <p>Your registration and payment have been verified! Below is your official receipt and link to download your Contestant Entry Pass &amp; Admit Card.</p>
+      {% else %}
+        <p>Thank you for submitting your registration for the <strong>{{ site.carnival_name }}</strong>! We have recorded your participant details.</p>
+      {% endif %}
+
+      <!-- Code Box -->
       <div class="code-box">
-        <div class="code-label">Your Confirmation Code</div>
+        <div class="code-label">Contestant Pass Code</div>
         <div class="code">{{ registration.short_code }}</div>
       </div>
 
+      <!-- Quick Action Buttons -->
+      <div class="btn-container">
+        <a href="{{ pass_url }}" class="btn-primary" target="_blank">
+          🎟️ View &amp; Download Entry Pass
+        </a>
+        <a href="{{ receipt_url }}" class="btn-secondary" target="_blank">
+          📄 View Official Receipt
+        </a>
+      </div>
+
+      <!-- Registration Summary -->
       <table class="details-table">
         <tr>
           <td class="label">Participant Name</td>
@@ -149,35 +241,64 @@
           <td class="value">{{ participant.get_grade_display }}</td>
         </tr>
         <tr>
-          <td class="label">Total Registration Fee</td>
-          <td class="value">৳{{ registration.total_fee }} BDT</td>
+          <td class="label">Payment Status</td>
+          <td class="value" style="color: {% if is_paid %}#10b981{% else %}#f59e0b{% endif %}; font-weight: 800;">
+            {{ registration.get_payment_status_display|upper }}
+          </td>
         </tr>
         <tr>
-          <td class="label">Payment Status</td>
-          <td class="value">{{ registration.get_payment_status_display }}</td>
+          <td class="label">Payment Method</td>
+          <td class="value">{{ registration.payment_method }}</td>
         </tr>
         {% if registration.payment_reference %}
         <tr>
-          <td class="label">Payment Reference</td>
-          <td class="value">{{ registration.payment_reference }}</td>
+          <td class="label">Transaction Reference</td>
+          <td class="value" style="font-family: monospace;">{{ registration.payment_reference }}</td>
         </tr>
         {% endif %}
       </table>
 
-      <h3 style="color: #00c9b1; margin-top: 25px; margin-bottom: 10px; font-size: 16px;">Registered Events:</h3>
-      <ul class="events-list">
-        {% for event in events %}
-          <li><strong>{{ event.name }}</strong> ({{ event.get_category_display }})</li>
-        {% endfor %}
-      </ul>
+      <!-- Itemized Receipt Box -->
+      <div class="receipt-box">
+        <div class="receipt-title">Official Itemized Receipt (RCPT-{{ registration.short_code }})</div>
+        <table class="receipt-table">
+          <thead>
+            <tr>
+              <th>Event / Competition</th>
+              <th>Type</th>
+              <th class="right">Fee</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for re in reg_events %}
+            <tr>
+              <td>
+                <strong>{{ re.event.name }}</strong>
+                {% if re.is_team and re.team_name %}
+                  <div style="font-size: 11px; color: #94a3b8;">Team: {{ re.team_name }}</div>
+                {% endif %}
+              </td>
+              <td style="color: #94a3b8;">
+                {% if re.is_team %}Team{% else %}Individual{% endif %}
+              </td>
+              <td class="right" style="font-family: monospace;">৳{{ re.fee_charged }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+              <td colspan="2">Total Amount {% if is_paid %}Paid{% else %}Due{% endif %}</td>
+              <td class="right" style="font-family: monospace;">৳{{ registration.total_fee }} BDT</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <p style="font-size: 13px; color: #94a3b8; margin-top: 20px;">
-        Please keep this email and your confirmation code (<strong>{{ registration.short_code }}</strong>) safe for verification at the registration desk on the event day.
+      <p style="font-size: 13px; color: #94a3b8; margin-top: 20px; line-height: 1.5;">
+        Please keep this email and your Pass Code (<strong>{{ registration.short_code }}</strong>) handy. You can show the QR code on your mobile or present a printed copy at the entrance desk on event day.
       </p>
     </div>
     <div class="footer">
       <p><strong>{{ site.venue }}</strong></p>
-      <p>For questions or assistance, contact: <a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a> | {{ site.contact_phone }}</p>
+      <p>For inquiries, reach out at <a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a> | {{ site.contact_phone }}</p>
       <p>&copy; 2026 Josephite Tech Club, St. Joseph International School. All rights reserved.</p>
     </div>
   </div>
