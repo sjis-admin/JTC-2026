@@ -83,8 +83,8 @@ def auth_guest_otp_verify(request):
     Validates the OTP entered by the guest and issues a session JWT on success.
     POST body: { "email": "user@example.com", "otp": "123456" }
     """
-    email = request.data.get('email', '').strip().lower()
-    otp_input = request.data.get('otp', '').strip()
+    email = str(request.data.get('email') or '').strip().lower()
+    otp_input = str(request.data.get('otp') or '').strip()
 
     if not email or not is_valid_email(email):
         return Response({'error': 'Please provide a valid email address.'}, status=status.HTTP_400_BAD_REQUEST)
