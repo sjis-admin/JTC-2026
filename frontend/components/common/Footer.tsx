@@ -49,11 +49,11 @@ export default function Footer() {
           {/* Col 1: Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-surface border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden relative">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-surface border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden relative shrink-0">
                 <img
                   src={logoSrc}
                   alt="JTC Logo"
-                  className="w-full h-full object-cover rounded-[9px]"
+                  className="w-full h-full object-cover rounded-[14px]"
                   onError={() => setLogoSrc('/images/jtc-logo.png')}
                 />
               </div>

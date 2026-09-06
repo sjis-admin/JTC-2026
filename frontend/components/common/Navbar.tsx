@@ -75,33 +75,33 @@ export default function Navbar() {
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
           isScrolled || mobileMenuOpen
-            ? 'bg-[#020B1E] border-b border-surface-border py-2.5 shadow-2xl shadow-black/90'
-            : 'bg-[#020B1E]/75 backdrop-blur-md py-3 sm:py-4 border-b border-surface-border/40'
+            ? 'bg-[#020B1E] border-b border-surface-border py-2 sm:py-2.5 shadow-2xl shadow-black/90'
+            : 'bg-[#020B1E]/85 backdrop-blur-md py-2.5 sm:py-3 border-b border-surface-border/40'
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sjis-royal via-surface-elevated to-gold p-0.5 shadow-lg shadow-gold/20 group-hover:shadow-gold/40 transition-all">
-              <div className="w-full h-full bg-surface rounded-[10px] flex items-center justify-center border border-gold/40 overflow-hidden relative">
+          <Link href="/" className="flex items-center gap-3 sm:gap-3.5 group shrink-0">
+            <div className="w-12 h-12 sm:w-[58px] sm:h-[58px] rounded-2xl bg-gradient-to-tr from-sjis-royal via-surface-elevated to-gold p-0.5 shadow-xl shadow-gold/25 group-hover:shadow-gold/50 group-hover:scale-105 transition-all duration-300 shrink-0">
+              <div className="w-full h-full bg-surface rounded-[14px] flex items-center justify-center border border-gold/40 overflow-hidden relative shadow-inner">
                 <img
                   src={logoSrc}
                   alt="JTC Logo"
-                  className="w-full h-full object-cover rounded-[9px]"
+                  className="w-full h-full object-cover rounded-[13px]"
                   onError={() => setLogoSrc('/images/jtc-logo.png')}
                 />
               </div>
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="font-black text-base sm:text-lg tracking-wider text-white font-mono group-hover:text-gold-light transition-colors">
+            <div className="flex flex-col justify-center">
+              <div className="flex items-center gap-2">
+                <span className="font-black text-xl sm:text-2xl tracking-wider text-white font-mono group-hover:text-gold-light transition-colors leading-none">
                   JTC
                 </span>
-                <span className="text-[10px] uppercase tracking-widest px-1.5 py-0.2 rounded bg-gold/20 text-gold font-black border border-gold/40 font-mono">
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest px-2 py-0.5 rounded-md bg-gold/20 text-gold font-black border border-gold/40 font-mono">
                   2026
                 </span>
               </div>
-              <span className="text-[10px] sm:text-[11px] text-slate-300 font-medium -mt-1 truncate max-w-[150px] sm:max-w-none">
+              <span className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 truncate max-w-[160px] sm:max-w-none">
                 St. Joseph International School
               </span>
             </div>
@@ -167,7 +167,7 @@ export default function Navbar() {
 
       {/* 100% Solid Opaque Mobile Drawer (No bleed-through) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-[60px] h-[calc(100dvh-60px)] bg-[#020B1E] border-b border-surface-border p-5 overflow-y-auto z-[9999] animate-in fade-in slide-in-from-top-2 duration-150 flex flex-col justify-between space-y-6 shadow-2xl">
+        <div className="lg:hidden fixed inset-x-0 top-[66px] h-[calc(100dvh-66px)] bg-[#020B1E] border-b border-surface-border p-5 overflow-y-auto z-[9999] animate-in fade-in slide-in-from-top-2 duration-150 flex flex-col justify-between space-y-6 shadow-2xl">
           <div className="space-y-4">
             <div className="text-[11px] font-mono uppercase tracking-widest text-gold font-bold px-2 pb-2 border-b border-surface-border/80 flex items-center justify-between">
               <span>Festival Menu</span>
