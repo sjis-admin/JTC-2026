@@ -48,7 +48,7 @@ interface EventsShowcaseProps {
 export default function EventsShowcase({
   events: initialEvents = [],
   title = 'Featured Competitions & Segments',
-  subtitle = 'Discover all 19 competitive challenges, robotics showdowns, and creative arenas.',
+  subtitle = 'Discover all 17 competitive challenges, robotics showdowns, and creative arenas.',
   limit,
   showFilters = true,
   showBundleBanner = true,

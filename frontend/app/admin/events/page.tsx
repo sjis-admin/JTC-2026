@@ -163,7 +163,7 @@ export default function AdminEventsPage() {
             Competitions Management
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Add new competitions, update fees, edit rules, or configure eligibility across all 19 arenas.
+            Add new competitions, update fees, edit rules, or configure eligibility across all 17 arenas.
           </p>
         </div>
 

@@ -113,7 +113,7 @@ export default function Hero({ settings }: HeroProps) {
         <div className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
           <div className="p-5 rounded-2xl bg-surface/70 border border-surface-border backdrop-blur-md hover:border-gold/50 transition-colors">
             <div className="text-3xl font-black text-white font-mono flex items-center justify-between">
-              19 <Cpu className="w-5 h-5 text-gold opacity-90" />
+              17 <Cpu className="w-5 h-5 text-gold opacity-90" />
             </div>
             <div className="text-xs font-semibold text-slate-300 mt-1">Competitions & Arenas</div>
           </div>

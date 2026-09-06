@@ -103,7 +103,7 @@ export default function RulesHighlights() {
         <Link href="/rulebook">
           <Button variant="glow" size="md" className="font-bold inline-flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
-            <span>Read Full 19-Competition Official Rulebook</span>
+            <span>Read Full 17-Competition Official Rulebook</span>
             <ArrowRight className="w-4 h-4" />
           </Button>
         </Link>

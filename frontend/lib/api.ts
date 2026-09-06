@@ -176,7 +176,7 @@ export async function fetchSiteSettings(): Promise<SiteSettingsData> {
       facebook_url: 'https://facebook.com',
       instagram_url: 'https://instagram.com',
       youtube_url: 'https://youtube.com',
-      announcement_banner: '⚡ Registrations for SJIS Inter-School Tech Carnival 2026 are now open! Explore 18 exciting events and register today.',
+      announcement_banner: '⚡ Registrations for SJIS Inter-School Tech Carnival 2026 are now open! Explore 17 exciting events and register today.',
       logo_url: null,
     };
   }

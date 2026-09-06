@@ -39,7 +39,7 @@ export default function MobileStickyBar() {
             </div>
             <div>
               <span className="text-xs font-bold text-white block">Tech Carnival 2026</span>
-              <span className="text-[10px] text-jtc-teal font-mono">19 Events • ৳200 onwards</span>
+              <span className="text-[10px] text-jtc-teal font-mono">17 Events • ৳200 onwards</span>
             </div>
           </div>
 

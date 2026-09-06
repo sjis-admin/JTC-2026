@@ -75,7 +75,7 @@ export default async function RulebookPage() {
               <h2 className="text-xl sm:text-2xl font-black text-white font-mono mt-0.5">
                 SJIS INTER-SCHOOL TECH CARNIVAL 2026
               </h2>
-              <span className="text-xs text-slate-300">Official Festival Compendium & 19-Arena Rulebook</span>
+              <span className="text-xs text-slate-300">Official Festival Compendium & 17-Arena Rulebook</span>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="gold" size="md">
