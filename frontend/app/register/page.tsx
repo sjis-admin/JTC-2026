@@ -875,7 +875,7 @@ function RegisterForm() {
                         <span className="text-[10px] text-emerald-300 uppercase font-bold tracking-wider block">You Save</span>
                         <span className="text-xl font-black text-emerald-400 font-mono">৳{bundleInfo.savings}</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 line-through font-mono">Original: ৳{bundleInfo.original_total}</span>
+                      <span className="text-xs text-slate-300 font-mono font-medium line-through decoration-rose-400/80">Original: ৳{bundleInfo.original_total}</span>
                     </div>
                   </div>
 
@@ -1252,7 +1252,7 @@ function RegisterForm() {
                   <span className="font-bold">Bundle Bonus: {bundleInfo.bonus}</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-slate-400 line-through font-mono">Original: ৳{bundleInfo.original_total}</span>
+                  <span className="text-slate-300 line-through decoration-rose-400/80 font-mono">Original: ৳{bundleInfo.original_total}</span>
                   <span className="text-emerald-400 font-bold">You save ৳{bundleInfo.savings}!</span>
                 </div>
               </div>
