@@ -101,7 +101,7 @@ function RegisterForm() {
   const [phone, setPhone] = useState('');
   const [schoolId, setSchoolId] = useState<string>('');
   const [schoolOther, setSchoolOther] = useState('');
-  const [grade, setGrade] = useState('9');
+  const [grade, setGrade] = useState('');
 
   // Touched state for realtime validation feedback
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
@@ -143,8 +143,8 @@ function RegisterForm() {
           setSelectedEvents(draft.selectedEvents);
         }
         if (draft.isBundleSelected) {
-          const draftGroup = GRADE_TO_GROUP[draft.grade || '9'] || 'D';
-          if (BUNDLE_ELIGIBLE_GROUPS.includes(draftGroup)) {
+          const draftGroup = draft.grade ? (GRADE_TO_GROUP[draft.grade] || '') : '';
+          if (!draftGroup || BUNDLE_ELIGIBLE_GROUPS.includes(draftGroup)) {
             setIsBundleSelected(true);
           }
         }
@@ -215,9 +215,9 @@ function RegisterForm() {
       setBundleInfo(bndInfo);
 
       if (preselectedBundle === '1' || preselectedBundle === 'true') {
-        const initialGroup = GRADE_TO_GROUP[grade] || 'D';
+        const initialGroup = grade ? (GRADE_TO_GROUP[grade] || '') : '';
         const eligibleList = bndInfo?.eligible_groups || BUNDLE_ELIGIBLE_GROUPS;
-        if (eligibleList.includes(initialGroup)) {
+        if (!initialGroup || eligibleList.includes(initialGroup)) {
           setIsBundleSelected(true);
           setSelectedEvents({});
         } else {
@@ -233,7 +233,7 @@ function RegisterForm() {
           if (targetEvent && targetEvent.eligibility_groups.length > 0) {
             // Check if current group is eligible; if not, switch to first eligible group's grade
             const isEligibleNow = targetEvent.eligibility_groups.some(
-              (g) => g.code === GRADE_TO_GROUP[grade]
+              (g) => g.code === (GRADE_TO_GROUP[grade] || '')
             );
             if (!isEligibleNow) {
               const firstGroupCode = targetEvent.eligibility_groups[0].code;
@@ -252,22 +252,25 @@ function RegisterForm() {
     loadData();
   }, [preselectedEventId, preselectedBundle]);
 
-  const currentGroup = GRADE_TO_GROUP[grade] || 'D';
-  const isGroupEligibleForBundle = (bundleInfo?.eligible_groups || BUNDLE_ELIGIBLE_GROUPS).includes(currentGroup);
+  const currentGroup = grade ? (GRADE_TO_GROUP[grade] || '') : '';
+  const isGroupEligibleForBundle = Boolean(
+    currentGroup && (bundleInfo?.eligible_groups || BUNDLE_ELIGIBLE_GROUPS).includes(currentGroup)
+  );
 
   // Reactive enforcement: If grade changes to an ineligible group (e.g. Group E University),
   // automatically deselect bundle and notify the participant gracefully.
   useEffect(() => {
-    if (!isGroupEligibleForBundle && isBundleSelected) {
+    if (grade && !isGroupEligibleForBundle && isBundleSelected) {
       setIsBundleSelected(false);
       setBundleIneligibleNotice(
         'The 5-in-1 Tech Festival Bundle Offer is exclusively applicable for School & College students (Groups A to D, Grades 3–12). Since you selected a University grade (Group E), the bundle offer was automatically deselected. Please choose from our open collegiate competitions below.'
       );
     }
-  }, [isGroupEligibleForBundle, isBundleSelected]);
+  }, [grade, isGroupEligibleForBundle, isBundleSelected]);
 
   // Filter events eligible for selected grade group
   const eligibleEvents = useMemo(() => {
+    if (!currentGroup) return events;
     return events.filter((e) =>
       e.eligibility_groups.some((g) => g.code === currentGroup)
     );
@@ -347,8 +350,13 @@ function RegisterForm() {
       errors.schoolOther = 'Please enter your school / college / university name (min 3 chars).';
     }
 
+    // Grade Validation
+    if (!grade) {
+      errors.grade = 'Please select your grade / academic level.';
+    }
+
     return errors;
-  }, [name, email, phone, schoolId, schoolOther]);
+  }, [name, email, phone, schoolId, schoolOther, grade]);
 
   // Step 2 Team Validations
   const step2TeamErrors = useMemo(() => {
@@ -429,6 +437,7 @@ function RegisterForm() {
       phone: true,
       school: true,
       schoolOther: true,
+      grade: true,
     });
 
     if (Object.keys(validationErrors).length > 0) {
@@ -665,7 +674,7 @@ function RegisterForm() {
             Please enter your accurate contact and academic details for verification, digital entry pass, and certificates.
           </CardDescription>
 
-          {isBundleSelected && isGroupEligibleForBundle && (
+          {isBundleSelected && (!grade || isGroupEligibleForBundle) && (
             <div className="mb-6 p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-emerald-900/60 to-surface border border-emerald-500/40 text-xs text-emerald-200 flex items-center justify-between gap-3 shadow-lg">
               <div className="flex items-center gap-2.5">
                 <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-sm font-bold shrink-0">
@@ -681,12 +690,14 @@ function RegisterForm() {
                     </span>
                   </div>
                   <span className="text-[11px] text-slate-300">
-                    All 5 flagship arenas + 1 complimentary FC match in Game Zone included!
+                    {!grade
+                      ? 'Select your Grade (Grades 3–12) below to confirm your bundle enrollment.'
+                      : 'All 5 flagship arenas + 1 complimentary FC match in Game Zone included!'}
                   </span>
                 </div>
               </div>
               <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-300 uppercase tracking-wider shrink-0 border border-emerald-400/30">
-                Active
+                {!grade ? 'Pending Grade' : 'Active'}
               </span>
             </div>
           )}
@@ -866,18 +877,45 @@ function RegisterForm() {
                 </label>
                 <select
                   value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-surface border border-surface-border text-white text-sm focus:outline-none focus:border-gold cursor-pointer"
+                  onChange={(e) => {
+                    setGrade(e.target.value);
+                    markTouched('grade');
+                  }}
+                  onBlur={() => markTouched('grade')}
+                  className={`w-full px-4 py-2.5 rounded-xl bg-surface border text-sm focus:outline-none cursor-pointer transition-all ${
+                    (touched.grade || submitAttempted) && validationErrors.grade
+                      ? 'border-rose-500 ring-1 ring-rose-500 bg-rose-950/20 text-white'
+                      : !grade
+                      ? 'border-surface-border text-slate-400 focus:border-gold'
+                      : 'border-surface-border text-white focus:border-gold'
+                  }`}
                 >
+                  <option value="" disabled className="bg-surface text-slate-400">
+                    -- Select your Grade / Academic Level --
+                  </option>
                   {GRADE_OPTIONS.map((g) => (
                     <option key={g.value} value={g.value} className="bg-surface text-white">
                       {g.label}
                     </option>
                   ))}
                 </select>
-                <p className="text-[10px] text-gold-light font-semibold">
-                  Automatically categorized into <strong className="text-gold font-mono">Group {currentGroup}</strong>
-                </p>
+                {(touched.grade || submitAttempted) && validationErrors.grade ? (
+                  <p className="text-[11px] text-rose-400 font-medium flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5" /> {validationErrors.grade}
+                  </p>
+                ) : !grade ? (
+                  <p className="text-[10px] text-slate-400">
+                    Select your grade to determine your competition division (Group A to Group E)
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5 animate-in fade-in">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    Categorized into <strong className="text-gold font-mono">Group {currentGroup}</strong>
+                    <span className="text-slate-400 font-normal">
+                      ({currentGroup === 'E' ? 'University Division' : `Grades ${currentGroup === 'A' ? '3–4' : currentGroup === 'B' ? '5–6' : currentGroup === 'C' ? '7–8' : '9–12'}`})
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
 
