@@ -62,19 +62,24 @@ export default function BundleSpotlightBanner({ className = '' }: BundleSpotligh
               <span className="text-[10px] text-emerald-300 uppercase font-bold tracking-widest block font-mono">
                 Exclusive Package
               </span>
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-2.5 sm:gap-3 mt-0.5">
                 <span className="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight">
                   ৳1,000
                 </span>
-                <span className="text-xs text-slate-300 font-mono font-medium line-through decoration-rose-400/80">
-                  Orig: ৳1,400
-                </span>
+                <div className="flex flex-col items-start leading-none">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 font-mono tracking-wider">
+                    Regular
+                  </span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-slate-200 line-through decoration-rose-500 decoration-[2.5px]">
+                    ৳1,400
+                  </span>
+                </div>
               </div>
             </div>
-            <span className="text-[11px] text-emerald-200/80 font-medium mt-0.5">
+            <span className="text-[11px] text-emerald-200/80 font-medium mt-1">
               All 5 Events Included
             </span>
-            <span className="text-[10px] font-bold text-emerald-400 font-mono mt-1">
+            <span className="text-[10px] font-bold text-emerald-400 font-mono mt-0.5">
               Groups A – D Only
             </span>
           </div>
