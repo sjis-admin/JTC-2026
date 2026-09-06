@@ -210,6 +210,26 @@
         <p>Thank you for submitting your registration for the <strong>{{ site.carnival_name }}</strong>! We have recorded your participant details.</p>
       {% endif %}
 
+      {% if registration.is_bundle %}
+      <!-- 5-in-1 Tech Festival Bundle Highlight Card -->
+      <div style="background: linear-gradient(135deg, #042f2e 0%, #064e3b 100%); border: 2px solid #10b981; border-radius: 10px; padding: 18px 20px; margin: 20px 0; color: #ffffff;">
+        <div style="font-size: 15px; font-weight: 800; color: #34d399; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+          ✨ 5-in-1 Tech Festival Bundle Enrolled!
+        </div>
+        <p style="margin: 0 0 12px; font-size: 13.5px; color: #e2e8f0; line-height: 1.5;">
+          You purchased the exclusive <strong>5-in-1 Tech Festival Bundle Offer</strong> for <strong>৳1,000 BDT</strong> (Regular value: ৳1,400 — you saved ৳400!). You are registered for all 5 core festival competitions.
+        </p>
+        <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; border-radius: 8px; padding: 12px 14px;">
+          <div style="color: #fbbf24; font-weight: 800; font-size: 13px; margin-bottom: 2px;">
+            ⚽ Complimentary FC Bonus Round Included!
+          </div>
+          <div style="color: #fef3c7; font-size: 12.5px; line-height: 1.4;">
+            As a bundle purchaser, you get <strong>1 free round of FC in the festival Game Zone</strong>. Please remember to claim your complimentary FC token at the Game Zone helpdesk on festival day by presenting your pass code!
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Code Box -->
       <div class="code-box">
         <div class="code-label">Contestant Pass Code</div>
@@ -284,6 +304,16 @@
               <td class="right" style="font-family: monospace;">৳{{ re.fee_charged }}</td>
             </tr>
             {% endfor %}
+            {% if registration.is_bundle %}
+            <tr>
+              <td>
+                <strong style="color: #34d399;">✨ 5-in-1 Festival Bundle Discount</strong>
+                <div style="font-size: 11px; color: #fbbf24;">⚽ Includes 1 Free Round of FC in Game Zone</div>
+              </td>
+              <td style="color: #34d399;">Package</td>
+              <td class="right" style="font-family: monospace; color: #34d399;">-৳400</td>
+            </tr>
+            {% endif %}
             <tr class="total-row">
               <td colspan="2">Total Amount {% if is_paid %}Paid{% else %}Due{% endif %}</td>
               <td class="right" style="font-family: monospace;">৳{{ registration.total_fee }} BDT</td>

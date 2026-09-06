@@ -39,9 +39,21 @@ def send_confirmation_email(registration):
             'receipt_url': receipt_url,
             'is_paid': is_paid,
         })
+        bundle_section = ""
+        if registration.is_bundle:
+            bundle_section = (
+                "--------------------------------------------------\n"
+                "✨ 5-IN-1 TECH FESTIVAL BUNDLE ENROLLED!\n"
+                "Fee: ৳1,000 BDT (Regular Value: ৳1,400 — Saved: ৳400)\n"
+                "⚽ BONUS PERK: 1 Complimentary Free Round of FC in the Game Zone!\n"
+                "Remember to claim your free FC round at the Game Zone desk on festival day.\n"
+                "--------------------------------------------------\n\n"
+            )
+
         plain_message = (
             f"Hi {participant.name},\n\n"
             f"Your registration for {site.carnival_name} has been received!\n\n"
+            f"{bundle_section}"
             f"Pass Code: {registration.short_code}\n"
             f"Payment Status: {registration.get_payment_status_display().upper()}\n"
             f"Total Registration Fee: ৳{registration.total_fee} BDT\n"

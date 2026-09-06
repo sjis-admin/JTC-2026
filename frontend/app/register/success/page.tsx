@@ -329,6 +329,29 @@ function SuccessContent() {
               </div>
             </div>
 
+            {/* Special Gold/Emerald Bundle Crest */}
+            {data.is_bundle && (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-emerald-900/70 to-amber-950/90 border-2 border-emerald-400/60 print:border-2 print:border-emerald-600 print:bg-emerald-50 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl print:shadow-none">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-400/20 border border-emerald-400/50 print:bg-emerald-100 print:border-emerald-600 text-lg shrink-0">
+                    ✨
+                  </div>
+                  <div>
+                    <span className="font-extrabold text-emerald-300 print:text-emerald-800 text-sm tracking-wide block">
+                      ✨ 5-in-1 Festival Bundle Attendee
+                    </span>
+                    <span className="text-[11px] text-slate-300 print:text-slate-700">
+                      All-Access 5 Competition Package • VIP Contestant
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-400/15 border border-amber-400/40 print:border-amber-600 print:bg-amber-100 text-xs font-bold text-amber-300 print:text-amber-900 shrink-0">
+                  <span className="text-sm">⚽</span>
+                  <span>Includes 1 Complimentary Round of FC in Game Zone</span>
+                </div>
+              </div>
+            )}
+
             {/* Participant Details & QR Verification Section */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
               <div className="sm:col-span-2 space-y-3.5 text-xs">
@@ -507,6 +530,16 @@ function SuccessContent() {
                   ))}
                 </tbody>
                 <tfoot>
+                  {data.is_bundle && (
+                    <tr className="border-t border-surface-border print:border-slate-300 text-xs text-emerald-400 print:text-emerald-800 font-semibold">
+                      <td colSpan={2} className="py-2.5">
+                        ✨ 5-in-1 Tech Festival Bundle (৳400 Savings Applied + ⚽ 1 Free FC Round)
+                      </td>
+                      <td className="py-2.5 text-right font-mono font-bold text-emerald-400 print:text-emerald-800">
+                        -৳400 BDT
+                      </td>
+                    </tr>
+                  )}
                   <tr className="border-t-2 border-surface-border print:border-slate-400 text-sm">
                     <th colSpan={2} className="py-3 text-right font-bold text-white print:text-slate-950">
                       {isVerified ? 'Grand Total Paid:' : 'Grand Total Due:'}
