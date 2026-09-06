@@ -21,7 +21,7 @@ export default function Footer() {
 
   const phone = settings?.contact_phone || '+880 2-9116271';
   const email = settings?.contact_email || 'jtc@sjis.edu.bd';
-  const venue = settings?.venue || '97 Asad Avenue, Mohammadpur, Dhaka 1207';
+  const venue = settings?.venue || 'St. Joseph International School, 97 Asad Avenue, Mohammadpur, Dhaka 1207';
   const fbUrl = settings?.facebook_url || 'https://facebook.com';
   const instaUrl = settings?.instagram_url || 'https://instagram.com';
   const ytUrl = settings?.youtube_url || 'https://youtube.com';
@@ -98,9 +98,28 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-gold-light">Campus & Helpdesk</h4>
             <div className="space-y-2.5 text-xs text-slate-300">
-              <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-gold shrink-0" />
-                <span>{venue}</span>
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                <div className="leading-snug">
+                  {venue.includes('St. Joseph') && (venue.includes('97 Asad') || venue.includes('Asad Avenue')) ? (
+                    <>
+                      <span className="block font-medium text-slate-200">
+                        {venue.split(/,(.+)/)[0]?.trim()}
+                      </span>
+                      <span className="block text-slate-400 mt-0.5">
+                        {venue.split(/,(.+)/)[1]?.trim()}
+                      </span>
+                    </>
+                  ) : venue.includes('\n') ? (
+                    venue.split('\n').map((line, idx) => (
+                      <span key={idx} className="block text-slate-300">
+                        {line}
+                      </span>
+                    ))
+                  ) : (
+                    <span>{venue}</span>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-gold shrink-0" />
