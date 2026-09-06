@@ -13,13 +13,20 @@ import { fetchSiteSettings } from '@/lib/api';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string | null>('/images/jtc-logo.png');
+  const [logoSrc, setLogoSrc] = useState<string>('/images/jtc-logo.png');
   const pathname = usePathname();
 
   useEffect(() => {
     fetchSiteSettings()
       .then((data) => {
-        if (data?.logo_url) setLogoUrl(data.logo_url);
+        if (data?.logo_url && data.logo_url !== logoSrc) {
+          // Verify remote logo loads cleanly before applying to prevent flicker/404s
+          const testImg = new window.Image();
+          testImg.onload = () => {
+            setLogoSrc(data.logo_url!);
+          };
+          testImg.src = data.logo_url;
+        }
       })
       .catch(() => {});
   }, []);
@@ -77,15 +84,12 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sjis-royal via-surface-elevated to-gold p-0.5 shadow-lg shadow-gold/20 group-hover:shadow-gold/40 transition-all">
               <div className="w-full h-full bg-surface rounded-[10px] flex items-center justify-center border border-gold/40 overflow-hidden relative">
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt="JTC Logo"
-                    className="w-full h-full object-cover rounded-[9px]"
-                  />
-                ) : (
-                  <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-gold group-hover:rotate-12 transition-transform" />
-                )}
+                <img
+                  src={logoSrc}
+                  alt="JTC Logo"
+                  className="w-full h-full object-cover rounded-[9px]"
+                  onError={() => setLogoSrc('/images/jtc-logo.png')}
+                />
               </div>
             </div>
             <div className="flex flex-col">

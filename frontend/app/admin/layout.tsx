@@ -46,15 +46,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.replace('/');
       });
 
-    // Fetch site settings for branding logo
+    // Fetch site settings for branding logo (pre-validated)
     fetchSiteSettings()
       .then((settings) => {
-        if (settings?.logo_url) {
-          setLogoUrl(settings.logo_url);
+        if (settings?.logo_url && settings.logo_url !== logoUrl) {
+          const testImg = new window.Image();
+          testImg.onload = () => {
+            setLogoUrl(settings.logo_url!);
+          };
+          testImg.src = settings.logo_url;
         }
       })
       .catch(() => {});
-  }, [router, authorized, user]);
+  }, [router, authorized, user, logoUrl]);
 
   // Reset page switching loader when pathname updates
   useEffect(() => {
@@ -116,7 +120,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Brand */}
           <div className="flex items-center gap-3 pb-2 border-b border-surface-border">
             <div className="w-9 h-9 rounded-xl bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden shrink-0">
-              <img src={logoUrl || '/images/jtc-logo.png'} alt="JTC Logo" className="w-full h-full object-cover rounded-[10px]" />
+              <img
+                src={logoUrl || '/images/jtc-logo.png'}
+                alt="JTC Logo"
+                className="w-full h-full object-cover rounded-[10px]"
+                onError={() => setLogoUrl('/images/jtc-logo.png')}
+              />
             </div>
             <div>
               <span className="font-black text-white text-base tracking-wider font-mono block">
@@ -199,7 +208,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="lg:hidden bg-surface border-b border-surface-border p-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold overflow-hidden shrink-0">
-              <img src={logoUrl || '/images/jtc-logo.png'} alt="JTC Logo" className="w-full h-full object-cover rounded-md" />
+              <img
+                src={logoUrl || '/images/jtc-logo.png'}
+                alt="JTC Logo"
+                className="w-full h-full object-cover rounded-md"
+                onError={() => setLogoUrl('/images/jtc-logo.png')}
+              />
             </div>
             <span className="font-mono font-bold text-white text-sm">JTC Control Center</span>
           </div>

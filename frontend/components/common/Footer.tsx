@@ -19,6 +19,18 @@ export default function Footer() {
     return null;
   }
 
+  const [logoSrc, setLogoSrc] = useState<string>('/images/jtc-logo.png');
+
+  useEffect(() => {
+    if (settings?.logo_url && settings.logo_url !== logoSrc) {
+      const testImg = new window.Image();
+      testImg.onload = () => {
+        setLogoSrc(settings.logo_url!);
+      };
+      testImg.src = settings.logo_url;
+    }
+  }, [settings?.logo_url]);
+
   const phone = settings?.contact_phone || '+880 2-9116271';
   const email = settings?.contact_email || 'jtc@sjis.edu.bd';
   const venue = settings?.venue || 'St. Joseph International School, 97 Asad Avenue, Mohammadpur, Dhaka 1207';
@@ -39,9 +51,10 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-surface border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden relative">
                 <img
-                  src={settings?.logo_url || '/images/jtc-logo.png'}
+                  src={logoSrc}
                   alt="JTC Logo"
                   className="w-full h-full object-cover rounded-[9px]"
+                  onError={() => setLogoSrc('/images/jtc-logo.png')}
                 />
               </div>
               <div>

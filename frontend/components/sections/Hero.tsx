@@ -15,6 +15,18 @@ interface HeroProps {
 }
 
 export default function Hero({ settings }: HeroProps) {
+  const [logoSrc, setLogoSrc] = React.useState<string>('/images/jtc-logo.png');
+
+  React.useEffect(() => {
+    if (settings?.logo_url && settings.logo_url !== logoSrc) {
+      const testImg = new window.Image();
+      testImg.onload = () => {
+        setLogoSrc(settings.logo_url!);
+      };
+      testImg.src = settings.logo_url;
+    }
+  }, [settings?.logo_url]);
+
   const targetDate = settings.carnival_start_date
     ? `${settings.carnival_start_date}T09:00:00+06:00`
     : '2026-10-01T09:00:00+06:00';
@@ -35,9 +47,10 @@ export default function Hero({ settings }: HeroProps) {
         <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-elevated/90 border border-gold/40 text-xs font-semibold shadow-xl shadow-gold/10 backdrop-blur-xl animate-fade-in hover:border-gold transition-colors">
           <div className="w-5 h-5 rounded-full overflow-hidden border border-gold/60 shadow-sm shrink-0">
             <img
-              src={settings.logo_url || '/images/jtc-logo.png'}
+              src={logoSrc}
               alt="JTC Emblem"
               className="w-full h-full object-cover"
+              onError={() => setLogoSrc('/images/jtc-logo.png')}
             />
           </div>
           <span className="text-gold-light font-mono font-bold tracking-wider">SJIS TECH CARNIVAL 2026</span>

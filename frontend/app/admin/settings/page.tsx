@@ -253,6 +253,7 @@ export default function AdminSettingsPage() {
                     src={settings?.logo_url || '/images/jtc-logo.png'}
                     alt="Active JTC Logo"
                     className="w-full h-full object-cover rounded-md"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/images/jtc-logo.png'; }}
                   />
                 </div>
                 <div className="text-xs space-y-1 min-w-0 flex-1">
