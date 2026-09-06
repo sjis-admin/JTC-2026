@@ -12,6 +12,7 @@ import {
   Camera, FileText, HelpCircle, Smile, Box, Compass, Crosshair, Trophy, Bot, Cpu, Plane,
   ArrowRight, Users, User, MapPin, Search, Eye, X, CheckCircle2, Award
 } from 'lucide-react';
+import BundleSpotlightBanner from './BundleSpotlightBanner';
 
 const iconMap: Record<string, React.ReactNode> = {
   Sparkles: <Sparkles className="w-5 h-5 text-amber-400" />,
@@ -41,6 +42,7 @@ interface EventsShowcaseProps {
   subtitle?: string;
   limit?: number;
   showFilters?: boolean;
+  showBundleBanner?: boolean;
 }
 
 export default function EventsShowcase({
@@ -49,6 +51,7 @@ export default function EventsShowcase({
   subtitle = 'Discover all 19 competitive challenges, robotics showdowns, and creative arenas.',
   limit,
   showFilters = true,
+  showBundleBanner = true,
 }: EventsShowcaseProps) {
   const [events, setEvents] = useState<EventItem[]>(initialEvents);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -149,6 +152,13 @@ export default function EventsShowcase({
           </Link>
         )}
       </div>
+
+      {/* 5-in-1 Tech Festival Bundle Spotlight Banner */}
+      {showBundleBanner && (
+        <div className="mb-12">
+          <BundleSpotlightBanner />
+        </div>
+      )}
 
       {/* Interactive Search & Filter Controls */}
       {showFilters && (

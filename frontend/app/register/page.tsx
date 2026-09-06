@@ -64,6 +64,7 @@ function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedEventId = searchParams.get('event');
+  const preselectedBundle = searchParams.get('bundle');
 
   // ─── Auth Gate State ──────────────────────────────────────────────────────
   const [authUnlocked, setAuthUnlocked] = useState<boolean>(false);
@@ -207,7 +208,10 @@ function RegisterForm() {
       setSiteSettings(stData);
       setBundleInfo(bndInfo);
 
-      if (preselectedEventId) {
+      if (preselectedBundle === '1' || preselectedBundle === 'true') {
+        setIsBundleSelected(true);
+        setSelectedEvents({});
+      } else if (preselectedEventId) {
         const id = parseInt(preselectedEventId, 10);
         if (id) {
           const targetEvent = evList.find((e) => e.id === id);
@@ -231,7 +235,7 @@ function RegisterForm() {
       }
     }
     loadData();
-  }, [preselectedEventId]);
+  }, [preselectedEventId, preselectedBundle]);
 
   const currentGroup = GRADE_TO_GROUP[grade] || 'D';
 
@@ -612,6 +616,27 @@ function RegisterForm() {
           <CardDescription className="mb-6">
             Please enter your accurate contact and academic details for verification, digital entry pass, and certificates.
           </CardDescription>
+
+          {isBundleSelected && (
+            <div className="mb-6 p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-emerald-900/60 to-surface border border-emerald-500/40 text-xs text-emerald-200 flex items-center justify-between gap-3 shadow-lg">
+              <div className="flex items-center gap-2.5">
+                <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-sm font-bold shrink-0">
+                  ✨
+                </span>
+                <div>
+                  <span className="font-bold text-white block">
+                    5-in-1 Tech Festival Bundle Pre-Selected (৳1,000)
+                  </span>
+                  <span className="text-[11px] text-slate-300">
+                    All 5 flagship arenas + 1 complimentary FC match in Game Zone included!
+                  </span>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-300 uppercase tracking-wider shrink-0 border border-emerald-400/30">
+                Active
+              </span>
+            </div>
+          )}
 
           <div className="space-y-5">
             {/* Full Name Field */}
