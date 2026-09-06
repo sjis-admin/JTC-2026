@@ -154,9 +154,33 @@ export default function EventsShowcase({
       </div>
 
       {/* 5-in-1 Tech Festival Bundle Spotlight Banner */}
-      {showBundleBanner && (
+      {showBundleBanner && selectedGroup !== 'E' && (
         <div className="mb-12">
           <BundleSpotlightBanner />
+        </div>
+      )}
+      {showBundleBanner && selectedGroup === 'E' && (
+        <div className="mb-12 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900/80 to-surface-elevated border border-blue-500/30 text-slate-300">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 shrink-0 font-bold text-lg">
+                🎓
+              </div>
+              <div>
+                <h4 className="text-white font-bold text-sm sm:text-base">
+                  University Division (Group E) Competitions Active
+                </h4>
+                <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+                  Showing events open to University contestants. <em>Note: The 5-in-1 Festival Bundle Pass is exclusively structured for School &amp; College levels (Groups A to D, Grades 3–12).</em>
+                </p>
+              </div>
+            </div>
+            <Link href="/register">
+              <Button variant="glow" size="sm" className="whitespace-nowrap font-bold text-xs">
+                Register for Group E Events →
+              </Button>
+            </Link>
+          </div>
         </div>
       )}
 
@@ -251,9 +275,9 @@ export default function EventsShowcase({
                     {icon}
                   </div>
                   <div className="flex flex-wrap gap-1.5 justify-end">
-                    {BUNDLE_EVENT_SLUGS.includes(event.slug) && (
+                    {BUNDLE_EVENT_SLUGS.includes(event.slug) && selectedGroup !== 'E' && (
                       <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 shadow-sm flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-emerald-400" /> In 5-in-1 Bundle
+                        <Sparkles className="w-3 h-3 text-emerald-400" /> In 5-in-1 Bundle (Grades 3–12)
                       </span>
                     )}
                     <span className="font-mono font-black text-sm px-3 py-1 rounded-full bg-gold/15 text-gold border border-gold/40 shadow-sm">

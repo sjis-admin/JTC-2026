@@ -68,6 +68,12 @@ def bundle_info(request):
         'original_total': original_total,
         'savings': savings,
         'eligible_groups': bundle_eligible_groups,
+        'eligible_groups_display': 'Groups A to D (Grade 3 to Grade 12)',
+        'eligibility_note': (
+            'The 5-in-1 Festival Bundle Offer is exclusively applicable for School & College '
+            'contestants (Groups A to D, Grade 3 to Grade 12). University participants (Group E) '
+            'must register for individual collegiate competitions.'
+        ),
         'bonus': bundle_bonus,
         'events': EventListSerializer(bundle_events, many=True).data,
     })

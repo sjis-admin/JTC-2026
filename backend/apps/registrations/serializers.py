@@ -120,10 +120,13 @@ class RegistrationCreateSerializer(serializers.Serializer):
         if is_bundle:
             bundle_eligible = getattr(settings, 'BUNDLE_ELIGIBLE_GROUPS', ['A', 'B', 'C', 'D'])
             if participant_group_code not in bundle_eligible:
-                raise serializers.ValidationError(
-                    f'The Bundle Competition Package is only available for Groups A to D '
-                    f'(Grade 3 to Grade 12). Your group ({participant_group_code}) is not eligible.'
-                )
+                raise serializers.ValidationError({
+                    'is_bundle': (
+                        f'The 5-in-1 Festival Bundle Offer is only applicable for Groups A to D '
+                        f'(Grade 3 to Grade 12). Your group ({participant_group_code}) is not eligible '
+                        f'for this bundle package. Please select individual competitions.'
+                    )
+                })
             bundle_slugs = getattr(settings, 'BUNDLE_EVENT_SLUGS', [])
             bundle_events = list(
                 Event.objects.filter(slug__in=bundle_slugs, is_active=True)

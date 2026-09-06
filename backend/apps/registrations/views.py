@@ -208,6 +208,14 @@ class RegistrationCreateView(generics.CreateAPIView):
         events_payload = data['events']
 
         if is_bundle:
+            bundle_eligible = getattr(settings, 'BUNDLE_ELIGIBLE_GROUPS', ['A', 'B', 'C', 'D'])
+            participant_group = participant.group.code if participant.group else GRADE_TO_GROUP.get(participant.grade)
+            if participant_group not in bundle_eligible:
+                participant.delete()
+                return Response(
+                    {'error': f'The 5-in-1 Festival Bundle Offer is only applicable for Groups A to D (Grade 3 to Grade 12). Your group ({participant_group}) is not eligible.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             # Bundle flat pricing — override individual event fees
             total_fee = getattr(settings, 'BUNDLE_PRICE', 1000)
         else:

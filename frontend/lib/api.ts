@@ -108,9 +108,13 @@ export interface BundleInfoData {
   original_total: number;
   savings: number;
   eligible_groups: string[];
+  eligible_groups_display?: string;
+  eligibility_note?: string;
   bonus: string;
   events: EventItem[];
 }
+
+export const BUNDLE_ELIGIBLE_GROUPS = ['A', 'B', 'C', 'D'];
 
 export const BUNDLE_EVENT_SLUGS = [
   'coding-marathon',
@@ -214,6 +218,8 @@ export async function fetchBundleInfo(): Promise<BundleInfoData> {
       original_total: originalTotal,
       savings: originalTotal - price,
       eligible_groups: ['A', 'B', 'C', 'D'],
+      eligible_groups_display: 'Groups A to D (Grade 3 to Grade 12)',
+      eligibility_note: 'The 5-in-1 Festival Bundle Offer is exclusively applicable for School & College contestants (Groups A to D, Grade 3 to Grade 12). University participants (Group E) must register for individual collegiate competitions.',
       bonus: 'One free round of FC playing in the Game Zone!',
       events: bundleEvents,
     };

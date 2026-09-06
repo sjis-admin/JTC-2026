@@ -219,6 +219,10 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                       Save ৳400
                     </span>
                   </div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-[10px] font-bold text-emerald-200 font-mono">
+                    <Users className="w-3 h-3 text-emerald-400" />
+                    <span>Applicable for Groups A to D (Grades 3–12)</span>
+                  </div>
                   <p className="text-xs text-slate-200 leading-relaxed">
                     Compete in <strong className="text-white">{event.name}</strong> + 4 other flagship events for only <strong className="text-emerald-400 font-mono text-sm">৳1,000</strong>! Includes free Game Zone FC match.
                   </p>
@@ -229,9 +233,14 @@ export default async function EventDetailPage({ params }: EventPageProps) {
                       className="w-full justify-center text-xs font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/25 flex items-center gap-1.5"
                     >
                       <Zap className="w-3.5 h-3.5 fill-slate-950" />
-                      <span>Get All 5 Events for ৳1,000 →</span>
+                      <span>Get 5-in-1 Bundle Pass (৳1,000) →</span>
                     </Button>
                   </Link>
+                  {event.eligibility_groups.some(g => g.code === 'E') && (
+                    <p className="text-[10px] text-slate-400 text-center">
+                      University participants (Group E) can register individually using the button above.
+                    </p>
+                  )}
                 </div>
               )}
             </div>

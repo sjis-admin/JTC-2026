@@ -9,7 +9,7 @@ import { Card, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
   fetchEvents, fetchSchools, fetchSiteSettings, submitRegistration, initiateSSLCommerzPayment,
-  fetchBundleInfo,
+  fetchBundleInfo, BUNDLE_ELIGIBLE_GROUPS,
   EventItem, SchoolItem, SiteSettingsData, RegistrationPayload, BundleInfoData
 } from '@/lib/api';
 import { Turnstile } from '@/components/ui/Turnstile';
@@ -122,9 +122,10 @@ function RegisterForm() {
   const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
 
-  // Bundle Package state
+  // Bundle Package state & eligibility notice
   const [isBundleSelected, setIsBundleSelected] = useState<boolean>(false);
   const [bundleInfo, setBundleInfo] = useState<BundleInfoData | null>(null);
+  const [bundleIneligibleNotice, setBundleIneligibleNotice] = useState<string>('');
 
   // ─── 1. Restore saved draft on mount ───────────────────────────────────────────
   useEffect(() => {
@@ -141,7 +142,12 @@ function RegisterForm() {
         if (draft.selectedEvents && Object.keys(draft.selectedEvents).length > 0) {
           setSelectedEvents(draft.selectedEvents);
         }
-        if (draft.isBundleSelected) setIsBundleSelected(true);
+        if (draft.isBundleSelected) {
+          const draftGroup = GRADE_TO_GROUP[draft.grade || '9'] || 'D';
+          if (BUNDLE_ELIGIBLE_GROUPS.includes(draftGroup)) {
+            setIsBundleSelected(true);
+          }
+        }
         if (draft.paymentMethod) setPaymentMethod(draft.paymentMethod);
         if (draft.paymentReference) setPaymentReference(draft.paymentReference);
         setDraftRestored(true);
@@ -209,8 +215,17 @@ function RegisterForm() {
       setBundleInfo(bndInfo);
 
       if (preselectedBundle === '1' || preselectedBundle === 'true') {
-        setIsBundleSelected(true);
-        setSelectedEvents({});
+        const initialGroup = GRADE_TO_GROUP[grade] || 'D';
+        const eligibleList = bndInfo?.eligible_groups || BUNDLE_ELIGIBLE_GROUPS;
+        if (eligibleList.includes(initialGroup)) {
+          setIsBundleSelected(true);
+          setSelectedEvents({});
+        } else {
+          setIsBundleSelected(false);
+          setBundleIneligibleNotice(
+            'The 5-in-1 Festival Bundle Offer is exclusively applicable for School & College contestants (Groups A to D, Grades 3–12). Since you selected a University grade (Group E), please select individual collegiate events.'
+          );
+        }
       } else if (preselectedEventId) {
         const id = parseInt(preselectedEventId, 10);
         if (id) {
@@ -238,6 +253,18 @@ function RegisterForm() {
   }, [preselectedEventId, preselectedBundle]);
 
   const currentGroup = GRADE_TO_GROUP[grade] || 'D';
+  const isGroupEligibleForBundle = (bundleInfo?.eligible_groups || BUNDLE_ELIGIBLE_GROUPS).includes(currentGroup);
+
+  // Reactive enforcement: If grade changes to an ineligible group (e.g. Group E University),
+  // automatically deselect bundle and notify the participant gracefully.
+  useEffect(() => {
+    if (!isGroupEligibleForBundle && isBundleSelected) {
+      setIsBundleSelected(false);
+      setBundleIneligibleNotice(
+        'The 5-in-1 Tech Festival Bundle Offer is exclusively applicable for School & College students (Groups A to D, Grades 3–12). Since you selected a University grade (Group E), the bundle offer was automatically deselected. Please choose from our open collegiate competitions below.'
+      );
+    }
+  }, [isGroupEligibleForBundle, isBundleSelected]);
 
   // Filter events eligible for selected grade group
   const eligibleEvents = useMemo(() => {
@@ -358,7 +385,15 @@ function RegisterForm() {
     });
   };
 
-  const selectBundle = () => { setSelectedEvents({}); setIsBundleSelected(true); };
+  const selectBundle = () => {
+    if (!isGroupEligibleForBundle) {
+      setGlobalError('The 5-in-1 Festival Bundle Offer is only applicable for Groups A to D (Grade 3 to Grade 12).');
+      return;
+    }
+    setSelectedEvents({});
+    setIsBundleSelected(true);
+    setBundleIneligibleNotice('');
+  };
   const deselectBundle = () => setIsBundleSelected(false);
 
   const removeEvent = (eventId: number) => {
@@ -371,7 +406,7 @@ function RegisterForm() {
 
   // Calculate total fee
   const totalFee = useMemo(() => {
-    if (isBundleSelected && bundleInfo) return bundleInfo.price;
+    if (isBundleSelected && isGroupEligibleForBundle && bundleInfo) return bundleInfo.price;
     return Object.entries(selectedEvents).reduce((sum, [eventIdStr, meta]) => {
       const event = events.find((e) => e.id === parseInt(eventIdStr, 10));
       if (!event) return sum;
@@ -380,7 +415,7 @@ function RegisterForm() {
       }
       return sum + event.individual_fee;
     }, 0);
-  }, [selectedEvents, events, isBundleSelected, bundleInfo]);
+  }, [selectedEvents, events, isBundleSelected, isGroupEligibleForBundle, bundleInfo]);
 
   // STEP 1 PROCEED
   const handleStep1Next = () => {
@@ -410,13 +445,22 @@ function RegisterForm() {
   const handleStep2Next = () => {
     setGlobalError('');
     if (isBundleSelected) {
+      if (!isGroupEligibleForBundle) {
+        setIsBundleSelected(false);
+        setGlobalError('The Bundle Package is only applicable for Groups A to D (Grade 3 to 12). Please select individual competitions.');
+        return;
+      }
       setStep(3);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
     const count = Object.keys(selectedEvents).length;
     if (count === 0) {
-      setGlobalError('Please select at least one competition to enter, or choose the Bundle Package.');
+      setGlobalError(
+        isGroupEligibleForBundle
+          ? 'Please select at least one competition to enter, or choose the Bundle Package.'
+          : 'Please select at least one competition to enter.'
+      );
       return;
     }
     if (Object.keys(step2TeamErrors).length > 0) {
@@ -431,6 +475,10 @@ function RegisterForm() {
   // STEP 3 SUBMISSION
   const handleSubmit = async () => {
     setGlobalError('');
+    if (isBundleSelected && !isGroupEligibleForBundle) {
+      setGlobalError('The Bundle Package is only applicable for Groups A to D. Please return to Step 2 and select individual events.');
+      return;
+    }
     setLoading(true);
 
     try {
@@ -441,8 +489,8 @@ function RegisterForm() {
         school_id: schoolId === 'other' ? null : parseInt(schoolId, 10),
         school_name_other: schoolId === 'other' ? schoolOther.trim() : '',
         grade,
-        is_bundle: isBundleSelected,
-        events: isBundleSelected
+        is_bundle: isBundleSelected && isGroupEligibleForBundle,
+        events: (isBundleSelected && isGroupEligibleForBundle)
           ? (bundleInfo?.events || []).map((e) => ({ event_id: e.id, is_team: false }))
           : Object.entries(selectedEvents).map(([idStr, meta]) => ({
               event_id: parseInt(idStr, 10),
@@ -617,16 +665,21 @@ function RegisterForm() {
             Please enter your accurate contact and academic details for verification, digital entry pass, and certificates.
           </CardDescription>
 
-          {isBundleSelected && (
+          {isBundleSelected && isGroupEligibleForBundle && (
             <div className="mb-6 p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-emerald-900/60 to-surface border border-emerald-500/40 text-xs text-emerald-200 flex items-center justify-between gap-3 shadow-lg">
               <div className="flex items-center gap-2.5">
                 <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-sm font-bold shrink-0">
                   ✨
                 </span>
                 <div>
-                  <span className="font-bold text-white block">
-                    5-in-1 Tech Festival Bundle Pre-Selected (৳1,000)
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-white block">
+                      5-in-1 Tech Festival Bundle Pre-Selected (৳1,000)
+                    </span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-bold uppercase">
+                      Groups A–D
+                    </span>
+                  </div>
                   <span className="text-[11px] text-slate-300">
                     All 5 flagship arenas + 1 complimentary FC match in Game Zone included!
                   </span>
@@ -635,6 +688,31 @@ function RegisterForm() {
               <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-300 uppercase tracking-wider shrink-0 border border-emerald-400/30">
                 Active
               </span>
+            </div>
+          )}
+
+          {/* Dismissible Bundle Ineligible Notice (for Group E) */}
+          {bundleIneligibleNotice && (
+            <div className="mb-6 p-4 rounded-xl bg-amber-950/40 border border-amber-500/50 text-xs text-amber-200 flex items-start justify-between gap-3 shadow-lg animate-in fade-in duration-200">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-amber-300 block mb-0.5">
+                    Bundle Offer Eligibility Policy
+                  </span>
+                  <p className="text-amber-200/90 leading-relaxed text-[11px] sm:text-xs">
+                    {bundleIneligibleNotice}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBundleIneligibleNotice('')}
+                className="text-amber-400 hover:text-white text-xs font-bold p-1 rounded cursor-pointer"
+                title="Dismiss Notice"
+              >
+                ✕
+              </button>
             </div>
           )}
 
@@ -855,9 +933,9 @@ function RegisterForm() {
           <div className="lg:col-span-2 space-y-4">
 
             {/* ══════════════════════════════════════════════════════════════ */}
-            {/* BUNDLE COMPETITION PACKAGE CARD — Premium Attractive UI       */}
+            {/* BUNDLE COMPETITION PACKAGE CARD — Groups A to D Only          */}
             {/* ══════════════════════════════════════════════════════════════ */}
-            {bundleInfo && bundleInfo.eligible_groups.includes(currentGroup) && (
+            {bundleInfo && isGroupEligibleForBundle && (
               <div className={`relative rounded-2xl overflow-hidden transition-all duration-300 ${
                 isBundleSelected
                   ? 'ring-2 ring-emerald-400 shadow-2xl shadow-emerald-500/25'
@@ -881,6 +959,9 @@ function RegisterForm() {
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-black uppercase tracking-widest text-emerald-400 font-mono">Bundle Competition Package</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400/20 border border-emerald-400/50 text-emerald-300 font-bold font-mono">
+                            Groups A to D Only
+                          </span>
                           {isBundleSelected && (
                             <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400/20 border border-emerald-400/40 text-emerald-300 font-bold animate-pulse">✓ SELECTED</span>
                           )}
@@ -889,7 +970,7 @@ function RegisterForm() {
                           Only <span className="text-emerald-400 font-mono">৳1,000</span>
                         </h3>
                         <p className="text-xs text-slate-300 mt-0.5">
-                          Register once — compete in <strong className="text-white">5 exciting events</strong>!
+                          Register once — compete in <strong className="text-white">5 exciting events</strong>! Exclusively for Groups A to D.
                         </p>
                       </div>
                     </div>
@@ -950,13 +1031,49 @@ function RegisterForm() {
                     <button
                       type="button"
                       onClick={selectBundle}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black text-sm transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-400/50 hover:scale-[1.01] active:scale-[0.99] group"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-400/50 hover:scale-[1.01] active:scale-[0.99] group"
                     >
                       <Sparkles className="w-4 h-4 shrink-0" />
                       <span>Select Bundle — Pay Only ৳1,000 for 5 Events</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                     </button>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* ══════════════════════════════════════════════════════════════ */}
+            {/* GROUP E COLLEGIATE GUIDANCE CARD (When Ineligible for Bundle) */}
+            {/* ══════════════════════════════════════════════════════════════ */}
+            {!isGroupEligibleForBundle && (
+              <div className="relative rounded-2xl overflow-hidden border border-blue-500/40 bg-gradient-to-br from-blue-950/40 via-slate-900/60 to-surface-elevated p-5 sm:p-6 text-slate-300 shadow-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 shrink-0 font-bold text-lg">
+                      🎓
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-black uppercase tracking-wider text-blue-400 font-mono">
+                          University Division (Group E) Notice
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 font-mono font-bold">
+                          Collegiate Tier
+                        </span>
+                      </div>
+                      <h4 className="text-base sm:text-lg font-bold text-white mt-1">
+                        Individual Collegiate Registration Active
+                      </h4>
+                      <p className="text-xs text-slate-300 mt-1 leading-relaxed max-w-xl">
+                        The <strong>5-in-1 Festival Bundle Offer (৳1,000)</strong> is structured exclusively for School &amp; College contestants (Groups A to D, Grades 3–12). As a University contestant in Group E, you are eligible to register for individual collegiate competitions below (such as Robo Showcase, Tech-Art Bonanza, and other open arenas).
+                      </p>
+                    </div>
+                  </div>
+                  <div className="shrink-0 self-start sm:self-center">
+                    <span className="inline-block px-3 py-1.5 rounded-xl bg-surface border border-surface-border text-[11px] font-mono text-slate-300">
+                      Select Competitions Below ↓
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
@@ -1130,7 +1247,7 @@ function RegisterForm() {
                 <span className="text-xs uppercase font-bold text-slate-200 flex items-center gap-1.5">
                   <ShoppingBag className="w-4 h-4 text-gold" /> Selection Cart
                 </span>
-                {isBundleSelected ? (
+                {isBundleSelected && isGroupEligibleForBundle ? (
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400/20 border border-emerald-400/40 text-emerald-300 font-bold">Bundle ✓</span>
                 ) : (
                   <Badge variant="gold" size="sm">
@@ -1141,7 +1258,7 @@ function RegisterForm() {
 
               {/* Items List */}
               <div className="space-y-2 py-3 max-h-64 overflow-y-auto">
-                {isBundleSelected && bundleInfo ? (
+                {isBundleSelected && isGroupEligibleForBundle && bundleInfo ? (
                   <>
                     <div className="p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 space-y-2">
                       <div className="flex items-center justify-between">
@@ -1257,7 +1374,7 @@ function RegisterForm() {
             </div>
             
             {/* Bundle or Individual Events display */}
-            {isBundleSelected && bundleInfo ? (
+            {isBundleSelected && isGroupEligibleForBundle && bundleInfo ? (
               <div className="mt-2 space-y-2">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />

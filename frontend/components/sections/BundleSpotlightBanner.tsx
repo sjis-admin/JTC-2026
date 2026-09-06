@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import {
-  Sparkles, CheckCircle2, ArrowRight, Zap, Flame, Cpu, Code2, HelpCircle, Gamepad2, Shield
+  Sparkles, CheckCircle2, ArrowRight, Zap, Flame, Cpu, Code2, HelpCircle, Gamepad2, Shield, Users
 } from 'lucide-react';
 
 interface BundleSpotlightBannerProps {
@@ -38,6 +38,10 @@ export default function BundleSpotlightBanner({ className = '' }: BundleSpotligh
                 <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                 Featured Value Package
               </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-400/20 border border-emerald-400/60 text-[11px] font-bold text-emerald-200 uppercase tracking-wider font-mono shadow-sm">
+                <Users className="w-3.5 h-3.5 text-emerald-400" />
+                Groups A to D Only (Grades 3–12)
+              </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-[11px] font-extrabold text-amber-300 uppercase tracking-wider font-mono">
                 <Flame className="w-3.5 h-3.5 text-amber-400" />
                 Save ৳400 (29% Off)
@@ -48,7 +52,7 @@ export default function BundleSpotlightBanner({ className = '' }: BundleSpotligh
               5-in-1 Tech Festival Bundle Pass
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-              Register once — unlock admission across <strong className="text-white">5 premier competitive arenas</strong> with a single VIP festival package!
+              Register once — unlock admission across <strong className="text-white">5 premier competitive arenas</strong> with a single VIP festival package! Exclusively available for school &amp; college contestants in <strong className="text-emerald-300">Group A to Group D</strong> (Grade 3 to Grade 12).
             </p>
           </div>
 
@@ -69,6 +73,9 @@ export default function BundleSpotlightBanner({ className = '' }: BundleSpotligh
             </div>
             <span className="text-[11px] text-emerald-200/80 font-medium mt-0.5">
               All 5 Events Included
+            </span>
+            <span className="text-[10px] font-bold text-emerald-400 font-mono mt-1">
+              Groups A – D Only
             </span>
           </div>
         </div>
@@ -151,7 +158,7 @@ export default function BundleSpotlightBanner({ className = '' }: BundleSpotligh
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-black text-xs sm:text-sm shadow-xl shadow-emerald-500/25 bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4 fill-slate-950" />
-                <span>Claim 5-in-1 Bundle (৳1,000)</span>
+                <span>Claim 5-in-1 Bundle (Groups A–D • ৳1,000)</span>
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
