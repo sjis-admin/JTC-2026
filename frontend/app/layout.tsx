@@ -106,6 +106,13 @@ export const metadata: Metadata = {
     },
   },
   category: "Technology",
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
 };
 
 // ─── JSON-LD Structured Data for Google Rich Snippets ─────────────────────────
@@ -160,7 +167,7 @@ const structuredData = {
       "@id": "https://sjis.edu.bd/#organization",
       name: "St. Joseph International School",
       url: "https://sjis.edu.bd",
-      logo: "https://jtc.sjis.edu.bd/favicon.ico",
+      logo: "https://jtc.sjis.edu.bd/images/jtc-logo-512.png",
       address: {
         "@type": "PostalAddress",
         streetAddress: "97 Asad Avenue, Mohammadpur",

@@ -33,10 +33,13 @@ export default function Hero({ settings }: HeroProps) {
         
         {/* Top Floating Prestige Badge */}
         <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-elevated/90 border border-gold/40 text-xs font-semibold shadow-xl shadow-gold/10 backdrop-blur-xl animate-fade-in hover:border-gold transition-colors">
-          <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-light"></span>
-          </span>
+          <div className="w-5 h-5 rounded-full overflow-hidden border border-gold/60 shadow-sm shrink-0">
+            <img
+              src={settings.logo_url || '/images/jtc-logo.png'}
+              alt="JTC Emblem"
+              className="w-full h-full object-cover"
+            />
+          </div>
           <span className="text-gold-light font-mono font-bold tracking-wider">SJIS TECH CARNIVAL 2026</span>
           <span className="text-slate-500">•</span>
           <span className="text-gold font-bold flex items-center gap-1">

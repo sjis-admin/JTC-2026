@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
   const [isPageSwitching, setIsPageSwitching] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>('/images/jtc-logo.png');
 
   useEffect(() => {
     const token = getAdminToken();
@@ -116,11 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Brand */}
           <div className="flex items-center gap-3 pb-2 border-b border-surface-border">
             <div className="w-9 h-9 rounded-xl bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden shrink-0">
-              {logoUrl ? (
-                <img src={logoUrl} alt="JTC Logo" className="w-full h-full object-contain p-1 rounded-[10px]" />
-              ) : (
-                <Cpu className="w-5 h-5" />
-              )}
+              <img src={logoUrl || '/images/jtc-logo.png'} alt="JTC Logo" className="w-full h-full object-cover rounded-[10px]" />
             </div>
             <div>
               <span className="font-black text-white text-base tracking-wider font-mono block">
@@ -203,11 +199,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="lg:hidden bg-surface border-b border-surface-border p-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold overflow-hidden shrink-0">
-              {logoUrl ? (
-                <img src={logoUrl} alt="JTC Logo" className="w-full h-full object-contain p-0.5" />
-              ) : (
-                <Cpu className="w-4 h-4" />
-              )}
+              <img src={logoUrl || '/images/jtc-logo.png'} alt="JTC Logo" className="w-full h-full object-cover rounded-md" />
             </div>
             <span className="font-mono font-bold text-white text-sm">JTC Control Center</span>
           </div>

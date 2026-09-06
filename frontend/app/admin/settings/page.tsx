@@ -246,21 +246,25 @@ export default function AdminSettingsPage() {
               onChange={(e) => setLogoFile(e.target.files?.[0] || null)}
               className="text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-surface-elevated file:text-gold hover:file:bg-surface cursor-pointer"
             />
-            {settings?.logo_url && (
+            {(settings?.logo_url || '/images/jtc-logo.png') && (
               <div className="mt-3 flex items-center gap-3.5 p-3 rounded-xl bg-surface-elevated/80 border border-gold/30">
-                <div className="w-14 h-14 rounded-lg bg-surface border border-gold/40 flex items-center justify-center overflow-hidden p-1.5 shrink-0 shadow-inner">
+                <div className="w-14 h-14 rounded-lg bg-surface border border-gold/40 flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-inner">
                   <img
-                    src={settings.logo_url}
+                    src={settings?.logo_url || '/images/jtc-logo.png'}
                     alt="Active JTC Logo"
-                    className="w-full h-full object-contain rounded-md"
+                    className="w-full h-full object-cover rounded-md"
                   />
                 </div>
                 <div className="text-xs space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-slate-200 font-semibold">Active Logo Live across Website & Admin</span>
+                    <span className="text-slate-200 font-semibold">
+                      {settings?.logo_url ? 'Custom Logo Live across Website & Admin' : 'Official JTC Brand Emblem Active'}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 font-mono truncate select-all">{settings.logo_url}</p>
+                  <p className="text-[11px] text-slate-400 font-mono truncate select-all">
+                    {settings?.logo_url || '/images/jtc-logo.png'}
+                  </p>
                 </div>
               </div>
             )}

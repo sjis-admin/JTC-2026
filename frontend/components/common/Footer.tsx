@@ -38,15 +38,11 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-surface border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden relative">
-                {settings?.logo_url ? (
-                  <img
-                    src={settings.logo_url}
-                    alt="JTC Logo"
-                    className="w-full h-full object-contain p-1 rounded-[9px]"
-                  />
-                ) : (
-                  <Cpu className="w-5 h-5" />
-                )}
+                <img
+                  src={settings?.logo_url || '/images/jtc-logo.png'}
+                  alt="JTC Logo"
+                  className="w-full h-full object-cover rounded-[9px]"
+                />
               </div>
               <div>
                 <span className="font-black text-white text-base sm:text-lg tracking-wider font-mono whitespace-nowrap block">

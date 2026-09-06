@@ -307,16 +307,25 @@ function SuccessContent() {
 
             {/* Pass Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-surface-border print:border-slate-300 gap-4">
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-gold print:text-amber-700 font-extrabold block">
-                  Official Contestant Entry Pass & Admit Card
-                </span>
-                <h2 className="text-xl sm:text-2xl font-black text-white print:text-slate-950 font-mono">
-                  JOSEPHITE TECH CLUB
-                </h2>
-                <p className="text-xs text-slate-300 print:text-slate-600 font-medium">
-                  St. Joseph International School • 97 Asad Avenue, Mohammadpur, Dhaka 1207
-                </p>
+              <div className="flex items-center gap-3.5">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-surface border border-gold/50 overflow-hidden shadow-lg shrink-0 print:border-slate-400">
+                  <img
+                    src="/images/jtc-logo.png"
+                    alt="JTC Logo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-gold print:text-amber-700 font-extrabold block">
+                    Official Contestant Entry Pass & Admit Card
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-black text-white print:text-slate-950 font-mono">
+                    JOSEPHITE TECH CLUB
+                  </h2>
+                  <p className="text-xs text-slate-300 print:text-slate-600 font-medium">
+                    St. Joseph International School • 97 Asad Avenue, Mohammadpur, Dhaka 1207
+                  </p>
+                </div>
               </div>
 
               <div className="text-left sm:text-right bg-surface print:bg-slate-100 p-3 rounded-xl border border-surface-border print:border-slate-300">
@@ -447,18 +456,27 @@ function SuccessContent() {
           <div className="rounded-[13px] p-6 sm:p-8 bg-surface-elevated/95 space-y-6 print:bg-white print:text-slate-950 print:p-6">
             {/* Invoice Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-surface-border print:border-slate-300 gap-4">
-              <div className="space-y-1">
-                <span className={`text-[10px] uppercase font-mono tracking-widest font-extrabold block ${
-                  isVerified ? 'text-emerald-400 print:text-emerald-700' : 'text-amber-400 print:text-amber-800'
-                }`}>
-                  {isVerified ? 'Official Payment Receipt & Tax Invoice' : 'Festival Registration Invoice (Unpaid)'}
-                </span>
-                <h2 className="text-xl sm:text-2xl font-black text-white print:text-slate-950 font-mono">
-                  JOSEPHITE TECH CLUB
-                </h2>
-                <p className="text-xs text-slate-300 print:text-slate-600">
-                  SJIS Inter-School Tech Carnival 2026 • St. Joseph International School
-                </p>
+              <div className="flex items-center gap-3.5">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-surface border border-gold/50 overflow-hidden shadow-lg shrink-0 print:border-slate-400">
+                  <img
+                    src="/images/jtc-logo.png"
+                    alt="JTC Logo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className={`text-[10px] uppercase font-mono tracking-widest font-extrabold block ${
+                    isVerified ? 'text-emerald-400 print:text-emerald-700' : 'text-amber-400 print:text-amber-800'
+                  }`}>
+                    {isVerified ? 'Official Payment Receipt & Tax Invoice' : 'Festival Registration Invoice (Unpaid)'}
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-black text-white print:text-slate-950 font-mono">
+                    JOSEPHITE TECH CLUB
+                  </h2>
+                  <p className="text-xs text-slate-300 print:text-slate-600">
+                    SJIS Inter-School Tech Carnival 2026 • St. Joseph International School
+                  </p>
+                </div>
               </div>
 
               <div className="text-left sm:text-right space-y-1">

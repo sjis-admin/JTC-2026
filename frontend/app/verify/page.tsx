@@ -47,8 +47,11 @@ function VerifyContent() {
   return (
     <div className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
       <div className="text-center space-y-3 mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/40 text-xs font-semibold text-gold">
-          <ShieldCheck className="w-3.5 h-3.5" /> Official Verification Portal
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-gold/40 text-xs font-semibold text-gold shadow-md">
+          <div className="w-4 h-4 rounded-full overflow-hidden border border-gold/60 shrink-0">
+            <img src="/images/jtc-logo.png" alt="JTC" className="w-full h-full object-cover" />
+          </div>
+          <span>Official Verification Portal</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-display">
           Verify Contestant Entry Pass
@@ -122,14 +125,19 @@ function VerifyContent() {
               )}
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-surface-border gap-4">
-                <div>
-                  <span className={`text-[10px] font-mono tracking-widest font-bold uppercase block ${
-                    isVerified ? 'text-emerald-400' : 'text-amber-400'
-                  }`}>
-                    {isVerified ? 'Status: Verified & Valid for Gate Entry ✓' : `Status: ${result.payment_status_display.toUpperCase()} (UNVERIFIED)`}
-                  </span>
-                  <h2 className="text-xl font-black text-white font-mono">{result.participant_name}</h2>
-                  <p className="text-xs text-slate-300">{result.participant_school}</p>
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-surface border border-gold/50 overflow-hidden shadow-md shrink-0">
+                    <img src="/images/jtc-logo.png" alt="JTC Logo" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <span className={`text-[10px] font-mono tracking-widest font-bold uppercase block ${
+                      isVerified ? 'text-emerald-400' : 'text-amber-400'
+                    }`}>
+                      {isVerified ? 'Status: Verified & Valid for Gate Entry ✓' : `Status: ${result.payment_status_display.toUpperCase()} (UNVERIFIED)`}
+                    </span>
+                    <h2 className="text-xl font-black text-white font-mono">{result.participant_name}</h2>
+                    <p className="text-xs text-slate-300">{result.participant_school}</p>
+                  </div>
                 </div>
 
                 <div className="text-left sm:text-right">

@@ -13,7 +13,7 @@ import { fetchSiteSettings } from '@/lib/api';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>('/images/jtc-logo.png');
   const pathname = usePathname();
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function Navbar() {
                   <img
                     src={logoUrl}
                     alt="JTC Logo"
-                    className="w-full h-full object-contain p-1 rounded-[9px]"
+                    className="w-full h-full object-cover rounded-[9px]"
                   />
                 ) : (
                   <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-gold group-hover:rotate-12 transition-transform" />
