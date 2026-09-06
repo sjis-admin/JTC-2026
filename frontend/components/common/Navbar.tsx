@@ -8,11 +8,21 @@ import {
   Menu, X, Cpu, Search, Sparkles, ArrowRight, BookOpen, ShieldCheck, Home, Trophy, Users, FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fetchSiteSettings } from '@/lib/api';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    fetchSiteSettings()
+      .then((data) => {
+        if (data?.logo_url) setLogoUrl(data.logo_url);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,8 +76,16 @@ export default function Navbar() {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sjis-royal via-surface-elevated to-gold p-0.5 shadow-lg shadow-gold/20 group-hover:shadow-gold/40 transition-all">
-              <div className="w-full h-full bg-surface rounded-[10px] flex items-center justify-center border border-gold/40">
-                <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-gold group-hover:rotate-12 transition-transform" />
+              <div className="w-full h-full bg-surface rounded-[10px] flex items-center justify-center border border-gold/40 overflow-hidden relative">
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt="JTC Logo"
+                    className="w-full h-full object-contain p-1 rounded-[9px]"
+                  />
+                ) : (
+                  <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-gold group-hover:rotate-12 transition-transform" />
+                )}
               </div>
             </div>
             <div className="flex flex-col">

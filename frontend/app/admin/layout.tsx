@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { getAdminToken, clearAdminToken, adminFetch, ADMIN_AUTH_PATH } from '@/lib/api';
+import { getAdminToken, clearAdminToken, adminFetch, ADMIN_AUTH_PATH, fetchSiteSettings } from '@/lib/api';
 import { AdminLoader } from '@/components/ui/AdminLoader';
 import {
   LayoutDashboard, Users, CalendarDays, School, Settings, LogOut, Cpu, ArrowLeft, Menu, X, QrCode, ShieldCheck
@@ -18,6 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
   const [isPageSwitching, setIsPageSwitching] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const token = getAdminToken();
@@ -44,6 +45,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         clearAdminToken();
         router.replace('/');
       });
+
+    // Fetch site settings for branding logo
+    fetchSiteSettings()
+      .then((settings) => {
+        if (settings?.logo_url) {
+          setLogoUrl(settings.logo_url);
+        }
+      })
+      .catch(() => {});
   }, [router, authorized, user]);
 
   // Reset page switching loader when pathname updates
@@ -105,8 +115,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="space-y-6">
           {/* Brand */}
           <div className="flex items-center gap-3 pb-2 border-b border-surface-border">
-            <div className="w-9 h-9 rounded-xl bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold shadow-md">
-              <Cpu className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold shadow-md overflow-hidden shrink-0">
+              {logoUrl ? (
+                <img src={logoUrl} alt="JTC Logo" className="w-full h-full object-contain p-1 rounded-[10px]" />
+              ) : (
+                <Cpu className="w-5 h-5" />
+              )}
             </div>
             <div>
               <span className="font-black text-white text-base tracking-wider font-mono block">
@@ -187,9 +201,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Top bar for mobile */}
         <header className="lg:hidden bg-surface border-b border-surface-border p-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-gold" />
-            <span className="font-mono font-bold text-white">JTC Control Center</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold overflow-hidden shrink-0">
+              {logoUrl ? (
+                <img src={logoUrl} alt="JTC Logo" className="w-full h-full object-contain p-0.5" />
+              ) : (
+                <Cpu className="w-4 h-4" />
+              )}
+            </div>
+            <span className="font-mono font-bold text-white text-sm">JTC Control Center</span>
           </div>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
