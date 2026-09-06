@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, ArrowRight, CornerDownLeft, Sparkles, HelpCircle, Trophy, DollarSign, Calendar, MapPin, Gamepad2, Bot, ShieldCheck } from 'lucide-react';
+import { Terminal, ArrowRight, CornerDownLeft, Sparkles, HelpCircle, Trophy, DollarSign, Calendar, MapPin, Gamepad2, Bot, ShieldCheck, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 interface HistoryItem {
@@ -10,6 +10,16 @@ interface HistoryItem {
 }
 
 const DEMO_SEQUENCE = [
+  {
+    cmd: 'bundle --offer',
+    output: (
+      <div className="space-y-0.5 text-slate-300">
+        <p className="text-emerald-400 font-bold">✨ 5-in-1 Tech Festival Bundle: ৳1,000 Flat (Save ৳400)</p>
+        <p className="text-slate-300">• Coding Marathon • Gaming Quiz • SwiftType • Tech-Art • Tech Memes</p>
+        <p className="text-slate-400">⚽ Bonus: 1 Free FC round in Game Zone • Exclusively for Groups A to D</p>
+      </div>
+    ),
+  },
   {
     cmd: 'events --featured',
     output: (
@@ -69,6 +79,7 @@ const DEMO_SEQUENCE = [
 
 const QUICK_COMMANDS = [
   { label: 'help', cmd: 'help', icon: <HelpCircle className="w-3 h-3 text-gold" /> },
+  { label: 'bundle', cmd: 'bundle', icon: <Zap className="w-3 h-3 text-emerald-400 fill-emerald-400" /> },
   { label: 'events', cmd: 'events', icon: <Sparkles className="w-3 h-3 text-amber-400" /> },
   { label: 'fees', cmd: 'fees', icon: <DollarSign className="w-3 h-3 text-emerald-400" /> },
   { label: 'schedule', cmd: 'schedule', icon: <Calendar className="w-3 h-3 text-sky-400" /> },
@@ -95,9 +106,9 @@ export default function HeroCyberTerminal() {
           <p className="text-gold-light">⚡ 17 Competitions Loaded • 5 Academic Groups Active</p>
           <p className="text-sky-300">📍 Venue: SJIS Campus, 97 Asad Avenue, Mohammadpur, Dhaka</p>
           <p className="text-slate-400">
-            Type or click <span className="text-gold font-bold font-mono">"help"</span>,{' '}
-            <span className="text-gold font-bold font-mono">"fees"</span>,{' '}
-            <span className="text-gold font-bold font-mono">"events"</span>, or{' '}
+            Type or click <span className="text-emerald-400 font-bold font-mono">"bundle"</span>,{' '}
+            <span className="text-gold font-bold font-mono">"events"</span>,{' '}
+            <span className="text-gold font-bold font-mono">"fees"</span>, or{' '}
             <span className="text-gold font-bold font-mono">"register"</span>
           </p>
         </div>
@@ -176,6 +187,7 @@ export default function HeroCyberTerminal() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 pt-1">
             <div>
               <span className="text-amber-400 font-bold block mb-0.5">✦ FESTIVAL INTEL:</span>
+              <p><span className="text-emerald-400 font-bold">bundle</span> - 5-in-1 VIP Package (৳1,000 • Save ৳400)</p>
               <p><span className="text-gold font-bold">events</span> - All 17 arenas & categories</p>
               <p><span className="text-gold font-bold">fees</span> - Entry pricing breakdown (Tk. 200–1000)</p>
               <p><span className="text-gold font-bold">schedule</span> - 2-Day timeline (Oct 1–2, 2026)</p>
@@ -199,18 +211,52 @@ export default function HeroCyberTerminal() {
           </div>
         </div>
       );
+    } else if (cleanCmd === 'bundle' || cleanCmd === 'bundle --offer' || cleanCmd === 'bundle --info' || cleanCmd === 'package' || cleanCmd === 'offer') {
+      output = (
+        <div className="space-y-1.5 text-xs text-slate-300">
+          <div className="flex items-center justify-between">
+            <p className="text-emerald-400 font-bold flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 fill-emerald-400" />
+              5-in-1 Tech Festival Bundle Pass:
+            </p>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-bold">
+              Save ৳400 (29% Off)
+            </span>
+          </div>
+          <div className="flex items-baseline gap-2 text-white">
+            <span>Special Flat Fee:</span>
+            <strong className="text-emerald-400 font-mono text-sm">৳1,000</strong>
+            <span className="text-slate-400 line-through decoration-rose-500 decoration-[2px] font-mono text-[11px]">
+              Regular: ৳1,400
+            </span>
+          </div>
+          <p className="text-slate-300">
+            • <strong>5 Flagship Arenas:</strong> Coding Marathon • Gaming Quiz • SwiftType Blitz • Tech-Art Bonanza • Tech Memes
+          </p>
+          <p className="text-slate-300">
+            • <strong>Perk Bonus:</strong> 1 Complimentary Free FC Match round in the Game Zone!
+          </p>
+          <p className="text-amber-300 text-[11px]">
+            ⚠️ <strong>Eligibility:</strong> Exclusively available for School & College contestants (Groups A to D, Grades 3–12).
+          </p>
+          <Link href="/register?bundle=1" className="text-emerald-400 font-bold hover:underline inline-flex items-center gap-1 mt-1">
+            → Claim 5-in-1 Bundle in Registration Wizard <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      );
     } else if (cleanCmd === 'fees' || cleanCmd === 'pricing' || cleanCmd === 'fees --all') {
       output = (
         <div className="space-y-1.5 text-xs text-slate-300">
           <p className="text-gold font-bold">💳 Official Registration Fee Schedule:</p>
           <div className="space-y-1 pl-1">
+            <p><span className="text-emerald-400 font-bold font-mono">⭐ ৳1,000 VIP Bundle:</span> 5 Flagship Arenas Combo (Save ৳400 + Free FC Match) • Groups A–D Only</p>
             <p><span className="text-emerald-400 font-bold font-mono">৳200 Tier:</span> AI Prompting • SwiftType Blitz • Photo Editing • Rubik’s Showdown</p>
-            <p><span className="text-sky-300 font-bold font-mono">৳300 Tier:</span> Coding Marathon • PowerPoint • Video Making • Tech Quiz • Gaming Quiz • HTML Web • Line Robot • Tech Bytes • Tech Memes • Tech-Art Bonanza • EAFC</p>
-            <p><span className="text-amber-400 font-bold font-mono">৳500 Tier:</span> Drone Competition (Individual) • Robo-Showcase (Individual) • Valorant 5v5 (Team of 5)</p>
+            <p><span className="text-sky-300 font-bold font-mono">৳300 Tier:</span> Coding Marathon • PowerPoint • Video Making • Tech Quiz • Gaming Quiz • HTML Web • Line Robot • Tech Bytes • Tech Memes • Tech-Art Bonanza</p>
+            <p><span className="text-amber-400 font-bold font-mono">৳500 Tier:</span> Drone Competition (Individual) • Robo-Showcase (Individual)</p>
             <p><span className="text-purple-300 font-bold font-mono">৳1,000 Tier:</span> Drone & Robo-Showcase Team Entry (Up to 3 members)</p>
           </div>
           <p className="text-[11px] text-slate-400 pt-0.5">
-            Pay online via instant SSLCommerz (bKash/Nagad/Cards) or manual bKash TrxID during registration.
+            Pay online via instant SSLCommerz (bKash/Nagad/Cards) or manual bKash TrxID during registration. Type <strong className="text-emerald-400 font-mono">"bundle"</strong> to view package details!
           </p>
         </div>
       );
