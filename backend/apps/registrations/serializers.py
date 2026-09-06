@@ -1,4 +1,5 @@
 import re
+from django.conf import settings
 from rest_framework import serializers
 from .models import Participant, Registration, RegistrationEvent, GRADE_TO_GROUP
 from apps.events.models import Event, EventGroup
@@ -44,8 +45,10 @@ class RegistrationCreateSerializer(serializers.Serializer):
     school_id = serializers.IntegerField(required=False, allow_null=True)
     school_name_other = serializers.CharField(max_length=300, required=False, allow_blank=True)
     grade = serializers.ChoiceField(choices=list(GRADE_TO_GROUP.keys()))
-    # Events
-    events = RegistrationEventCreateSerializer(many=True)
+    # Bundle flag — when True, auto-populates the 5 bundle events at ৳1,000 flat
+    is_bundle = serializers.BooleanField(default=False, required=False)
+    # Events (required unless is_bundle=True)
+    events = RegistrationEventCreateSerializer(many=True, required=False, default=[])
     # Payment
     payment_method = serializers.ChoiceField(
         choices=['SSLCOMMERZ', 'BKASH', 'NAGAD', 'BANK'], default='SSLCOMMERZ'
@@ -87,8 +90,7 @@ class RegistrationCreateSerializer(serializers.Serializer):
         return match.group(1)  # Return normalized 11-digit format
 
     def validate_events(self, events_data):
-        if not events_data:
-            raise serializers.ValidationError('At least one event must be selected.')
+        # Events are optional if is_bundle=True; validation handled in validate()
         return events_data
 
     def validate(self, data):
@@ -112,8 +114,40 @@ class RegistrationCreateSerializer(serializers.Serializer):
 
         grade = data.get('grade')
         participant_group_code = GRADE_TO_GROUP.get(grade)
+        is_bundle = data.get('is_bundle', False)
 
-        event_ids = [e['event_id'] for e in data.get('events', [])]
+        # ─── Bundle Package Flow ───────────────────────────────────────────────
+        if is_bundle:
+            bundle_eligible = getattr(settings, 'BUNDLE_ELIGIBLE_GROUPS', ['A', 'B', 'C', 'D'])
+            if participant_group_code not in bundle_eligible:
+                raise serializers.ValidationError(
+                    f'The Bundle Competition Package is only available for Groups A to D '
+                    f'(Grade 3 to Grade 12). Your group ({participant_group_code}) is not eligible.'
+                )
+            bundle_slugs = getattr(settings, 'BUNDLE_EVENT_SLUGS', [])
+            bundle_events = list(
+                Event.objects.filter(slug__in=bundle_slugs, is_active=True)
+                .prefetch_related('eligibility_groups')
+            )
+            if len(bundle_events) != len(bundle_slugs):
+                found_slugs = {e.slug for e in bundle_events}
+                missing = [s for s in bundle_slugs if s not in found_slugs]
+                raise serializers.ValidationError(
+                    f'Bundle configuration error: the following events are missing or inactive: '
+                    f'{", ".join(missing)}. Please contact the carnival committee.'
+                )
+            # Override events data with the 5 bundle events (all individual, no team)
+            data['events'] = [{'event_id': e.id, 'is_team': False, 'team_name': '', 'team_members': ''} for e in bundle_events]
+            data['_events'] = bundle_events
+            data['_participant_group_code'] = participant_group_code
+            return data
+
+        # ─── Individual Event Flow ─────────────────────────────────────────────
+        events_data = data.get('events', [])
+        if not events_data:
+            raise serializers.ValidationError({'events': 'At least one event must be selected.'})
+
+        event_ids = [e['event_id'] for e in events_data]
         events = Event.objects.filter(id__in=event_ids, is_active=True).prefetch_related('eligibility_groups')
 
         if len(events) != len(event_ids):
@@ -191,5 +225,6 @@ class RegistrationReadSerializer(serializers.ModelSerializer):
             'participant_phone', 'participant_grade', 'participant_school',
             'registration_events', 'total_fee', 'payment_method',
             'payment_reference', 'payment_status', 'payment_status_display',
+            'is_bundle', 'bundle_bonus_fc',
             'email_sent', 'sms_sent', 'registered_at',
         ]

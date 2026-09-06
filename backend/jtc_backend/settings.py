@@ -266,6 +266,21 @@ SSLCOMMERZ_IS_SANDBOX = os.environ.get('SSLCOMMERZ_IS_SANDBOX', 'True') == 'True
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 BACKEND_URL = os.environ.get('BACKEND_URL', 'http://127.0.0.1:8000')
 
+# ─── Bundle Competition Package ────────────────────────────────────────────────
+# Committee-defined bundle: 5 events for a flat fee of ৳1,000 (normal = ৳1,400)
+# Groups A–D only (Group E excluded because Gaming Quiz, SwiftType, Coding Marathon,
+# and Tech Memes are not open to Group E).
+BUNDLE_PRICE = 1000  # BDT
+BUNDLE_EVENT_SLUGS = [
+    'coding-marathon',    # ৳300 — Groups A,B,C,D
+    'gaming-quiz',        # ৳300 — Groups A,B,C,D
+    'swifttype-blitz',    # ৳200 — Groups A,B,C,D
+    'tech-art-bonanza',   # ৳300 — Groups A,B,C,D,E
+    'tech-memes',         # ৳300 — Groups A,B,C,D
+]
+BUNDLE_ELIGIBLE_GROUPS = ['A', 'B', 'C', 'D']  # Intersection of all 5 events
+BUNDLE_BONUS_DESCRIPTION = 'One free round of FC playing in the Game Zone!'
+
 # ─── Production Security Hardening ────────────────────────────────────────────
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True

@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -162,6 +163,7 @@ class RegistrationCreateView(generics.CreateAPIView):
         email = data['email'].strip().lower()
         phone = data['phone'].strip()
         requested_event_ids = [e.id for e in events]
+        is_bundle = data.get('is_bundle', False)
 
         # Duplicate Registration Guard:
         # Prevent double registration for the same event if there is an active (PENDING or VERIFIED) registration.
@@ -202,16 +204,20 @@ class RegistrationCreateView(generics.CreateAPIView):
         )
 
         # Calculate total fee
-        total_fee = 0
         event_map = {e.id: e for e in events}
         events_payload = data['events']
 
-        for ep in events_payload:
-            event = event_map[ep['event_id']]
-            if ep.get('is_team') and event.event_type in ['TEAM', 'BOTH']:
-                total_fee += event.team_fee
-            else:
-                total_fee += event.individual_fee
+        if is_bundle:
+            # Bundle flat pricing — override individual event fees
+            total_fee = getattr(settings, 'BUNDLE_PRICE', 1000)
+        else:
+            total_fee = 0
+            for ep in events_payload:
+                event = event_map[ep['event_id']]
+                if ep.get('is_team') and event.event_type in ['TEAM', 'BOTH']:
+                    total_fee += event.team_fee
+                else:
+                    total_fee += event.individual_fee
 
         # Create registration
         registration = Registration.objects.create(
@@ -219,21 +225,39 @@ class RegistrationCreateView(generics.CreateAPIView):
             total_fee=total_fee,
             payment_method=data.get('payment_method', 'BKASH'),
             payment_reference=data.get('payment_reference', ''),
+            is_bundle=is_bundle,
+            bundle_bonus_fc=is_bundle,  # Bundle always includes the FC Game Zone bonus
         )
 
         # Create RegistrationEvent rows
-        for ep in events_payload:
-            event = event_map[ep['event_id']]
-            is_team = ep.get('is_team', False) and event.event_type in ['TEAM', 'BOTH']
-            fee = event.team_fee if is_team else event.individual_fee
-            RegistrationEvent.objects.create(
-                registration=registration,
-                event=event,
-                is_team=is_team,
-                team_name=ep.get('team_name', ''),
-                team_members=ep.get('team_members', ''),
-                fee_charged=fee,
-            )
+        if is_bundle:
+            # Distribute bundle fee proportionally for record-keeping
+            # (fee_charged reflects the discounted share; total = BUNDLE_PRICE)
+            num_events = len(events_payload)
+            for i, ep in enumerate(events_payload):
+                event = event_map[ep['event_id']]
+                # Store original individual fee for reference; admin can see original vs paid
+                RegistrationEvent.objects.create(
+                    registration=registration,
+                    event=event,
+                    is_team=False,
+                    team_name='',
+                    team_members='',
+                    fee_charged=event.individual_fee,  # Original price stored for reference
+                )
+        else:
+            for ep in events_payload:
+                event = event_map[ep['event_id']]
+                is_team = ep.get('is_team', False) and event.event_type in ['TEAM', 'BOTH']
+                fee = event.team_fee if is_team else event.individual_fee
+                RegistrationEvent.objects.create(
+                    registration=registration,
+                    event=event,
+                    is_team=is_team,
+                    team_name=ep.get('team_name', ''),
+                    team_members=ep.get('team_members', ''),
+                    fee_charged=fee,
+                )
 
         # Auto-verify free events (total_fee == 0)
         if total_fee == 0:

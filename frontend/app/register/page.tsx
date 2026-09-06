@@ -9,7 +9,8 @@ import { Card, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
   fetchEvents, fetchSchools, fetchSiteSettings, submitRegistration, initiateSSLCommerzPayment,
-  EventItem, SchoolItem, SiteSettingsData, RegistrationPayload
+  fetchBundleInfo,
+  EventItem, SchoolItem, SiteSettingsData, RegistrationPayload, BundleInfoData
 } from '@/lib/api';
 import { Turnstile } from '@/components/ui/Turnstile';
 import {
@@ -120,6 +121,10 @@ function RegisterForm() {
   const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
 
+  // Bundle Package state
+  const [isBundleSelected, setIsBundleSelected] = useState<boolean>(false);
+  const [bundleInfo, setBundleInfo] = useState<BundleInfoData | null>(null);
+
   // ─── 1. Restore saved draft on mount ───────────────────────────────────────────
   useEffect(() => {
     try {
@@ -135,6 +140,7 @@ function RegisterForm() {
         if (draft.selectedEvents && Object.keys(draft.selectedEvents).length > 0) {
           setSelectedEvents(draft.selectedEvents);
         }
+        if (draft.isBundleSelected) setIsBundleSelected(true);
         if (draft.paymentMethod) setPaymentMethod(draft.paymentMethod);
         if (draft.paymentReference) setPaymentReference(draft.paymentReference);
         setDraftRestored(true);
@@ -160,6 +166,7 @@ function RegisterForm() {
               schoolOther,
               grade,
               selectedEvents,
+              isBundleSelected,
               paymentMethod,
               paymentReference,
               savedAt: new Date().toISOString(),
@@ -172,7 +179,7 @@ function RegisterForm() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [name, email, phone, schoolId, schoolOther, grade, selectedEvents, paymentMethod, paymentReference]);
+  }, [name, email, phone, schoolId, schoolOther, grade, selectedEvents, paymentMethod, paymentReference, isBundleSelected]);
 
   const clearDraft = () => {
     try {
@@ -185,16 +192,20 @@ function RegisterForm() {
     setSchoolOther('');
     setGrade('9');
     setSelectedEvents({});
+    setIsBundleSelected(false);
     setPaymentReference('');
     setDraftRestored(false);
   };
 
   useEffect(() => {
     async function loadData() {
-      const [evList, schList, stData] = await Promise.all([fetchEvents(), fetchSchools(), fetchSiteSettings()]);
+      const [evList, schList, stData, bndInfo] = await Promise.all([
+        fetchEvents(), fetchSchools(), fetchSiteSettings(), fetchBundleInfo()
+      ]);
       setEvents(evList);
       setSchools(schList);
       setSiteSettings(stData);
+      setBundleInfo(bndInfo);
 
       if (preselectedEventId) {
         const id = parseInt(preselectedEventId, 10);
@@ -328,8 +339,9 @@ function RegisterForm() {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
-  // Toggle event selection
+  // Toggle event selection — deselects bundle if active
   const toggleEvent = (e: EventItem) => {
+    setIsBundleSelected(false);
     setSelectedEvents((prev) => {
       const copy = { ...prev };
       if (copy[e.id]) {
@@ -342,6 +354,9 @@ function RegisterForm() {
     });
   };
 
+  const selectBundle = () => { setSelectedEvents({}); setIsBundleSelected(true); };
+  const deselectBundle = () => setIsBundleSelected(false);
+
   const removeEvent = (eventId: number) => {
     setSelectedEvents((prev) => {
       const copy = { ...prev };
@@ -352,6 +367,7 @@ function RegisterForm() {
 
   // Calculate total fee
   const totalFee = useMemo(() => {
+    if (isBundleSelected && bundleInfo) return bundleInfo.price;
     return Object.entries(selectedEvents).reduce((sum, [eventIdStr, meta]) => {
       const event = events.find((e) => e.id === parseInt(eventIdStr, 10));
       if (!event) return sum;
@@ -360,7 +376,7 @@ function RegisterForm() {
       }
       return sum + event.individual_fee;
     }, 0);
-  }, [selectedEvents, events]);
+  }, [selectedEvents, events, isBundleSelected, bundleInfo]);
 
   // STEP 1 PROCEED
   const handleStep1Next = () => {
@@ -389,18 +405,21 @@ function RegisterForm() {
   // STEP 2 PROCEED
   const handleStep2Next = () => {
     setGlobalError('');
-    const count = Object.keys(selectedEvents).length;
-    if (count === 0) {
-      setGlobalError('Please select at least one competition to enter.');
+    if (isBundleSelected) {
+      setStep(3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-
+    const count = Object.keys(selectedEvents).length;
+    if (count === 0) {
+      setGlobalError('Please select at least one competition to enter, or choose the Bundle Package.');
+      return;
+    }
     if (Object.keys(step2TeamErrors).length > 0) {
       const firstErr = Object.values(step2TeamErrors)[0];
       setGlobalError(firstErr);
       return;
     }
-
     setStep(3);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -418,12 +437,15 @@ function RegisterForm() {
         school_id: schoolId === 'other' ? null : parseInt(schoolId, 10),
         school_name_other: schoolId === 'other' ? schoolOther.trim() : '',
         grade,
-        events: Object.entries(selectedEvents).map(([idStr, meta]) => ({
-          event_id: parseInt(idStr, 10),
-          is_team: meta.is_team,
-          team_name: meta.team_name.trim(),
-          team_members: meta.team_members.trim(),
-        })),
+        is_bundle: isBundleSelected,
+        events: isBundleSelected
+          ? (bundleInfo?.events || []).map((e) => ({ event_id: e.id, is_team: false }))
+          : Object.entries(selectedEvents).map(([idStr, meta]) => ({
+              event_id: parseInt(idStr, 10),
+              is_team: meta.is_team,
+              team_name: meta.team_name.trim(),
+              team_members: meta.team_members.trim(),
+            })),
         payment_method: paymentMethod,
         payment_reference: paymentReference.trim(),
         turnstile_token: turnstileToken,
@@ -806,6 +828,121 @@ function RegisterForm() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Main Selection Area */}
           <div className="lg:col-span-2 space-y-4">
+
+            {/* ══════════════════════════════════════════════════════════════ */}
+            {/* BUNDLE COMPETITION PACKAGE CARD — Premium Attractive UI       */}
+            {/* ══════════════════════════════════════════════════════════════ */}
+            {bundleInfo && bundleInfo.eligible_groups.includes(currentGroup) && (
+              <div className={`relative rounded-2xl overflow-hidden transition-all duration-300 ${
+                isBundleSelected
+                  ? 'ring-2 ring-emerald-400 shadow-2xl shadow-emerald-500/25'
+                  : 'ring-1 ring-emerald-600/50 hover:ring-emerald-500/80 shadow-lg shadow-emerald-900/20'
+              }`}>
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0a1f0f] via-[#071a12] to-[#0d1a14]" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.15),transparent_60%)]" />
+                {/* Subtle grid pattern */}
+                <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'repeating-linear-gradient(0deg,#00ff88,#00ff88 1px,transparent 1px,transparent 32px),repeating-linear-gradient(90deg,#00ff88,#00ff88 1px,transparent 1px,transparent 32px)'}} />
+
+                <div className="relative p-5 sm:p-6">
+                  {/* Header row */}
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+                    <div className="flex items-start gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                        isBundleSelected ? 'bg-emerald-400 text-slate-900 shadow-lg shadow-emerald-400/40' : 'bg-emerald-900/60 border border-emerald-700 text-emerald-400'
+                      }`}>
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-black uppercase tracking-widest text-emerald-400 font-mono">Bundle Competition Package</span>
+                          {isBundleSelected && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400/20 border border-emerald-400/40 text-emerald-300 font-bold animate-pulse">✓ SELECTED</span>
+                          )}
+                        </div>
+                        <h3 className="text-2xl sm:text-3xl font-black text-white mt-0.5">
+                          Only <span className="text-emerald-400 font-mono">৳1,000</span>
+                        </h3>
+                        <p className="text-xs text-slate-300 mt-0.5">
+                          Register once — compete in <strong className="text-white">5 exciting events</strong>!
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Savings badge */}
+                    <div className="flex flex-col items-start sm:items-end gap-1 shrink-0">
+                      <div className="px-3 py-1.5 rounded-xl bg-emerald-400/15 border border-emerald-400/40 text-center">
+                        <span className="text-[10px] text-emerald-300 uppercase font-bold tracking-wider block">You Save</span>
+                        <span className="text-xl font-black text-emerald-400 font-mono">৳{bundleInfo.savings}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 line-through font-mono">Original: ৳{bundleInfo.original_total}</span>
+                    </div>
+                  </div>
+
+                  {/* 5 Events Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                    {bundleInfo.events.map((ev) => (
+                      <div key={ev.id} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${
+                        isBundleSelected
+                          ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
+                          : 'bg-surface/60 border-surface-border text-slate-300'
+                      }`}>
+                        <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${isBundleSelected ? 'text-emerald-400' : 'text-slate-500'}`} />
+                        <span className="truncate">{ev.short_name || ev.name}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Bundle Bonus Banner */}
+                  <div className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl border mb-5 transition-all ${
+                    isBundleSelected
+                      ? 'bg-amber-400/10 border-amber-400/40'
+                      : 'bg-surface/40 border-surface-border'
+                  }`}>
+                    <span className="text-2xl">⚽</span>
+                    <div>
+                      <span className={`text-xs font-black uppercase tracking-wider ${isBundleSelected ? 'text-amber-300' : 'text-slate-400'}`}>Bundle Bonus!</span>
+                      <p className="text-xs text-slate-300 leading-tight">{bundleInfo.bonus}</p>
+                    </div>
+                  </div>
+
+                  {/* CTA Button */}
+                  {isBundleSelected ? (
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex-1 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-sm">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        Bundle Package Selected — ৳1,000 Total
+                      </div>
+                      <button
+                        type="button"
+                        onClick={deselectBundle}
+                        className="px-4 py-2.5 rounded-xl border border-surface-border text-slate-400 text-xs font-semibold hover:text-rose-400 hover:border-rose-500/40 transition-all"
+                      >
+                        ✕ Deselect
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={selectBundle}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black text-sm transition-all shadow-xl shadow-emerald-500/30 hover:shadow-emerald-400/50 hover:scale-[1.01] active:scale-[0.99] group"
+                    >
+                      <Sparkles className="w-4 h-4 shrink-0" />
+                      <span>Select Bundle — Pay Only ৳1,000 for 5 Events</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Individual Events Divider */}
+            <div className="flex items-center gap-3 px-1">
+              <div className="flex-1 h-px bg-surface-border" />
+              <span className="text-[11px] uppercase font-bold text-slate-500 tracking-wider shrink-0">— or pick individual events —</span>
+              <div className="flex-1 h-px bg-surface-border" />
+            </div>
+
             <Card glow="none" className="border border-surface-border bg-surface-elevated/90 backdrop-blur-xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                 <div>
@@ -826,6 +963,7 @@ function RegisterForm() {
                   const teamError = step2TeamErrors[ev.id];
 
                   return (
+
                     <div
                       key={ev.id}
                       className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
@@ -967,14 +1105,41 @@ function RegisterForm() {
                 <span className="text-xs uppercase font-bold text-slate-200 flex items-center gap-1.5">
                   <ShoppingBag className="w-4 h-4 text-gold" /> Selection Cart
                 </span>
-                <Badge variant="gold" size="sm">
-                  {Object.keys(selectedEvents).length} Item(s)
-                </Badge>
+                {isBundleSelected ? (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400/20 border border-emerald-400/40 text-emerald-300 font-bold">Bundle ✓</span>
+                ) : (
+                  <Badge variant="gold" size="sm">
+                    {Object.keys(selectedEvents).length} Item(s)
+                  </Badge>
+                )}
               </div>
 
               {/* Items List */}
               <div className="space-y-2 py-3 max-h-64 overflow-y-auto">
-                {Object.keys(selectedEvents).length > 0 ? (
+                {isBundleSelected && bundleInfo ? (
+                  <>
+                    <div className="p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-emerald-300 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5" /> Bundle Package (5 Events)
+                        </span>
+                        <span className="font-mono font-black text-emerald-400">৳1,000</span>
+                      </div>
+                      <div className="space-y-1">
+                        {bundleInfo.events.map((ev) => (
+                          <div key={ev.id} className="flex items-center gap-1.5 text-[10px] text-emerald-200/70">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                            <span className="truncate">{ev.short_name || ev.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-400/10 border border-amber-400/30 text-[10px] text-amber-300">
+                      <span>⚽</span>
+                      <span className="font-semibold">Bonus: FC Game Zone Round included!</span>
+                    </div>
+                  </>
+                ) : Object.keys(selectedEvents).length > 0 ? (
                   Object.entries(selectedEvents).map(([idStr, meta]) => {
                     const event = events.find((e) => e.id === parseInt(idStr, 10));
                     if (!event) return null;
@@ -1011,7 +1176,7 @@ function RegisterForm() {
               <div className="pt-4 border-t border-surface-border space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-300 font-bold">Total Amount Due:</span>
-                  <span className="text-2xl font-black text-white font-mono text-glow-gold">
+                  <span className={`text-2xl font-black font-mono ${isBundleSelected ? 'text-emerald-400' : 'text-white text-glow-gold'}`}>
                     ৳{totalFee} BDT
                   </span>
                 </div>
@@ -1065,12 +1230,41 @@ function RegisterForm() {
               <span className="text-slate-400 shrink-0">Institution:</span>
               <strong className="text-white text-left sm:text-right break-words">{schoolId === 'other' ? schoolOther : schools.find(s => s.id === parseInt(schoolId))?.name}</strong>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-slate-300 gap-1">
-              <span className="text-slate-400 shrink-0">Selected Events ({Object.keys(selectedEvents).length}):</span>
-              <span className="text-slate-200 font-semibold text-left sm:text-right break-words">
-                {Object.keys(selectedEvents).map(id => events.find(e => e.id === parseInt(id))?.name).join(', ')}
-              </span>
-            </div>
+            
+            {/* Bundle or Individual Events display */}
+            {isBundleSelected && bundleInfo ? (
+              <div className="mt-2 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span className="text-emerald-400 font-black uppercase tracking-wider text-[11px]">Bundle Competition Package (5 Events)</span>
+                </div>
+                <div className="pl-5 space-y-1">
+                  {bundleInfo.events.map((ev) => (
+                    <div key={ev.id} className="flex items-center gap-1.5 text-emerald-200/80">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                      <span>{ev.short_name || ev.name}</span>
+                      <span className="text-slate-500 font-mono ml-auto">৳{ev.individual_fee}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-400/10 border border-amber-400/30 text-[11px] text-amber-300 mt-1">
+                  <span>⚽</span>
+                  <span className="font-bold">Bundle Bonus: {bundleInfo.bonus}</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400 line-through font-mono">Original: ৳{bundleInfo.original_total}</span>
+                  <span className="text-emerald-400 font-bold">You save ৳{bundleInfo.savings}!</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-slate-300 gap-1">
+                <span className="text-slate-400 shrink-0">Selected Events ({Object.keys(selectedEvents).length}):</span>
+                <span className="text-slate-200 font-semibold text-left sm:text-right break-words">
+                  {Object.keys(selectedEvents).map(id => events.find(e => e.id === parseInt(id))?.name).join(', ')}
+                </span>
+              </div>
+            )}
+
             <div className="flex justify-between items-center text-slate-200 border-t border-surface-border pt-3 text-sm">
               <span className="font-bold text-white">Grand Total Fee:</span>
               <strong className="text-gold font-mono text-xl font-black text-glow-gold">৳{totalFee} BDT</strong>

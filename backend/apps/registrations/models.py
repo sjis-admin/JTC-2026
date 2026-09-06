@@ -82,6 +82,9 @@ class Registration(models.Model):
         'auth.User', on_delete=models.SET_NULL, null=True, blank=True,
         related_name='verified_payments'
     )
+    # Bundle Competition Package fields
+    is_bundle = models.BooleanField(default=False, help_text='True if this is a Bundle Competition Package registration (৳1,000 flat)')
+    bundle_bonus_fc = models.BooleanField(default=False, help_text='Participant is entitled to one free FC Game Zone round (bundle bonus)')
     admin_notes = models.TextField(blank=True)
     email_sent = models.BooleanField(default=False)
     sms_sent = models.BooleanField(default=False)

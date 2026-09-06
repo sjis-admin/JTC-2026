@@ -85,6 +85,8 @@ def generate_registrations_workbook(qs=None) -> bytes:
         "Grade Level",
         "Academic Group",
         "Total Fee (BDT)",
+        "Bundle Package",
+        "FC Bonus",
         "Payment Status",
         "Payment Method",
         "Transaction ID / Ref",
@@ -132,6 +134,8 @@ def generate_registrations_workbook(qs=None) -> bytes:
             student_grade,
             student_group,
             reg.total_fee,
+            "✓ Bundle" if reg.is_bundle else "—",
+            "✓ FC Bonus" if reg.bundle_bonus_fc else "—",
             reg.payment_status,
             reg.get_payment_method_display() if hasattr(reg, 'get_payment_method_display') else reg.payment_method,
             reg.payment_reference or "-",
@@ -151,13 +155,16 @@ def generate_registrations_workbook(qs=None) -> bytes:
             cell.alignment = Alignment(vertical='center')
 
             # Formatting specific columns
-            if col_idx in (1, 2, 3, 8, 9, 14, 15, 16, 18, 19):
+            if col_idx in (1, 2, 3, 8, 9, 11, 12, 14, 15, 17, 18, 20, 21):
                 cell.alignment = Alignment(horizontal='center', vertical='center')
             elif col_idx == 10:  # Fee
                 cell.alignment = Alignment(horizontal='right', vertical='center')
                 cell.number_format = '৳ #,##0'
                 cell.font = bold_font
-            elif col_idx == 11:  # Status
+            elif col_idx == 11 and reg.is_bundle:  # Bundle badge
+                cell.font = Font(name='Arial', size=10, bold=True, color='0F5132')
+                cell.fill = PatternFill(start_color='D1E7DD', end_color='D1E7DD', fill_type='solid')
+            elif col_idx == 13:  # Status
                 cell.alignment = Alignment(horizontal='center', vertical='center')
                 if reg.payment_status in status_styles:
                     cell.fill = status_styles[reg.payment_status]['fill']

@@ -14,8 +14,11 @@ class RegistrationEventInline(admin.TabularInline):
 
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ['short_code', 'participant', 'total_fee', 'payment_method', 'payment_status', 'registered_at']
-    list_filter = ['payment_status', 'payment_method']
+    list_display = [
+        'short_code', 'participant', 'total_fee', 'is_bundle', 'bundle_bonus_fc',
+        'payment_method', 'payment_status', 'registered_at'
+    ]
+    list_filter = ['payment_status', 'payment_method', 'is_bundle', 'bundle_bonus_fc']
     search_fields = ['confirmation_code', 'participant__name', 'participant__email', 'payment_reference']
     readonly_fields = ['confirmation_code', 'short_code', 'registered_at']
     inlines = [RegistrationEventInline]

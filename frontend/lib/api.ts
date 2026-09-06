@@ -91,6 +91,7 @@ export interface RegistrationPayload {
   school_id: number | null;
   school_name_other?: string;
   grade: string;
+  is_bundle?: boolean;
   events: {
     event_id: number;
     is_team?: boolean;
@@ -100,6 +101,15 @@ export interface RegistrationPayload {
   payment_method: 'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK';
   payment_reference: string;
   turnstile_token?: string;
+}
+
+export interface BundleInfoData {
+  price: number;
+  original_total: number;
+  savings: number;
+  eligible_groups: string[];
+  bonus: string;
+  events: EventItem[];
 }
 
 export interface RegistrationResponse {
@@ -115,6 +125,8 @@ export interface RegistrationResponse {
   payment_reference: string;
   payment_status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'REFUNDED' | 'EXPIRED';
   payment_status_display: string;
+  is_bundle: boolean;
+  bundle_bonus_fc: boolean;
   email_sent: boolean;
   sms_sent: boolean;
   registered_at: string;
@@ -172,6 +184,31 @@ export async function fetchEvents(): Promise<EventItem[]> {
   } catch (err) {
     console.warn('API fetchEvents failed or offline, using official Holy Grail events fallback:', err);
     return CARNIVAL_EVENTS;
+  }
+}
+
+export async function fetchBundleInfo(): Promise<BundleInfoData> {
+  try {
+    const res = await fetch(`${getApiBase()}/bundle-info/`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) throw new Error('Failed to fetch bundle info');
+    return await res.json();
+  } catch (err) {
+    console.warn('fetchBundleInfo fallback to static data:', err);
+    // Fallback: derive from CARNIVAL_EVENTS
+    const bundleSlugs = ['coding-marathon', 'gaming-quiz', 'swifttype-blitz', 'tech-art-bonanza', 'tech-memes'];
+    const bundleEvents = CARNIVAL_EVENTS.filter(e => bundleSlugs.includes(e.slug));
+    const originalTotal = bundleEvents.reduce((s, e) => s + e.individual_fee, 0);
+    const price = 1000;
+    return {
+      price,
+      original_total: originalTotal,
+      savings: originalTotal - price,
+      eligible_groups: ['A', 'B', 'C', 'D'],
+      bonus: 'One free round of FC playing in the Game Zone!',
+      events: bundleEvents,
+    };
   }
 }
 
