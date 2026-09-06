@@ -12,11 +12,11 @@ interface BundleSpotlightBannerProps {
 }
 
 const BUNDLE_EVENTS = [
-  { name: 'Project Display', fee: 350, icon: Cpu, category: 'Hardware / Showcase' },
-  { name: 'IT Quiz', fee: 200, icon: HelpCircle, category: 'General IT' },
-  { name: 'Game Development', fee: 300, icon: Gamepad2, category: 'Game Dev' },
-  { name: 'Programming Contest', fee: 300, icon: Code2, category: 'Competitive Coding' },
-  { name: 'Cybersecurity', fee: 250, icon: Shield, category: 'InfoSec / CTF' },
+  { name: 'Tech-Art Bonanza', fee: 300, icon: Sparkles, category: 'Digital Art & MV' },
+  { name: 'Gaming Quiz', fee: 300, icon: Gamepad2, category: 'Gaming & Trivia' },
+  { name: 'Swift-Type Blitz', fee: 200, icon: Zap, category: 'Speed Typing' },
+  { name: 'Tech Memes', fee: 300, icon: Shield, category: 'Creative & Culture' },
+  { name: 'Coding Marathon', fee: 300, icon: Code2, category: 'Competitive Coding' },
 ];
 
 export default function BundleSpotlightBanner({ className = '' }: BundleSpotlightBannerProps) {

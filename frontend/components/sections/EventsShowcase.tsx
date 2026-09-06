@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { EventItem } from '@/lib/api';
+import { EventItem, BUNDLE_EVENT_SLUGS } from '@/lib/api';
 import { Card, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -251,6 +251,11 @@ export default function EventsShowcase({
                     {icon}
                   </div>
                   <div className="flex flex-wrap gap-1.5 justify-end">
+                    {BUNDLE_EVENT_SLUGS.includes(event.slug) && (
+                      <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 shadow-sm flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-emerald-400" /> In 5-in-1 Bundle
+                      </span>
+                    )}
                     <span className="font-mono font-black text-sm px-3 py-1 rounded-full bg-gold/15 text-gold border border-gold/40 shadow-sm">
                       {event.fee_display}
                     </span>

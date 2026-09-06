@@ -112,6 +112,14 @@ export interface BundleInfoData {
   events: EventItem[];
 }
 
+export const BUNDLE_EVENT_SLUGS = [
+  'coding-marathon',
+  'gaming-quiz',
+  'swifttype-blitz',
+  'tech-art-bonanza',
+  'tech-memes',
+];
+
 export interface RegistrationResponse {
   confirmation_code: string;
   short_code: string;
