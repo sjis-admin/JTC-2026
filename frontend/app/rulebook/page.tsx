@@ -79,7 +79,7 @@ export default async function RulebookPage() {
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="gold" size="md">
-                Oct 1 – 2, 2026
+                Oct 1 – 3, 2026
               </Badge>
             </div>
           </div>

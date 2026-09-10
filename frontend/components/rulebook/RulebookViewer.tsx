@@ -133,7 +133,7 @@ ${ev.rules || 'Standard tournament rules apply.'}
     const blob = new Blob(
       [
         `# SJIS INTER-SCHOOL TECH CARNIVAL 2026 — OFFICIAL RULEBOOK COMPENDIUM\n` +
-          `Date: Oct 1 – 2, 2026 | Venue: St. Joseph International School, Dhaka\n` +
+          `Date: Oct 1 – 3, 2026 | Venue: St. Joseph International School, Dhaka\n` +
           `Official Portal: https://jtc.sjis.edu.bd\n\n` +
           markdownContent,
       ],

@@ -84,7 +84,7 @@ export default function Hero({ settings }: HeroProps) {
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-semibold text-slate-200">
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface/90 border border-gold/30 backdrop-blur-md hover:border-gold transition-colors shadow-sm text-gold-light">
             <Calendar className="w-4 h-4 text-gold" />
-            <span>Oct 1 – 2, 2026</span>
+            <span>Oct 1 – 3, 2026</span>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface/90 border border-gold/30 backdrop-blur-md hover:border-gold transition-colors shadow-sm text-gold-light">
             <MapPin className="w-4 h-4 text-amber-400" />

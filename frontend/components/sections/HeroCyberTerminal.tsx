@@ -34,7 +34,7 @@ const DEMO_SEQUENCE = [
     cmd: 'fest --schedule',
     output: (
       <div className="space-y-0.5 text-slate-300">
-        <p className="text-emerald-400 font-bold">📅 Festival Dates: Oct 1 – 2, 2026 (2-Day Tech Fest)</p>
+        <p className="text-emerald-400 font-bold">📅 Festival Dates: Oct 1 – 3, 2026 (3-Day National Tech Fest)</p>
         <p className="text-slate-400">📍 Venue: St. Joseph International School Campus, Mohammadpur, Dhaka</p>
       </div>
     ),
@@ -190,7 +190,7 @@ export default function HeroCyberTerminal() {
               <p><span className="text-emerald-400 font-bold">bundle</span> - 5-in-1 VIP Package (৳1,000 • Save ৳400)</p>
               <p><span className="text-gold font-bold">events</span> - All 17 arenas & categories</p>
               <p><span className="text-gold font-bold">fees</span> - Entry pricing breakdown (Tk. 200–1000)</p>
-              <p><span className="text-gold font-bold">schedule</span> - 2-Day timeline (Oct 1–2, 2026)</p>
+              <p><span className="text-gold font-bold">schedule</span> - 3-Day timeline (Oct 1–3, 2026)</p>
               <p><span className="text-gold font-bold">prizes</span> - Champion crests & awards</p>
               <p><span className="text-gold font-bold">venue</span> - Campus location & arena rooms</p>
             </div>
@@ -273,10 +273,11 @@ export default function HeroCyberTerminal() {
     } else if (cleanCmd === 'schedule' || cleanCmd === 'dates' || cleanCmd === 'timeline') {
       output = (
         <div className="space-y-1.5 text-xs text-slate-300">
-          <p className="text-gold font-bold">📅 Festival Timeline: Oct 1 – 2, 2026 (2-Day Grand Fest):</p>
+          <p className="text-gold font-bold">📅 Festival Timeline: Oct 1 – 3, 2026 (3-Day Grand Fest):</p>
           <div className="space-y-1 pl-1">
-            <p><strong className="text-sky-300">Day 1 (Oct 1):</strong> Inauguration Ceremony • Coding Marathon • AI Prompting • Line-Robot Qualifying Runs • Gaming Quiz Prelims • Tech-Art Showcase</p>
-            <p><strong className="text-amber-300">Day 2 (Oct 2):</strong> Autonomous Drone Flight Trials • Robotics Exhibition • E-Sports Stage Finals (Valorant & EAFC) • Grand Award Ceremony & Shield Distribution</p>
+            <p><strong className="text-slate-400">Day 1 (Oct 1):</strong> Inauguration & ID Verification • Full slot itinerary releasing soon</p>
+            <p><strong className="text-sky-300">Day 2 (Oct 2):</strong> Rubik's Cube • Tech Article • HTML Web Page • Gaming Quiz • SwiftType • AI Prompting • PowerPoint Defense • Treasure Hunt • Tech Art Bonanza</p>
+            <p><strong className="text-amber-300">Day 3 (Oct 3):</strong> Photography Judgement • Tech Meme • Tech Quiz • Line Robot • Coding Marathon • VTutor Workshop • Drone Flight • Grand Closing Ceremony (3–6 PM) • Cultural Gala (6–8 PM)</p>
           </div>
         </div>
       );
