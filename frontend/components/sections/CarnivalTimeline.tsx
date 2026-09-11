@@ -21,6 +21,12 @@ import {
   HelpCircle,
   ChevronRight,
   Tv,
+  ShieldCheck,
+  CheckCircle2,
+  Palette,
+  Video,
+  Info,
+  FileCheck,
 } from 'lucide-react';
 
 type DayKey = 'day1' | 'day2' | 'day3';
@@ -54,8 +60,153 @@ interface OngoingItem {
 }
 
 export default function CarnivalTimeline() {
-  const [activeDay, setActiveDay] = useState<DayKey>('day2');
+  const [activeDay, setActiveDay] = useState<DayKey>('day1');
   const [selectedGroup, setSelectedGroup] = useState<GroupFilter>('ALL');
+
+  // Day 1 Data
+  const day1Ongoing: OngoingItem[] = [
+    {
+      title: 'St. Joseph Students Exclusive Submission Counters',
+      time: '11:45 AM – 04:30 PM',
+      venue: 'SJIS Media Wing & Art Hall (Level 2 & Ground)',
+      format: 'Laminated Photo Prints, Digital Media & USB Pen Drive Drop-offs',
+      tag: 'JOSEPHITE EXCLUSIVE',
+    },
+    {
+      title: 'Grand Inauguration Ceremony & Red Carpet Assembly',
+      time: '09:00 AM – 11:45 AM',
+      venue: 'SJIS Main Auditorium & Ceremonial Stage',
+      format: 'Official Opening, Dignitary Speeches & Digital Torch Lighting',
+      tag: 'CEREMONY',
+    },
+    {
+      title: 'Robotics Arena Track Testing & Hardware Inspection',
+      time: '12:00 PM – 05:00 PM',
+      venue: 'Room N-204 (Robotics Track Arena) & SJIS Basement',
+      format: 'LFR Official Track Testing & Robot Exhibition Stall Allotment',
+      tag: 'ROBOTICS',
+    },
+  ];
+
+  const day1Events: TimelineEvent[] = [
+    {
+      title: 'Grand Carnival Inauguration & Opening Ceremony',
+      category: 'CEREMONY',
+      mainTime: '09:00 AM – 11:45 AM',
+      venue: 'SJIS Main Auditorium & Ceremonial Stage',
+      note: 'Dignitary reception, national anthem, presidential address, and official ribbon cutting.',
+    },
+    {
+      title: 'St. Joseph Students Submission: Phase 1 (Groups A & B)',
+      category: 'SUBMISSION',
+      mainTime: '11:45 AM – 01:00 PM',
+      venue: 'Art & Media Hall (Ground Floor)',
+      waitingRoom: 'Room S-301',
+      note: 'Strictly for internal St. Joseph contestants. Laminated 7×9 photos & USB digital art.',
+      groupSlots: [
+        { group: 'Group A', time: '11:45 AM – 12:20 PM', venue: 'Art & Media Hall' },
+        { group: 'Group B', time: '12:20 PM – 01:00 PM', venue: 'Art & Media Hall' },
+      ],
+    },
+    {
+      title: 'Lunch, Dhuhr Prayer & Refreshment Break',
+      category: 'BREAK',
+      mainTime: '01:00 PM – 02:00 PM',
+      venue: 'SJIS Cafeteria & Prayer Hall',
+      note: 'Submission counters and auditorium paused for afternoon prayer and lunch service.',
+    },
+    {
+      title: 'St. Joseph Students Submission: Phase 2 (Groups C, D & E)',
+      category: 'SUBMISSION',
+      mainTime: '02:00 PM – 04:30 PM',
+      venue: 'Media Lab & Audiovisual Wing (Level 2)',
+      waitingRoom: 'Room S-305',
+      note: 'Exclusive to St. Joseph students. Digital art layered files, meme exports, video montages & photos.',
+      groupSlots: [
+        { group: 'Group C', time: '02:00 PM – 02:50 PM', venue: 'Media Lab (Level 2)' },
+        { group: 'Group D', time: '02:50 PM – 03:40 PM', venue: 'Media Lab (Level 2)' },
+        { group: 'Group E', time: '03:40 PM – 04:30 PM', venue: 'Media Lab (Level 2)' },
+      ],
+    },
+    {
+      title: 'Robotics Track Calibration & Inspection (St. Joseph Teams)',
+      category: 'ROBOTICS',
+      mainTime: '02:30 PM – 05:00 PM',
+      venue: 'Robotics Track Arena (Room N-204) & Basement',
+      note: 'Chassis dimension verification (≤25cm), sensor calibration on vinyl track & stall setup.',
+      groupSlots: [
+        { group: 'Group B', time: '02:30 PM – 03:15 PM', room: 'Room N-204' },
+        { group: 'Group C', time: '03:15 PM – 04:00 PM', room: 'Room N-204' },
+        { group: 'Group D', time: '04:00 PM – 05:00 PM', room: 'Room N-204' },
+      ],
+    },
+    {
+      title: 'Delegate Credential & Kit Distribution (Internal Josephites)',
+      category: 'CONTEST',
+      mainTime: '11:45 AM – 04:30 PM',
+      venue: 'JTC Central Helpdesk (Admin Lobby)',
+      note: 'Collect official carnival badge, participant laminate, and arena access passes.',
+      groupSlots: [
+        { group: 'Group A', time: '11:45 AM – 12:45 PM', venue: 'Admin Lobby Desk' },
+        { group: 'Group B', time: '12:45 PM – 01:45 PM', venue: 'Admin Lobby Desk' },
+        { group: 'Group C', time: '02:00 PM – 03:00 PM', venue: 'Admin Lobby Desk' },
+        { group: 'Group D', time: '03:00 PM – 04:00 PM', venue: 'Admin Lobby Desk' },
+        { group: 'Group E', time: '04:00 PM – 04:30 PM', venue: 'Admin Lobby Desk' },
+      ],
+    },
+  ];
+
+  // Day 1 Inauguration Ceremony Steps
+  const day1InaugurationSteps = [
+    { time: '09:00 AM – 09:30 AM', title: 'Red Carpet Reception & Assembly', desc: 'Arrival of Revered Holy Cross Brothers, Chief Guest, JTC Executives & School Delegates.' },
+    { time: '09:30 AM – 09:40 AM', title: 'National Anthem & St. Joseph Hymn', desc: 'Opening solemn invocation and college hymn rendered by the St. Joseph Student Choir.' },
+    { time: '09:40 AM – 09:55 AM', title: 'Welcome Address & JTC 2026 Trailer Premiere', desc: 'Opening keynote by Siam Ulla Aziz (President, JTC) with exclusive festival trailer launch.' },
+    { time: '09:55 AM – 10:15 AM', title: 'Address by Chief Convener', desc: 'Speech by Snigdha K. Paul (Chief Convener) outlining competitive integrity and arena setup.' },
+    { time: '10:15 AM – 10:35 AM', title: 'Speech of Vice Principal', desc: 'Inspirational message by Brother Bikash Victor Rozario, CSC, Vice Principal.' },
+    { time: '10:35 AM – 11:05 AM', title: 'Inaugural Keynote by Chief Guest', desc: 'Keynote address by the Distinguished Chief Guest & presentation of commemorative floral tributes.' },
+    { time: '11:05 AM – 11:25 AM', title: 'Inaugural Address by Principal', desc: 'Official festival opening declaration and blessings by Brother Chandon B. Gomes, CSC, Principal.' },
+    { time: '11:25 AM – 11:45 AM', title: 'Digital Torch Lighting & Ribbon Cutting', desc: 'Ceremonial digital torch activation & grand inauguration ribbon cutting marking Day 1 kickoff.' },
+  ];
+
+  // Day 1 Dedicated St. Joseph Submission Desks
+  const day1SubmissionDesks = [
+    {
+      station: 'Station 01',
+      title: 'Captura (Photography Prints Desk)',
+      venue: 'Art & Media Hall (Ground Floor)',
+      format: 'Physical 7×9 in Laminated Prints',
+      icon: Camera,
+      badge: 'Group A, B, C, D, E',
+      desc: 'Submit properly laminated 7×9 inches photographs. Write Name, Class, Section, Group, and Title on the back before laminating.',
+    },
+    {
+      station: 'Station 02',
+      title: 'Tech-Art Bonanza & Tech Meme USB Drop',
+      venue: 'Media Lab Submission Desk (Level 2)',
+      format: 'High-Res PNG + Raw Layered Source Files',
+      icon: Palette,
+      badge: 'Group A, B, C, D, E',
+      desc: 'Submit project via physical USB drive in folder labeled [Name_Roll_Group]. Include raw layered file (.psd, .ai, .procreate) for authenticity verification.',
+    },
+    {
+      station: 'Station 03',
+      title: 'Game Sync Symphony (Video Montage)',
+      venue: 'Audiovisual Screening Room N-201',
+      format: '1080p MP4 (Max 5 Mins)',
+      icon: Video,
+      badge: 'Group A, B, C, D',
+      desc: 'Video montage submissions turned in via USB drive. Judges perform initial codec verification & staging for Day 3 main auditorium projection.',
+    },
+    {
+      station: 'Station 04',
+      title: 'Robotics Track Calibration & Inspection',
+      venue: 'Room N-204 & Basement Arena',
+      format: 'LFR Dimension Check (≤25cm) & Free Trial',
+      icon: Cpu,
+      badge: 'Group B, C, D',
+      desc: 'Pre-event dimensional audit and test runs on the official vinyl track. Teams secure booth allocations in the Basement Hardware Showcase.',
+    },
+  ];
 
   // Day 2 Data
   const day2Ongoing: OngoingItem[] = [
@@ -368,15 +519,15 @@ export default function CarnivalTimeline() {
 
   // Filter events by group
   const filteredEvents = useMemo(() => {
-    const list = activeDay === 'day2' ? day2Events : activeDay === 'day3' ? day3Events : [];
+    const list = activeDay === 'day1' ? day1Events : activeDay === 'day2' ? day2Events : activeDay === 'day3' ? day3Events : [];
     if (selectedGroup === 'ALL') return list;
 
     return list.filter((ev) => {
-      if (ev.category === 'BREAK') return true;
+      if (ev.category === 'BREAK' || ev.category === 'CEREMONY') return true;
       if (!ev.groupSlots || ev.groupSlots.length === 0) return true;
       return ev.groupSlots.some((slot) => slot.group.toLowerCase() === selectedGroup.toLowerCase());
     });
-  }, [activeDay, selectedGroup, day2Events, day3Events]);
+  }, [activeDay, selectedGroup, day1Events, day2Events, day3Events]);
 
   const getCategoryBadgeClass = (category: TimelineEvent['category']) => {
     switch (category) {
@@ -422,7 +573,7 @@ export default function CarnivalTimeline() {
       {/* Day Navigation Tabs */}
       <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
         {[
-          { id: 'day1', label: 'Day 1 • Oct 1 (Thu)', subtitle: 'Opening & Setup' },
+          { id: 'day1', label: 'Day 1 • Oct 1 (Thu)', subtitle: '09:00 AM – 05:00 PM • Inauguration & Submissions' },
           { id: 'day2', label: 'Day 2 • Oct 2 (Fri)', subtitle: '09:00 AM – 06:00 PM • Competitions' },
           { id: 'day3', label: 'Day 3 • Oct 3 (Sat)', subtitle: '09:00 AM – 08:00 PM • Finals & Gala' },
         ].map((tab) => {
@@ -449,115 +600,71 @@ export default function CarnivalTimeline() {
         })}
       </div>
 
-      {/* DAY 1 PLACEHOLDER / COMING SOON */}
-      {activeDay === 'day1' && (
-        <Card glow="none" className="p-8 sm:p-12 border border-surface-border bg-surface/80 backdrop-blur-xl text-center">
-          <div className="max-w-xl mx-auto space-y-5">
-            <div className="w-16 h-16 rounded-2xl bg-gold/15 border border-gold/40 text-gold flex items-center justify-center mx-auto shadow-lg shadow-gold/15">
-              <Clock className="w-8 h-8" />
-            </div>
-            <div className="space-y-2">
-              <Badge variant="gold" size="md">
-                Publishing Soon
+      {/* ALL DAYS CONTENT */}
+      <div className="space-y-8">
+        {/* Day Overview Banner */}
+        <div className="p-6 rounded-2xl bg-surface/90 border border-surface-border backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="gold" size="sm">
+                {activeDay === 'day1' ? 'Day 01 • Thursday' : activeDay === 'day2' ? 'Day 02 • Friday' : 'Day 03 • Saturday'}
               </Badge>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-display">
-                Day 1 (Thursday, Oct 1, 2026) Schedule
-              </h3>
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                The detailed slot-by-slot itinerary for Day 1 is currently being finalized by the JTC Executive Committee and will be published here shortly.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-surface-elevated border border-surface-border text-left text-xs sm:text-sm text-slate-300 space-y-2">
-              <div className="flex items-center gap-2 text-gold font-bold">
-                <AlertCircle className="w-4 h-4 text-gold shrink-0" />
-                <span>What to expect on Day 1:</span>
-              </div>
-              <p className="pl-6 text-slate-400">
-                • Contestant Reporting & ID Verification Desk Opens<br />
-                • Grand Inauguration & Opening Ceremony in SJIS Main Auditorium<br />
-                • Registration Kit Distribution & Arena Orientations<br />
-                • Preliminary Qualifiers & Practice Arena Access
-              </p>
-            </div>
-
-            <div className="pt-2">
-              <button
-                onClick={() => setActiveDay('day2')}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gold text-slate-950 font-black text-sm hover:bg-yellow-400 transition-colors shadow-lg shadow-gold/20 cursor-pointer"
-              >
-                <span>View Released Day 2 Schedule</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* DAY 2 AND DAY 3 CONTENT */}
-      {(activeDay === 'day2' || activeDay === 'day3') && (
-        <div className="space-y-8">
-          {/* Day Overview Banner */}
-          <div className="p-6 rounded-2xl bg-surface/90 border border-surface-border backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Badge variant="gold" size="sm">
-                  {activeDay === 'day2' ? 'Day 02 • Friday' : 'Day 03 • Saturday'}
-                </Badge>
-                <span className="text-xs font-mono text-slate-400">
-                  {activeDay === 'day2' ? 'Oct 2, 2026' : 'Oct 3, 2026'}
-                </span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-white font-display">
-                {activeDay === 'day2'
-                  ? 'Major Competitions, Lab Contests & On-Stage Presentations'
-                  : 'Championship Finals, Grand Closing Ceremony & Cultural Gala'}
-              </h3>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-1">
-                <span className="flex items-center gap-1.5 text-gold-light">
-                  <MapPin className="w-3.5 h-3.5 text-gold" />
-                  St. Joseph International School Premises
-                </span>
-                <span className="flex items-center gap-1.5 text-sky-300">
-                  <Clock className="w-3.5 h-3.5 text-sky-400" />
-                  {activeDay === 'day2' ? '09:00 AM – 06:00 PM' : '09:00 AM – 08:00 PM'}
-                </span>
-              </div>
-            </div>
-
-            {/* Group Filter Pills */}
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-gold" /> Filter by Academic Group:
+              <span className="text-xs font-mono text-slate-400">
+                {activeDay === 'day1' ? 'Oct 1, 2026' : activeDay === 'day2' ? 'Oct 2, 2026' : 'Oct 3, 2026'}
               </span>
-              <div className="flex flex-wrap gap-1.5">
-                {(['ALL', 'Group A', 'Group B', 'Group C', 'Group D'] as GroupFilter[]).map((grp) => (
-                  <button
-                    key={grp}
-                    onClick={() => setSelectedGroup(grp)}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      selectedGroup === grp
-                        ? 'bg-gold text-slate-950 shadow-md shadow-gold/20 font-black'
-                        : 'bg-surface-elevated text-slate-300 hover:text-white hover:bg-surface-border border border-surface-border'
-                    }`}
-                  >
-                    {grp === 'ALL' ? 'All Groups' : grp}
-                  </button>
-                ))}
-              </div>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-white font-display">
+              {activeDay === 'day1'
+                ? 'Grand Inauguration Ceremony & Exclusive St. Joseph Student Submissions'
+                : activeDay === 'day2'
+                ? 'Major Competitions, Lab Contests & On-Stage Presentations'
+                : 'Championship Finals, Grand Closing Ceremony & Cultural Gala'}
+            </h3>
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-1">
+              <span className="flex items-center gap-1.5 text-gold-light">
+                <MapPin className="w-3.5 h-3.5 text-gold" />
+                St. Joseph International School Premises
+              </span>
+              <span className="flex items-center gap-1.5 text-sky-300">
+                <Clock className="w-3.5 h-3.5 text-sky-400" />
+                {activeDay === 'day1' ? '09:00 AM – 05:00 PM' : activeDay === 'day2' ? '09:00 AM – 06:00 PM' : '09:00 AM – 08:00 PM'}
+              </span>
             </div>
           </div>
 
-          {/* Ongoing Arenas & Submissions Showcase */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-gold flex items-center gap-1.5">
-              <Tv className="w-3.5 h-3.5" /> Full-Day Ongoing Arenas & Submission Windows
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {(activeDay === 'day2' ? day2Ongoing : day3Ongoing).map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-xl bg-surface-elevated/90 border border-surface-border hover:border-gold/40 transition-colors flex flex-col justify-between gap-2.5"
+          {/* Group Filter Pills */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold flex items-center gap-1">
+              <Users className="w-3.5 h-3.5 text-gold" /> Filter by Academic Group:
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {(['ALL', 'Group A', 'Group B', 'Group C', 'Group D'] as GroupFilter[]).map((grp) => (
+                <button
+                  key={grp}
+                  onClick={() => setSelectedGroup(grp)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    selectedGroup === grp
+                      ? 'bg-gold text-slate-950 shadow-md shadow-gold/20 font-black'
+                      : 'bg-surface-elevated text-slate-300 hover:text-white hover:bg-surface-border border border-surface-border'
+                  }`}
+                >
+                  {grp === 'ALL' ? 'All Groups' : grp}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Ongoing Arenas & Submissions Showcase */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-gold flex items-center gap-1.5">
+            <Tv className="w-3.5 h-3.5" /> Full-Day Ongoing Arenas & Submission Windows
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {(activeDay === 'day1' ? day1Ongoing : activeDay === 'day2' ? day2Ongoing : day3Ongoing).map((item, idx) => (
+              <div
+                key={idx}
+                className="p-4 rounded-xl bg-surface-elevated/90 border border-surface-border hover:border-gold/40 transition-colors flex flex-col justify-between gap-2.5"
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between gap-2">
@@ -689,6 +796,152 @@ export default function CarnivalTimeline() {
             )}
           </div>
 
+          {/* DAY 1 EXCLUSIVE: INAUGURATION PROGRAM & JOSEPHITE SUBMISSION PROTOCOL */}
+          {activeDay === 'day1' && (
+            <div className="pt-6 space-y-8">
+              {/* Grand Inauguration Program Itinerary */}
+              <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-surface via-sjis-royal/40 to-surface-elevated border border-gold/40 shadow-xl shadow-amber-500/10">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-6 border-b border-surface-border">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="gold" size="sm">
+                        Auditorium Grand Opening
+                      </Badge>
+                      <span className="text-xs font-mono text-gold-light">09:00 AM – 11:45 AM</span>
+                    </div>
+                    <h3 className="text-2xl font-black text-white font-display mt-1">
+                      Grand Carnival Inauguration Program
+                    </h3>
+                  </div>
+                  <Badge variant="champagne" size="md">
+                    Ceremonial Order & Dignitary Addresses
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {day1InaugurationSteps.map((step, sIdx) => (
+                    <div
+                      key={sIdx}
+                      className="p-3.5 rounded-xl bg-surface/80 border border-surface-border flex items-start gap-3 hover:border-gold/30 transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-gold/15 text-gold flex items-center justify-center font-mono text-xs font-bold shrink-0 mt-0.5 border border-gold/30">
+                        {sIdx + 1}
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-mono font-bold text-gold-light">{step.time}</span>
+                        </div>
+                        <h5 className="font-bold text-white text-sm">{step.title}</h5>
+                        <p className="text-xs text-slate-400">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Exclusive St. Joseph Submission Desks & Protocol Hub */}
+              <div className="p-6 sm:p-8 rounded-2xl bg-surface-elevated border border-gold/30 shadow-xl relative overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
+                
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-surface-border relative z-10">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold uppercase">
+                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                        Internal Submission Day
+                      </span>
+                      <span className="text-xs font-mono text-slate-400">11:45 AM – 04:30 PM</span>
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white font-display">
+                      St. Joseph Students Exclusive Submission Desks
+                    </h3>
+                    <p className="text-slate-300 text-xs sm:text-sm max-w-3xl leading-relaxed">
+                      Day 1 is strictly reserved for <strong className="text-white">St. Joseph International School students</strong> to turn in physical and digital project submissions, conduct track trials, and receive official delegate accreditation before external teams arrive.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-surface/90 border border-amber-500/30 text-amber-200 text-xs max-w-xs shrink-0 flex items-start gap-2.5">
+                    <Info className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-white block font-semibold mb-0.5">External Institutions:</strong>
+                      Submissions for guest schools/colleges open on <span className="text-gold font-bold">Day 2 Morning (09:30 AM – 01:00 PM)</span> at Central Registration.
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4 Dedicated Submission Stations */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-6 relative z-10">
+                  {day1SubmissionDesks.map((station, sIdx) => {
+                    const Icon = station.icon;
+                    return (
+                      <div
+                        key={sIdx}
+                        className="p-5 rounded-xl bg-surface/90 border border-surface-border hover:border-gold/50 transition-all flex flex-col justify-between space-y-4 group"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center border border-gold/30 group-hover:scale-105 transition-transform">
+                              <Icon className="w-5 h-5" />
+                            </div>
+                            <span className="text-[10px] font-mono font-bold text-amber-400 px-2 py-0.5 rounded bg-surface border border-surface-border">
+                              {station.station}
+                            </span>
+                          </div>
+
+                          <div>
+                            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-surface border border-amber-500/30 text-gold-light font-semibold">
+                              {station.badge}
+                            </span>
+                            <h5 className="font-bold text-white text-base mt-2 leading-snug">{station.title}</h5>
+                          </div>
+
+                          <p className="text-xs text-slate-400 leading-relaxed">
+                            {station.desc}
+                          </p>
+                        </div>
+
+                        <div className="space-y-1.5 pt-3 border-t border-surface-border text-xs">
+                          <div className="flex items-center gap-1.5 text-slate-300">
+                            <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
+                            <span className="truncate">{station.venue}</span>
+                          </div>
+                          <div className="text-[11px] font-mono text-amber-300">
+                            {station.format}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Checklist / Directives for Josephites */}
+                <div className="p-4 rounded-xl bg-surface/80 border border-surface-border relative z-10">
+                  <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-gold mb-3 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Mandatory Josephite Submission Checklist:
+                  </h5>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-slate-300">
+                    <div className="flex items-start gap-2">
+                      <span className="text-gold font-bold">•</span>
+                      <span><strong>Student ID:</strong> Keep St. Joseph ID card or College Roll card ready at verification.</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-gold font-bold">•</span>
+                      <span><strong>USB Drive Label:</strong> Save folder as <code>[Name]_[Class]_[Roll]_[Event]</code>.</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-gold font-bold">•</span>
+                      <span><strong>7×9 Photo Print:</strong> Strictly laminated; back signed with Name, Class, Group & Title.</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-gold font-bold">•</span>
+                      <span><strong>Signed Receipt:</strong> Retain the JTC stamped counter-slip for Day 3 award claims.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* DAY 3 EXCLUSIVE: CLOSING CEREMONY & CULTURAL PROGRAM */}
           {activeDay === 'day3' && (
             <div className="pt-6 space-y-8">
@@ -777,7 +1030,6 @@ export default function CarnivalTimeline() {
             </div>
           )}
         </div>
-      )}
     </section>
   );
 }

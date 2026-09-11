@@ -275,7 +275,7 @@ export default function HeroCyberTerminal() {
         <div className="space-y-1.5 text-xs text-slate-300">
           <p className="text-gold font-bold">📅 Festival Timeline: Oct 1 – 3, 2026 (3-Day Grand Fest):</p>
           <div className="space-y-1 pl-1">
-            <p><strong className="text-slate-400">Day 1 (Oct 1):</strong> Inauguration & ID Verification • Full slot itinerary releasing soon</p>
+            <p><strong className="text-gold-light">Day 1 (Oct 1):</strong> Grand Inauguration Ceremony (Auditorium, 09:00 AM) • St. Joseph Students Exclusive Submissions & Robotics Setup</p>
             <p><strong className="text-sky-300">Day 2 (Oct 2):</strong> Rubik's Cube • Tech Article • HTML Web Page • Gaming Quiz • SwiftType • AI Prompting • PowerPoint Defense • Treasure Hunt • Tech Art Bonanza</p>
             <p><strong className="text-amber-300">Day 3 (Oct 3):</strong> Photography Judgement • Tech Meme • Tech Quiz • Line Robot • Coding Marathon • VTutor Workshop • Drone Flight • Grand Closing Ceremony (3–6 PM) • Cultural Gala (6–8 PM)</p>
           </div>
