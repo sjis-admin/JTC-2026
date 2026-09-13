@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Turnstile } from '@/components/ui/Turnstile';
 import { API_BASE, setAdminToken, getAdminToken } from '@/lib/api';
 import { ShieldCheck, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
 
@@ -17,7 +16,6 @@ function AdminLoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,10 +25,6 @@ function AdminLoginForm() {
       window.location.href = fromUrl;
     }
   }, [fromUrl]);
-
-  const handleTurnstileSuccess = React.useCallback((token: string) => {
-    setTurnstileToken(token);
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +38,6 @@ function AdminLoginForm() {
         body: JSON.stringify({
           username,
           password,
-          turnstile_token: turnstileToken,
         }),
       });
 
@@ -129,9 +122,6 @@ function AdminLoginForm() {
               </button>
             </div>
           </div>
-
-          {/* Cloudflare Turnstile Bot Defense */}
-          <Turnstile onSuccess={handleTurnstileSuccess} />
 
           <div className="pt-2">
             <Button variant="glow" type="submit" isLoading={loading} className="w-full font-bold">

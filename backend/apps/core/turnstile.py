@@ -6,15 +6,12 @@ logger = logging.getLogger(__name__)
 
 CLOUDFLARE_TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 
-def verify_turnstile_token(token: str, remote_ip: str = None) -> bool:
+def verify_turnstile_token(token: str = None, remote_ip: str = None) -> bool:
     """
-    Verifies Cloudflare Turnstile token against Cloudflare's /siteverify API.
-    If Turnstile is disabled (e.g. in local development), it automatically passes.
+    Turnstile is completely disabled as human verification is handled via Google OAuth
+    and Edge Middleware protections.
     """
-    enabled = getattr(settings, 'CLOUDFLARE_TURNSTILE_ENABLED', False)
-    if not enabled:
-        # Development / local mode bypass
-        return True
+    return True
 
     if not token:
         logger.warning("Turnstile token missing while verification is enabled.")

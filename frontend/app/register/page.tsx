@@ -12,7 +12,6 @@ import {
   fetchBundleInfo, BUNDLE_ELIGIBLE_GROUPS,
   EventItem, SchoolItem, SiteSettingsData, RegistrationPayload, BundleInfoData
 } from '@/lib/api';
-import { Turnstile } from '@/components/ui/Turnstile';
 import {
   CheckCircle2, AlertCircle, User, Trophy, CreditCard, ShieldCheck, ArrowRight,
   ArrowLeft, Copy, Check, Info, Users, Sparkles, ShoppingBag, Trash2, Phone, Mail, School, ExternalLink, Zap, Lock
@@ -119,7 +118,6 @@ function RegisterForm() {
 
   const [paymentMethod, setPaymentMethod] = useState<'SSLCOMMERZ' | 'BKASH' | 'NAGAD' | 'BANK'>('SSLCOMMERZ');
   const [paymentReference, setPaymentReference] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
 
   // Bundle Package state & eligibility notice
@@ -509,7 +507,6 @@ function RegisterForm() {
             })),
         payment_method: paymentMethod,
         payment_reference: paymentReference.trim(),
-        turnstile_token: turnstileToken,
       };
 
       const res = await submitRegistration(payload);
@@ -1506,9 +1503,6 @@ function RegisterForm() {
               </div>
             </div>
           </div>
-
-          {/* Cloudflare Turnstile Bot Defense */}
-          <Turnstile onSuccess={(tok) => setTurnstileToken(tok)} />
 
           {/* Navigation & Submit CTA */}
           <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-surface-border gap-3">
