@@ -40,11 +40,11 @@ export default function RulesHighlights() {
       ],
     },
     {
-      title: 'Robotics & 4×4 Speedcube',
+      title: 'Robotics & 3×3 Speedcube',
       icon: <Box className="w-5 h-5 text-emerald-400" />,
       tag: 'Strict Dimensions & Scrambling',
       points: [
-        'Rubik’s Showdown: Standard 4×4 Rubik’s Cube only; official scrambled sequences by judges.',
+        'Rubik’s Showdown: Standard 3×3 Rubik’s Cube only; official scrambled sequences by judges.',
         'Line Robot: Maximum dimensions 25cm × 25cm × 25cm; must navigate 100% autonomously.',
         'Drone Competition: Maneuver obstacle course within flight zone; 5-second penalty per missed gate.',
         'Webpage Creation: 30 minutes in lab using offline code editors (HTML/CSS/JS).',

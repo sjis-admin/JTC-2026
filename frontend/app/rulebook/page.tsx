@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     'Tech Carnival Rules Bangladesh',
     'Coding Marathon BDRO',
     'Drone Competition Guidelines',
-    '4x4 Rubiks Cube Rules SJIS',
+    '3x3 Rubiks Cube Rules SJIS',
     'AI Prompting Rules',
     'Gaming Quiz Rulebook',
   ],

@@ -103,26 +103,29 @@ export const CARNIVAL_EVENTS: EventItem[] = [
     registered_count: 0,
     order: 1,
     description:
-      'Based on a theme given on-spot, contestants use natural language prompting to generate an image that matches the style, composition, and subject as closely as possible. Open to Group B to E (Individual).',
-    rules: `### Task Description
-Based on an on-the-spot secret theme, contestants must craft text prompts to generate an image matching the style, composition, and subject of the theme as closely as possible.
+      'Based on the theme given on spot, use prompt to generate an image. Contestants are given a specific theme. They must generate an image that matches the style, composition, and subject of the theme as closely as possible. Open to Group B to E (Individual).',
+    rules: `### Description
+Based on the theme given on spot, use prompt to generate an image. Contestants are given a specific theme. They must generate an image that matches the style, composition, and subject of the theme as closely as possible.
 
-### Grade Eligibility
-- **Group B to Group E** (Grade 5 to University 4th Year)
+### Grade Group
+- **Group B to Group E** (Grade 5 to University Level)
 - Individual participation only
 
-### Participant Requirements
-- **Own Device (BYOD):** Any hardware from: laptop, tablet, smartphone, or mini PC.
-- **Internet Connection:** Must bring your own mobile data/hotspot connection.
-- **Pre-Login:** Must be logged into preferred AI image generation platform (e.g. Midjourney, DALL-E, Stable Diffusion, Firefly, Bing Image Creator) prior to the event start.
+### Rules and Regulations
+1. **New Session:** Must start a new Chat or terminal of AI model for the competition.
+2. **Safety Compliance:** Must not violate the host platform’s (major) safety guidelines (NSFW, extreme violence, etc.).
+3. **Reproducibility Check:** The prompt history must match the generated image. The prompts will be test-run by judges if any suspicion arises to validate the prompts.
+4. **Text-Only Rule:** The prompt history must not include any other resource (such as images or files) other than text typed by the participant. Each instruction MUST be typed by the participant completely (autocorrect and suggestions are still allowed).
+5. **Submission:** Submission into the google form link provided on the time of competition.
 
-### Rules & Regulations
-1. **New Session:** Must start a fresh chat or terminal of the AI model specifically for the competition.
-2. **Safety Compliance:** Must not violate the host platform’s major safety guidelines (NSFW, extreme violence, etc.).
-3. **Reproducibility Check:** The prompt history must match the generated image. Prompts will be test-run by judges if any suspicion arises to validate prompt authenticity.
-4. **Text-Only Rule:** The prompt history must NOT include any uploaded image or file other than text typed by the participant. Each instruction MUST be typed by the participant completely (autocorrect and suggestions are allowed; image-to-image cloning is prohibited).
-5. **Submission:** Completed output and prompt history must be submitted via the official Google Form link provided at competition time.`,
-    judging_criteria: "",
+### 🏆 Judging Criteria
+- **Prompt Effectiveness:** 35 Marks
+- **Accuracy of Output:** 25 Marks
+- **Creativity & Innovation:** 20 Marks
+- **Prompt Structure & Clarity:** 10 Marks
+- **Efficiency (Fewest Effective Prompts):** 10 Marks
+- **Total:** 100 Marks`,
+    judging_criteria: `Prompt Effectiveness (35), Accuracy of Output (25), Creativity & Innovation (20), Prompt Structure & Clarity (10), Efficiency (10). Total: 100.`,
     faqs: [
       {
         question: 'Which AI platforms are permitted?',
@@ -136,7 +139,7 @@ Based on an on-the-spot secret theme, contestants must craft text prompts to gen
   },
   {
     id: 2,
-    name: 'Tech-Art Bonanza (Digital Art & Banner)',
+    name: 'Tech-Art Bonanza (Theme Based Digital Art & Digital Poster/Banner Submission)',
     slug: 'tech-art-bonanza',
     short_name: 'Tech-Art Bonanza',
     category: 'DIGITAL_ART',
@@ -155,21 +158,26 @@ Based on an on-the-spot secret theme, contestants must craft text prompts to gen
     registered_count: 0,
     order: 2,
     description:
-      'Theme-based digital art & digital poster/banner submission. Submit high-res exports and raw layered project files. Open to Groups A to E (Grade 3 to University).',
-    rules: `### Task Description
-Contestants will create an artwork or poster based on the given technology theme announced by the carnival committee.
-
-### Grade Eligibility
-- **Grade 3 to 12 & University Level** (Group A to Group E)
+      'Theme-based digital art & digital poster/banner submission. Contestants will make an artwork or poster based on the given technology theme. Open to Groups A to E (Grade 3 to 12 & University Level).',
+    rules: `### Rules
+- **Grade:** 3 to 12 & University Level (Group A to E)
+- **Task:** Contestants will make an artwork or poster based on the given technology theme.
 
 ### Guidelines
-- **Art vs Poster:** Art submissions must be hand-drawn digitally. Posters must be graphically designed.
-- **Raw File Verification:** Submit the final image as well as the raw editable project file (e.g. .PSD, .AI, .Procreate, .KRA, .CLIP) for poster submissions (and raw files for art submissions where possible). Raw files are audited by judges to verify authenticity and layers.
-- **Originality & Anti-AI:** Submissions must be 100% human-created. AI-generated elements are strictly prohibited.
-- **Copyright:** Using trademarked or copyrighted characters or assets is forbidden. Participants must use self-made assets or verified royalty-free elements.
-- **Submission Mode:** Submit the project folder via pen drive on the first day of the fest at the submission desk.
-- Participants must bring their physical artwork print/display to the submission site on time if requested.`,
-    judging_criteria: "",
+- Submit an image as well as the raw file for poster submissions (and raw files for art submissions if possible). The raw files will be used to check for authenticity.
+- Submissions must be original. AI is prohibited.
+- Using trademarked or copyrighted characters or assets is forbidden. Participants must use self-made assets or royalty free ones.
+- Submit the submission through a pen drive.
+- Participants must bring their physical artwork to the submission site on time.
+
+### 🏆 Judgement Criteria (Marks)
+- **Creativity & Originality:** 25 Marks
+- **Relevance to Theme:** 30 Marks
+- **Artistic Skill & Technique:** 20 Marks
+- **Visual Appeal / Presentation:** 15 Marks
+- **In-depth Message / Meaning:** 10 Marks
+- **Total:** 100 Marks`,
+    judging_criteria: `Creativity & Originality (25), Relevance to theme (30), Artistic skill & technique (20), Visual appeal/presentation (15), In-depth message/meaning (10). Total: 100.`,
     faqs: [
       {
         question: 'Are AI tools allowed for digital art?',
@@ -199,24 +207,23 @@ Contestants will create an artwork or poster based on the given technology theme
     order: 3,
     description:
       'Video game lore, mechanics, esports history, and game architecture quiz. Features written OMR qualifiers followed by a thrilling live on-stage buzzer showdown.',
-    rules: `### Tournament Structure (2 Rounds)
+    rules: `### 1. Rounds (2 Rounds)
+#### 1. Qualifiers
+- Qualifiers will be on a MCQ question paper, where participants have to fill out OMR boxes in the OMR Answer Script.
+- QP will be of 20 marks and the participant will have to answer all 20 questions.
+- The top 5 participants will be taken from this round.
+- In case of participants from position 5 and below them having exact same marks, a verbal buzzer round will be taken of 11 questions where the person who answers the most amount of questions correctly will win the 5th place.
 
-#### 1. Qualifiers (OMR Written Round)
-- Conducted via an MCQ question paper where participants fill out OMR answer sheets.
-- Question paper comprises 20 questions for a total of 20 marks.
-- Participants must attempt all 20 questions within the allotted time.
-- **Advancement:** The top 5 participants from the Qualifiers advance directly to the Finals.
-- **Tie-Breaker:** In case participants from position 5 and below have exact identical scores, a live verbal buzzer round of 11 sudden-death questions will decide the 5th finalist.
-
-#### 2. Finals (On-Stage Buzzer Round)
-- Held live on the carnival main stage with a buzzer system.
+#### 2. Finals
+- Will be an on stage buzzer round.
 - Participants with the most questions answered correctly out of the first 10 questions will win the Finals.
-- **Draw Rule:** In case of a draw for podium positions, an 11-question sudden-death buzzer round will decide the champion.
+- In the case of a draw, a series of 11 questions will be asked in a buzzer round and the participants with the most correct answers will win.
 
-### Syllabus
-- Video game history, game development trivia, iconic franchises, esports championships, console hardware, and character lore.
-- Tailored difficulty arranged according to academic groups (Group A to D).`,
-    judging_criteria: "",
+### 2. Syllabus
+- Syllabus will be different and difficulty will be arranged according to the groups.
+- Different groups will have different syllabus.
+- Syllabus of individual groups will be uploaded soon on the Facebook and Instagram pages of JTC.`,
+    judging_criteria: `Qualifiers: 20 marks MCQ OMR (Top 5 advance). Finals: 10-question stage buzzer round. Ties: 11-question sudden-death buzzer round.`,
     faqs: [],
   },
   {
@@ -241,22 +248,20 @@ Contestants will create an artwork or poster based on the given technology theme
     order: 4,
     description:
       'High-octane speed typing showdown on MonkeyType in the SJIS Computer Lab. Test your pure WPM and accuracy over 15-second bursts. Participants may bring their own keyboards.',
-    rules: `### Task Description
-Participants will have timed attempts on MonkeyType to type as rapidly and accurately as possible in the school computer lab.
-
-### Grade Eligibility
-- **Grade 3 to Grade 12** (Group A to Group D)
+    rules: `### Rules
+- **Grade:** 3 to 12 (Group A to D)
+- **Task:** Participants will have 3 tries to type as fast as possible in one minute on MonkeyType.
 
 ### Guidelines
-- **Keyboards:** Participants are permitted to bring and plug in their own mechanical/membrane USB keyboards.
-- **Venue Hardware:** The competition takes place on SJIS Computer Lab desktop workstations. Bringing personal laptops or computers is not permitted.
-- **Fair Play:** Auto-correct, automated scripts, macros, and copy-pasting are strictly banned.
-- **Warm-Up:** A 5-minute warm-up period is provided before the official competition begins.
-- **Format:** Each try is a 15-second speed test. The best of five attempts will be recorded for official ranking.
+- Participants are allowed to bring their own keyboards.
+- The event will be held in the school computer lab. Bringing your own device (excluding keyboard) is not allowed.
+- No auto-correct, macros or copy-pasting.
+- 5 minutes will be given before the competition for warming up.
+- Each try will be a 15 second test. The best of five tries will be chosen for judging.
 
-### Judging & Awards
-- The contestants with the 3 highest recorded Net Words Per Minute (WPM) will be awarded official carnival medals and certificates.`,
-    judging_criteria: "",
+### 🏆 Judging
+- The participants with the 3 highest WPMs will be awarded.`,
+    judging_criteria: `Highest Net Words Per Minute (WPM) on MonkeyType across 15-second speed bursts.`,
     faqs: [
       {
         question: 'Can I bring my custom mechanical keyboard?',
@@ -285,20 +290,22 @@ Participants will have timed attempts on MonkeyType to type as rapidly and accur
     registered_count: 0,
     order: 5,
     description:
-      'Recreate a given reference webpage using pure HTML and CSS (including JS) in 30 minutes in the SJIS Computer Lab using offline code editors.',
-    rules: `### Task Description
-Participants will have to recreate a given target webpage using HTML and CSS (including JavaScript where needed) within 30 minutes.
-
-### Grade Eligibility
-- **Grade 3 to Grade 12** (Group A to Group D)
+      'Participants will have to recreate a given webpage using HTML and CSS (including JS) in 30 minutes in the school computer lab using offline code editors.',
+    rules: `### Rules
+- **Grade:** 3 to 12 (Group A to D)
+- **Task:** Participants will have to recreate a given webpage using HTML and CSS (including JS) in 30 minutes.
 
 ### Guidelines
-- **Offline Environment:** All participants must code using an offline code editor (VS Code, Sublime Text, or Notepad++).
-- **Lab Setup:** The event will be held in the school computer lab. Bringing personal laptops is not allowed.
-- **Functionality:** Any interactive functionality in the reference webpage will be specified. Participants must recreate the visual structure and behavior as accurately as possible.
-- **Script Files:** Creating an extra separate JavaScript file (.js) for interactivity is allowed and must be included in the submission folder.
-- **No Internet Assistance:** External templates, AI tools, or internet browsing are blocked during the contest.`,
-    judging_criteria: "",
+- All participants must use an offline code editor.
+- The event will be held in the school computer lab. Bringing your own device is not allowed.
+- Any functionality in the webpage will be mentioned. Participants must recreate the functionality as accurately as possible.
+- Making an extra JS file for the functionality is allowed and must be included with the webpage files.
+
+### 🏆 Judging
+- **Accuracy:** 60%
+- **Functionality:** 25%
+- **Code Quality & Structure:** 15%`,
+    judging_criteria: `Accuracy (60%), Functionality (25%), Code Quality & Structure (15%).`,
     faqs: [
       {
         question: 'Can I use CSS frameworks like Bootstrap or Tailwind?',
@@ -327,29 +334,30 @@ Participants will have to recreate a given target webpage using HTML and CSS (in
     registered_count: 0,
     order: 6,
     description:
-      'Create an engaging thematic video or montage based on the festival tech theme. Maximum 5 minutes, 1080p MP4. Submit via pendrive on Day 1 for stage screening and evaluation.',
-    rules: `### Task Description
-Participants must produce an original video based on the carnival technology theme and submit it on the first day of the fest.
-
-### Grade Eligibility
-- **Grade 3 to Grade 12** (Group A to Group D)
+      'Participants must create a video based on the theme given and submit it on the first day of the fest. Maximum 5 minutes, 1080p MP4. Submit via pendrive.',
+    rules: `### Rules
+- **Grade:** 3 to 12 (Group A to D)
+- **Task:** Participants must create a video based on the theme given and submit it on the first day of the fest.
 
 ### General Guidelines
-- The video must be strictly based on the assigned tech theme.
-- Offensive, copyrighted, or inappropriate footage/audio is strictly prohibited.
-- All footage and content must be original and theme-oriented.
-- Submission must be turned in via a physical pen drive on Day 1.
+- The video must be based on the given theme.
+- Offensive, copyrighted, or inappropriate content is prohibited.
+- All footage and content must be original and theme based.
+- Submit the submission through a pen drive on the first day of the fest.
 
-### Video Technical Format
-- **Duration:** Not more than 5 minutes.
-- **Resolution:** Full HD 1080p (1920×1080).
-- **Format:** MP4 container.
+### Video Format
+- The Video must be not more than 5 mins.
+- The resolution of the video must be 1080p and mp4 format.
 
-### Submission Folder Structure
-The submitted pendrive folder must contain:
-1. The video file (.mp4).
-2. A document file (.doc / .pdf) containing the student's full personal info (Name, Class, Section, School, Group) and the title/concept of the video.`,
-    judging_criteria: "",
+### Student Information
+- The submitted Folder should contain the video and in a doc file students personal information and title of the video needs to be written.
+
+### 🏆 Judging
+The videos will be judged by our judges on stage after being reviewed.
+- **Creativity & Storytelling:** 25%
+- **Editing, Audio & Video Quality:** 35%
+- **Theme Relevance:** 40%`,
+    judging_criteria: `Creativity & Storytelling (25%), Editing, Audio & Video Quality (35%), Theme Relevance (40%).`,
     faqs: [],
   },
   {
@@ -365,7 +373,7 @@ The submitted pendrive folder must contain:
     team_max: 1,
     eligibility_groups: [ACADEMIC_GROUPS.A, ACADEMIC_GROUPS.B, ACADEMIC_GROUPS.C, ACADEMIC_GROUPS.D, ACADEMIC_GROUPS.E],
     submission_type: 'PHYSICAL',
-    venue_detail: 'Carnival Photo Gallery Exhibition',
+    venue_detail: 'Carnival Photo Gallery Exhibition (Day 2 Submission)',
     is_active: true,
     highlight: true,
     icon: 'Camera',
@@ -373,39 +381,45 @@ The submitted pendrive folder must contain:
     registered_count: 0,
     order: 7,
     description:
-      'Theme-based photography exhibition. Strictly 7×9 inches (18×23 cm) laminated hardcopy submission with handwritten back-side information. Zero AI allowed.',
-    rules: `### Task Description
-Participants must take original photographs based on the festival theme and submit hardcopies on the first day of the tech carnival.
+      'Participants must take photos and submit it on the Second day of the fest. Strictly 7×9 inches (18×23 cm) laminated hardcopy submission with handwritten back-side information. Zero AI allowed.',
+    rules: `### Rules
+- **Grade:** 3 to 12 & University Level (Group A to E)
+- **Task:** Participants must take photos and submit it on the Second day of the fest.
 
-### Grade Eligibility
-- **Grade 3 to 12 & University Level** (Group A to Group E)
+### Guidelines
+1. **Photograph Size:**
+   - The photograph must be printed in **7 × 9 inches (18 × 23 cm)** size.
+   - This size is suitable for easy handling and display using clips.
+   - Do not submit photographs larger than the specified size.
 
-### Strict Print & Submission Specifications
-1. **Photograph Dimensions:**
-   - Must be printed strictly in **7 × 9 inches (18 × 23 cm)** size.
-   - This exact size is required for uniform hanging and display using hanging clips.
-   - Do NOT submit photographs larger or smaller than this dimension.
-
-2. **Printing & Mandatory Lamination:**
+2. **Printing & Lamination:**
    - Each student must submit one hardcopy of the photograph.
    - The photograph must be **properly laminated by the student before submission**.
-   - **DO NOT mount** the photograph on cardboard, foam board, or a frame, as photos are hung with clips.
+   - Do not mount the photograph on cardboard, foam board, or a frame, as the photographs will be displayed using clips.
 
-3. **Student Information (Back Side):**
-   - The following information must be clearly written on the **BACK SIDE** of the photograph **BEFORE laminating**:
-     • Student’s Full Name
-     • School / College / University Name
+3. **Student Information:**
+   - The following information must be clearly written on the back side of the photograph then laminate it:
+     • Student’s Name
      • Class & Section
-     • Group (A / B / C / D / E)
+     • Group A/B/C/D/E
      • Title of the Photograph
+   - **IMPORTANT:** Write all student information clearly on the **BACK SIDE** of the photograph.
 
-4. **Exhibition Display:**
-   - All approved photographs will be displayed suspended with gallery clips in the exhibition hall.
-   - Photographs that are unlaminated, incorrectly sized, or missing student information will be disqualified.
+4. **Display:**
+   - All photographs will be displayed by hanging them with clips.
+   - Students are requested to ensure that the photograph is neatly printed, laminated, and ready for display.
 
-5. **Anti-AI Policy:**
-   - **NO AI-generated or AI-synthesized photos will be allowed.** Submissions must be captured with a camera or phone by the participant.`,
-    judging_criteria: "",
+5. **Important Note:**
+   - Photographs that are not laminated, incorrectly sized, or missing student information may not be considered for the exhibition.
+   - **NO AI Generated photos/photos that is downloaded from internet will be allowed.**
+
+### 🏆 Judging
+The photos will be judged by our judges on stage after being reviewed.
+- **Technical Quality:** 10%
+- **Composition:** 20%
+- **Creativity & Originality:** 30%
+- **Theme Relevance:** 40%`,
+    judging_criteria: `Technical Quality (10%), Composition (20%), Creativity & Originality (30%), Theme Relevance (40%).`,
     faqs: [
       {
         question: 'Can I frame my photograph with glass or cardboard?',
@@ -435,35 +449,42 @@ Participants must take original photographs based on the festival theme and subm
     order: 8,
     description:
       'ICT Olympiad — Technology Quiz Competition. Features Round 1 Written exam, Round 2 Buzzer qualifier, and Round 3 Live Stage Final Buzzer with negative marking.',
-    rules: `### Overview
-ICT Olympiad — Technology Quiz Competition. This is an individual competition testing computer science, digital systems, cybersecurity, software, and tech innovations.
+    rules: `### 🧠 ICT Olympiad — Technology Quiz Competition
+Grade: Group A to D
 
-### General Rules
-- Individual competition across Groups A to D.
+### 📋 Rules & Format
+
+#### General Rules
+- This is an individual competition.
 - Participants must report before the scheduled reporting time.
-- Mobile phones, smartwatches, and all electronic devices are strictly prohibited.
-- No communication between participants during any round. Any cheating results in immediate disqualification.
-
-### Competition Format (3 Rounds)
+- Mobile phones, smartwatches, and all other electronic devices are strictly prohibited.
+- No communication or discussion between participants is allowed during any round.
+- Any form of cheating or unfair means will result in immediate disqualification.
+- Participants must maintain discipline throughout the competition.
 
 #### 📝 Round 1 — Written Round
-- Participants are given 10 comprehensive analytical questions.
-- Time limit: 30 minutes.
-- **Total Marks: 20** (1 mark for correct answer + 1 mark for correct and relevant technical explanation).
-- Answers must be submitted within the allotted time.
+- The first round will be a written quiz.
+- Participants will be given 10 questions.
+- The time limit will be 30 minutes.
+- Total Marks: 20 (1 mark for the correct answer, 1 mark for a correct and relevant explanation).
+- Participants must submit their answers within the allotted time.
 
 #### 🔔 Round 2 — Buzzer Round
-- Conducted with 20 rapid-fire questions using the buzzer system.
-- Only the **top 4 highest-scoring participants** from Round 2 qualify for the grand finals.
+- The second round will be a buzzer round consisting of 20 questions.
+- Participants must answer using the buzzer system.
+- Only the 4 highest-scoring participants from Round 2 will qualify for the final round.
 
 #### ⚡ Round 3 — Final Buzzer Round
-- Live stage buzzer showdown between the 4 finalists.
-- **Negative marking applies in this round** for incorrect buzzer attempts.
-- The top 2 scorers at the end of Round 3 will be declared the Champions and receive official awards.
+- The final round will also be a buzzer round.
+- The finalists will compete for the highest score.
+- Negative marking will apply in this round.
+- The top 2 scorers at the end of the final round will be declared the winners and will receive the prizes.
 
-#### 🏆 Tie-Breaker
-In case of a tie affecting qualification or podium places, a rapid-fire question round will be conducted. Judges' decisions are final and binding.`,
-    judging_criteria: "",
+#### 🏆 Judging & Tie-Breaker
+- Scores from each round will be recorded and used to determine qualification and final ranking.
+- In case of a tie affecting qualification or prize positions, an additional tie-breaker/rapid-fire question round may be conducted.
+- The judges' decision will be final and binding.`,
+    judging_criteria: `Round 1: Written (20 marks). Round 2: Buzzer (top 4 advance). Round 3: Final Buzzer with negative marking (top 2 win).`,
     faqs: [],
   },
   {
@@ -495,13 +516,13 @@ In case of a tie affecting qualification or podium places, a rapid-fire question
 - **Grade 3 to Grade 12** (Group A to Group D)
 - Teams of 2 to 4 members
 
-### How It Works (5 Progressive Stages)
-1. **Round 1 — QR Hunt:** Teams are given a clue sheet with encrypted QR codes. Scanning each QR code reveals secret room locations on the 2nd and 3rd floors of the SJIS building.
-2. **Round 2 — Tech Puzzle:** Teams find printed coding/debugging challenges in designated rooms. Determining the correct program output yields a secret numerical coordinate.
-3. **Round 3 — Hidden Message:** Teams receive an image concealing steganographic visual clues. Deciphering the clue unlocks the decryption cipher.
-4. **Round 4 — Encryption Challenge:** Teams solve a cryptography riddle to obtain a decryption string. Entering it into an online web terminal uncovers a secret destination URL.
-5. **Final Round — The Stage Treasure:** The URL yields the master Key and Box number that unlocks the physical treasure chest on stage containing the Bitcoin / Golden Code.`,
-    judging_criteria: "",
+### How it works:
+- **Round 1 — QR Hunt:** Place QR codes given in a paper to each team. Scanning each QR code reveals the room location on the 2nd and 3rd floor or SJIS building.
+- **Round 2 — Tech Puzzle:** Give teams a simple coding/debugging challenge. This will be presented in the form of printed paper in the designated rooms. The correct output gives them a number.
+- **Round 3 — Hidden Message:** Give them an image containing a hidden message using visual clues.
+- **Round 4 — Encryption Challenge:** Teams solve a riddle to obtain a decryption. Entering it on a webpage reveals a URL.
+- **Final Round — The Treasure:** The URL provides a combination of Key and box number that opens the treasure box on stage that has the Bitcoin.`,
+    judging_criteria: `Speed and accuracy across 5 phases: QR Hunt, Tech Puzzle, Hidden Message, Encryption Challenge, and Stage Treasure Chest Unlock.`,
     faqs: [
       {
         question: 'How many members can be in a Treasure Hunt team?',
@@ -511,7 +532,7 @@ In case of a tie affecting qualification or podium places, a rapid-fire question
   },
   {
     id: 10,
-    name: 'Rubik’s Showdown (4×4 Speedcube)',
+    name: 'Rubik’s Showdown (3×3 Speedcube)',
     slug: 'rubiks-showdown',
     short_name: 'Rubik’s Showdown',
     category: 'OTHER',
@@ -530,46 +551,73 @@ In case of a tie affecting qualification or podium places, a rapid-fire question
     registered_count: 0,
     order: 10,
     description:
-      'Official 4×4 Rubik’s Cube speed solving showdown. Standard 4×4 cubes scrambled by organizers. Fastest valid solving times take the podium.',
-    rules: `### Competition Category
-**Standard 4×4 Rubik’s Cube Competition**
+      'Official 3×3 Rubik’s Cube speed solving showdown. Standard 3×3 cubes scrambled by organizers. Fastest valid solving times take the podium. Open to Grade 3 to 12 (Group A to D).',
+    rules: `### Category
+**3x3 Rubik’s Cube**
 
 ### Grade Eligibility
-- **Grade 3 to Grade 12** (Group A to Group D)
+- **Grade 3 to 12** (Group A to D)
 
 ### Task
-Participants must solve a standard 4×4 Rubik’s Cube within the given time. The participant with the fastest valid solving time will be ranked highest.
+Participants must solve a standard 3×3 Rubik’s Cube within the given time. The participant with the fastest valid solving time will be ranked higher.
 
-### Official Guidelines
+### Guidelines
 1. **Cube Requirements:**
-   - Standard 4×4 Rubik’s Cube only.
-   - Participants must bring their own 4×4 cube in proper mechanical working condition.
-   - Any electronic, motorized, or specially modified cubes providing an unfair advantage are strictly prohibited.
-   - Organizers reserve the right to inspect all cubes prior to scrambling.
+   - The competition will be conducted using a standard 3×3 Rubik’s Cube.
+   - Participants may bring their own 3×3 cube unless instructed otherwise by the organizers.
+   - The cube must be in proper working condition.
+   - Any electronic or specially modified cube that provides an unfair advantage will not be allowed.
+   - The organizers reserve the right to inspect the cube before the competition.
 
-2. **Scrambling Procedure:**
-   - Each cube will be scrambled by official event marshals/judges following standardized scramble sequences.
+2. **Scrambling the Cube:**
+   - Each participant's cube will be scrambled before the competition.
+   - The scrambling process will be conducted by the event organizers or judges to ensure fairness.
    - Participants must not observe or interfere with the scrambling process.
 
-3. **Procedure & Timing:**
-   - Official timing mats/stopwatches will record each solve.
-   - Competitors start on the judge's signal and stop timer immediately upon finishing.
-   - A cube is considered solved only when all six faces are completely resolved into uniform colors.
-   - Multiple attempts will be permitted as decided by organizers; best valid solve time is ranked.
+3. **Competition Procedure:**
+   - Participants must wait for the official signal before starting.
+   - Timing will begin according to the instructions of the judges.
+   - Participants must stop immediately after completing the cube.
+   - A cube will be considered solved only when all six faces are completely solved with their respective colours.
 
-4. **Fair Play:**
-   - No external notes, algorithmic cheat sheets, smartwatches, or phones permitted during solve.`,
-    judging_criteria: "",
+4. **Timing:**
+   - The official timing system will be used to record each participant's solving time.
+   - Each participant will be given the number of attempts determined by the organizers.
+   - The best valid solving time will be considered for the final ranking.
+   - The judges' recorded time will be considered final.
+
+5. **Fair Play:**
+   - Participants must solve the cube without any external assistance.
+   - The use of mobile phones, smart devices, notes, algorithms, or any other solving guides during the competition is strictly prohibited.
+   - Participants must not receive assistance from spectators or other participants.
+   - Any participant found using unfair means may be immediately disqualified.
+
+6. **Participant Conduct:**
+   - Participants must report to the competition venue on time.
+   - Participants must follow the instructions of the judges and event organizers.
+   - Any disruptive or inappropriate behaviour may result in disqualification.
+
+7. **Judging & Results:**
+   - Participants will be ranked according to their fastest valid solving time.
+   - In the case of a tie, additional attempts or tie-breaking rules may be applied by the judges.
+   - The decision of the judges and organizers will be final.
+
+### IMPORTANT NOTE
+- **Only standard 3×3 Rubik’s Cubes will be allowed for this competition.**
+- Participants must ensure that their cubes are in proper working condition.
+- Any form of cheating or external assistance will result in immediate disqualification.
+- The decision of the judges will be final.`,
+    judging_criteria: `Ranked by fastest valid solving time on standard 3×3 Rubik's Cube. Best of official attempts.`,
     faqs: [
       {
-        question: 'Can I use a magnetic 4x4 cube?',
-        answer: 'Yes, factory magnetic speedcubes are allowed, provided they have no electronic sensors or Bluetooth connectivity.',
+        question: 'Can I use a magnetic 3x3 cube?',
+        answer: 'Yes, factory magnetic 3x3 speedcubes are allowed, provided they have no electronic sensors or Bluetooth connectivity.',
       },
     ],
   },
   {
     id: 11,
-    name: 'PowerPoint Presentation',
+    name: 'PowerPoint Presentation Competition',
     slug: 'powerpoint-presentation',
     short_name: 'PowerPoint Presentation',
     category: 'CREATIVE',
@@ -590,38 +638,59 @@ Participants must solve a standard 4×4 Rubik’s Cube within the given time. Th
     description:
       'Individual presentation contest using Microsoft PowerPoint. Choose exactly one assigned topic for your academic group. Strict human-created rule; no AI-generated slide decks.',
     rules: `### Competition Type
-**Individual Competition** (Grade 3 to Grade 12 — Groups A to D)
+**Individual Competition** (Grade 3 to 12 — Group A to D)
 
-### Official Presentation Topics
-*(Participants must choose strictly ONE topic from their designated grade group for their submission & presentation)*
-
-#### 🔹 Group A (Grade 3–4):
+### Presentation Topics (Choose only one Topic for the submission according to the Group)
+#### 🔹 Group-A:
 1. Introduction to Computer
 2. History of Computer
 3. History of Internet
 
-#### 🔹 Group B (Grade 5–6):
+#### 🔹 Group-B:
 1. Introduction to coding
 2. 3D printing in education, medicine and industry
 3. Wearable technology
 
-#### 🔹 Group C (Grade 7–8):
+#### 🔹 Group-C:
 1. The magic of animation
 2. Technology in space
 3. The technology behind virtual reality (AR vs VR)
 
-#### 🔹 Group D (Grade 9–12 / A2):
+#### 🔹 Group-D:
 1. The anatomy of a Digital Footprint
 2. Generative AI vs Human Creativity
 3. Cybersecurity Threats and Prevention
 
-### Key Guidelines
-- **Software:** Must be built using **Microsoft PowerPoint** (.pptx format).
-- **Individual Effort:** Must be prepared and presented independently by the contestant.
-- **Anti-AI Policy:** **AI-generated presentations or fully AI-generated slide content are strictly prohibited.**
-- **Slide Count & Timing:** Time limit and slide expectations will be confirmed by organizers at the venue. Exceeding time limits incurs mark deductions.
-- **Required Slide Info:** The presentation must clearly feature: Participant’s Name, School Name, Class & Section, Group (A/B/C/D), and Presentation Title.`,
-    judging_criteria: "",
+### Task
+Participants will work individually to create and present a PowerPoint presentation based on the theme/topic provided by the event organizers. The theme/topic and detailed instructions will be announced later. The same theme/topic will be applicable to all participating individuals.
+
+### Guidelines
+1. **Individual Participation:** Each participant must compete individually and independently.
+2. **Theme & Topic:** Strictly based on the given theme/topic.
+3. **Presentation Requirements:** Created using Microsoft PowerPoint. Clear, well-organized, visually appealing.
+4. **Number of Slides & Presentation Time:** Announced later by the organizers. Exceeding time limit may result in mark deductions.
+5. **Submission:** Must be submitted in **.pptx format**.
+6. **Originality & Fair Play:** **AI-generated presentations or fully AI-generated content will not be allowed.**
+7. **Student’s Information:** Participant’s Name, School Name, Class & Section, Group (A/B/C/D), Title of the Presentation.
+
+### 🏆 Judging Criteria
+Groups will be evaluated based on:
+- Relevance to the given theme/topic
+- Creativity and originality
+- Quality and accuracy of content
+- Slide design and visual appeal
+- Effective use of Microsoft PowerPoint features
+- Teamwork and coordination
+- Presentation and communication skills
+- Organization and clarity
+- Time management
+
+### IMPORTANT NOTE
+- This is an Individual competition.
+- The presentation must be created using Microsoft PowerPoint.
+- AI-generated presentations or fully AI-generated content will not be allowed.
+- The decision of the judges and event organizers will be final.`,
+    judging_criteria: `Relevance, Creativity & Originality, Quality & Accuracy, Slide Design, PowerPoint Features, Presentation & Communication, Organization & Clarity, Time Management.`,
     faqs: [
       {
         question: 'Can I use Gamma or Tome AI to generate my slides?',
@@ -631,7 +700,7 @@ Participants must solve a standard 4×4 Rubik’s Cube within the given time. Th
   },
   {
     id: 12,
-    name: 'Tech Bytes (Tech Article Writing)',
+    name: 'Tech Bytes (Tech Article Writing Competition)',
     slug: 'tech-bytes',
     short_name: 'Tech Bytes',
     category: 'CREATIVE',
@@ -650,21 +719,37 @@ Participants must solve a standard 4×4 Rubik’s Cube within the given time. Th
     registered_count: 0,
     order: 12,
     description:
-      'On-the-spot technology-related article writing in English. Secret theme announced at venue. Evaluated on depth of thought, clarity, and grammatical precision.',
+      'On-the-spot technology-related article writing in English. Topic announced at venue. Evaluated on depth of thought, clarity, and grammatical precision.',
     rules: `### Competition Type
-**Individual On-the-Spot Writing Competition** (Grade 3 to Grade 12 — Groups A to D)
+**Individual Competition** (Grade 3 to 12 — Group A to D)
 
 ### Task
-Participants will write an original technology-related article on the spot based on a topic or theme announced at the competition venue.
+Participants will write a technology-related article on the spot based on a topic or theme provided by the event organizers. The topic/theme will be announced at the competition venue, and participants will be required to complete their article within the allocated time.
 
 ### Guidelines
-1. **On-the-Spot Writing:** All articles must be composed in person during the allocated competition window.
-2. **Language:** The article must be written in **English**. Proper grammar, punctuation, and structure must be maintained.
-3. **Structure:** Must include an appropriate **Title, Introduction, Main Analysis/Discussion, and Conclusion**.
-4. **Word Limit:** Specified by the organizers prior to writing. Articles falling significantly above or below the limit incur penalties.
-5. **Materials:** Organizers provide official writing paper/answer sheets. Participants must bring their own pens.
-6. **Identification Header:** Must include Student's Name, School, Class & Section, Group (A/B/C/D), and Article Title.`,
-    judging_criteria: "",
+1. **Topic & Theme:** Provided on the day of the competition. Must remain relevant to technology.
+2. **On-the-Spot Writing:** Completed within allocated time limit.
+3. **Writing Format:** Clear and well-organized with appropriate Title, Introduction, Main Content, and Conclusion.
+4. **Language:** Must be written in **English**. Proper grammar, spelling, punctuation, and sentence structure.
+5. **Word Limit:** Announced by organizers before competition.
+6. **Writing Materials:** Bring own writing materials; organizers provide writing paper or answer sheets.
+7. **Student Information:** Student's Name, Class & Section, Group (A/B/C/D), Title of the Article.
+
+### 🏆 Judging Criteria
+Participants will be evaluated based on:
+- Relevance to the given topic
+- Quality and depth of ideas
+- Creativity and expression
+- Organization and structure
+- Language and grammar
+- Clarity and presentation
+
+### IMPORTANT NOTE
+- This is an on-the-spot writing competition.
+- The topic/theme will be announced at the competition venue.
+- All articles must be written in English.
+- The decision of the judges and event organizers will be final.`,
+    judging_criteria: `Relevance to given topic, Quality and depth of ideas, Creativity and expression, Organization and structure, Language and grammar, Clarity and presentation.`,
     faqs: [],
   },
   {
@@ -688,21 +773,37 @@ Participants will write an original technology-related article on the spot based
     registered_count: 0,
     order: 13,
     description:
-      'Individual submission of original programming, computer science, and digital technology humor. Every meme undergoes strict screening and plagiarism audit before judging.',
+      'Individual submission of original programming, computer science, and digital technology humor. Every meme undergoes strict screening and audit before judging.',
     rules: `### Competition Type
-**Individual Submission-Based Competition** (Groups A to D)
+**Individual / Submission-Based Competition** (Grade 3 to 12 — Group A to D)
 
-### Task Description
-Participants must create and submit an original technology-related meme based on programming, artificial intelligence, robotics, computer science, or digital student culture.
+### Task
+Participants must create and submit a technology-related meme based on a topic, theme, or concept related to technology, computers, programming, artificial intelligence, robotics, digital life, or other relevant technology-related subjects. All submitted memes will first go through a screening and auditing process to ensure that the content is appropriate before being shortlisted for judging.
 
-### Submission & Auditing Process
-1. **Screening & Audit:** All submitted memes undergo a rigorous **screening and auditing process** for appropriateness, copyright compliance, and originality before shortlisting.
-2. **Quantity:** Each participant may submit **one meme only**.
-3. **Formats:** High-resolution JPG, JPEG, or PNG.
-4. **Originality & Copyright:** Memes must be the original creative work of the participant. Direct reposts from Reddit, Instagram, or past competitions are disqualified. Standard meme templates may be utilized provided the joke/text is original.
-5. **Appropriateness:** Offensive, defamatory, or discriminatory content is strictly banned.
-6. **Required Info:** Submissions must include Student's Name, School, Class & Section, Group (A/B/C/D), and Meme Title/Caption.`,
-    judging_criteria: "",
+### Guidelines
+1. **Meme Content:** Related to technology, humorous, creative, understandable, and suitable for a general audience. Offensive or inappropriate content will not be accepted.
+2. **Submission:** Each participant may submit one meme only before the deadline.
+3. **Meme Format:** Clear and high-quality digital format (JPG, JPEG, or PNG).
+4. **Originality & Copyright:** Original creative work of the participant. No direct copying from another person, website, or social media. Permitted templates allowed with appropriate credit.
+5. **Content Screening & Auditing:** All submissions screened and audited before judging.
+6. **Student Information:** Student's Name, Class & Section, Group (A/B/C/D), Title or Caption of the Meme.
+
+### 🏆 Judging Criteria
+Shortlisted memes will be evaluated based on:
+- Creativity and humour
+- Relevance to technology
+- Originality of concept
+- Clarity of the message
+- Visual presentation
+- Effective use of text and imagery
+- Overall impact and audience engagement
+
+### IMPORTANT NOTE
+- This is a submission-based competition.
+- All submissions will be screened and audited for content appropriateness before judging.
+- The submitted meme must be the participant's original creative work.
+- The decision of the judges and event organizers will be final.`,
+    judging_criteria: `Creativity and humour, Relevance to technology, Originality of concept, Clarity of message, Visual presentation, Effective use of text and imagery, Overall impact.`,
     faqs: [],
   },
   {
@@ -727,19 +828,20 @@ Participants must create and submit an original technology-related meme based on
     order: 14,
     description:
       'BDRO Line-Following Robot race across a precision track. Robots must navigate fully autonomously and adhere to strict 25cm × 25cm × 25cm dimensional bounds.',
-    rules: `### Task Description
-Participants must design, build, and program an autonomous line-following robot capable of traversing a complex line track in the fastest time.
+    rules: `### Rules
+- **Grade:** 3 to 12 (Group A to D)
+- **Task:** Participants must design and make a line-following robot. In the event the robots will have to traverse a line course.
 
-### Grade Eligibility
-- **Grade 3 to Grade 12** (Group A to Group D)
-- Individual (৳300) or Team of up to 3 members (৳1000)
+### Guidelines
+- The robot cannot exceed dimensions 25cm × 25cm × 25cm.
+- The robot must move autonomously after the run starts. No physical contact or electronic communication with the robot is allowed.
+- If the robot leaves the track, a time penalty will be applied as decided by the judges.
+- Any misconduct will result in disqualification.
 
-### Technical Guidelines (BDRO Standards)
-- **Dimensions:** The robot **cannot exceed 25cm × 25cm × 25cm** in width, length, and height.
-- **Autonomous Operation:** The robot must operate 100% autonomously after the start button is pressed. No physical contact or wireless/electronic communication is permitted during the run.
-- **Track Penalties:** If the robot leaves the black track, a time penalty will be added to the final score as decided by the judges.
-- **Conduct:** Any intentional track damage or unsportsmanlike behavior results in immediate disqualification.`,
-    judging_criteria: "",
+### 🏆 Judging
+- The robots with the fastest times will be awarded.
+- Ties will be handled by preferring the smaller/lighter robot.`,
+    judging_criteria: `Fastest line course completion time. Strict 25cm × 25cm × 25cm dimension compliance. Ties: smaller/lighter robot preferred.`,
     faqs: [],
   },
   {
@@ -764,22 +866,21 @@ Participants must design, build, and program an autonomous line-following robot 
     order: 15,
     description:
       'BDRO Drone Obstacle Course navigation. Pilots maneuver custom drones through gates, hoops, and checkpoints. Strict flight zone boundaries and penalty rules apply.',
-    rules: `### Task Description
-Pilots must control and maneuver custom drones through an intricate 3D obstacle course within the carnival flight arena.
+    rules: `### Rules
+- **Grade:** 7 to 12 & University Level (Group C to E)
+- **Task:** Participants must control drones and navigate through an obstacle course.
 
-### Grade Eligibility
-- **Grade 7 to 12 & University Level** (Group C to Group E)
-- Individual (৳500) or Team of up to 3 members (৳1000)
+### Guidelines
+- Participants must bring their own drones. Drones must comply with the specifications mentioned below.
+- All drones must stay in the designated competition area.
+- Missing a checkpoint or colliding with an obstacle will result in a 5 second time penalty.
+- Sabotaging other participants’ drones, colliding with them or leaving the flight zone will result in disqualification.
+- Participants entering the flight zone will be disqualified.
 
-### Flight Guidelines & Safety (BDRO Standards)
-- **BYO Drone:** Participants must bring their own functional multirotor drones complying with safety limits.
-- **Designated Flight Zone:** All drones must strictly remain inside the marked net/flight zone arena.
-- **Penalties:** Missing an obstacle gate or colliding with an obstacle incurs a **5-second time penalty**.
-- **Disqualification Rules:**
-  • Sabotaging or colliding intentionally with other participants’ drones.
-  • Flying outside the boundary of the flight zone.
-  • Any participant physically entering the active flight arena without referee authorization results in instant disqualification.`,
-    judging_criteria: "",
+### 🏆 Judging
+- The drones with the fastest times will be awarded.
+- Ties will be handled by redoing the course.`,
+    judging_criteria: `Fastest obstacle course completion time. 5-second penalty per missed checkpoint or obstacle collision. Ties: redoing course.`,
     faqs: [],
   },
   {
@@ -817,7 +918,7 @@ BDRO Coding Marathon tests algorithmic logic, computational efficiency, and clea
 - Contest conducted in the SJIS Computer Lab.
 - External code generation assistants (ChatGPT, Copilot, Cursor) are strictly blocked and banned.
 - Standard language libraries are fully permitted.`,
-    judging_criteria: "",
+    judging_criteria: `Correctness of test cases, execution time, and algorithmic complexity.`,
     faqs: [],
   },
   {
@@ -852,7 +953,7 @@ Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT
 ### Presentation Rules
 - Hardware must be demonstrated live in front of the judging panel.
 - Teams must be prepared for a 5-minute technical presentation followed by a jury Q&A on schematics, components, code, and practical impact.`,
-    judging_criteria: "",
+    judging_criteria: `Innovation, technical complexity, working prototype demonstration, and presentation defense.`,
     faqs: [],
   },
 ];

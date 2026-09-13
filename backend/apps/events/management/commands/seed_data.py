@@ -280,33 +280,39 @@ class Command(BaseCommand):
                 'submission_type': 'PHYSICAL',
                 'highlight': True,
                 'icon': 'Camera',
-                'description': 'Theme-based photography exhibition. Strictly 7×9 inches (18×23 cm) laminated hardcopy submission with handwritten back-side information. Zero AI allowed.',
+                'description': 'Participants must take photos and submit it on the Second day of the fest. Strictly 7×9 inches (18×23 cm) laminated hardcopy submission with handwritten back-side information. Zero AI allowed.',
                 'rules': (
-                    "### Task Description\n"
-                    "Participants must take photos based on the given theme and submit physical hardcopies on the first day of the fest.\n\n"
-                    "### Grade Eligibility\n"
-                    "- **Grade 3 to 12 & University Level** (Group A to Group E)\n\n"
-                    "### Guidelines & Specifications\n"
+                    "### Rules\n"
+                    "- **Grade:** 3 to 12 & University Level (Group A to E)\n"
+                    "- **Task:** Participants must take photos and submit it on the Second day of the fest.\n\n"
+                    "### Guidelines\n"
                     "1. **Photograph Size:**\n"
-                    "   - The photograph must be printed strictly in **7 × 9 inches (18 × 23 cm)** size.\n"
-                    "   - This size is suitable for uniform handling and display using clips.\n"
-                    "   - Do not submit photographs larger or smaller than the specified size.\n"
-                    "2. **Printing & Mandatory Lamination:**\n"
-                    "   - Each student must submit one hardcopy.\n"
+                    "   - The photograph must be printed in 7 × 9 inches (18 × 23 cm) size.\n"
+                    "   - This size is suitable for easy handling and display using clips.\n"
+                    "   - Do not submit photographs larger than the specified size.\n"
+                    "2. **Printing & Lamination:**\n"
+                    "   - Each student must submit one hardcopy of the photograph.\n"
                     "   - The photograph must be properly laminated by the student before submission.\n"
-                    "   - **Do not mount** the photograph on cardboard, foam board, or a frame, as photos will be displayed using hanging clips.\n"
+                    "   - Do not mount the photograph on cardboard, foam board, or a frame, as the photographs will be displayed using clips.\n"
                     "3. **Student Information:**\n"
-                    "   - Must be clearly written on the **BACK SIDE** of the photograph **before laminating it**:\n"
+                    "   - Must be clearly written on the back side of the photograph then laminate it:\n"
                     "     • Student’s Name\n"
-                    "     • School / College / University Name\n"
                     "     • Class & Section\n"
-                    "     • Group (A/B/C/D/E)\n"
+                    "     • Group A/B/C/D/E\n"
                     "     • Title of the Photograph\n"
+                    "   - **IMPORTANT:** Write all student information clearly on the BACK SIDE of the photograph.\n"
                     "4. **Display:**\n"
-                    "   - All approved photographs will be displayed by hanging them with clips.\n"
-                    "5. **Important Note & Anti-AI:**\n"
-                    "   - Photographs that are not laminated, incorrectly sized, or missing student information will not be considered.\n"
-                    "   - **NO AI Generated photos will be allowed.**"
+                    "   - All photographs will be displayed by hanging them with clips.\n"
+                    "   - Students are requested to ensure that the photograph is neatly printed, laminated, and ready for display.\n"
+                    "5. **Important Note:**\n"
+                    "   - Photographs that are not laminated, incorrectly sized, or missing student information may not be considered for the exhibition.\n"
+                    "   - **NO AI Generated photos/photos that is downloaded from internet will be allowed.**\n\n"
+                    "### 🏆 Judging\n"
+                    "The photos will be judged by our judges on stage after being reviewed.\n"
+                    "- Technical Quality: 10%\n"
+                    "- Composition: 20%\n"
+                    "- Creativity & Originality: 30%\n"
+                    "- Theme Relevance: 40%"
                 ),
                 'judging_criteria': "",
                 'faqs': []
@@ -380,7 +386,7 @@ class Command(BaseCommand):
                 'faqs': []
             },
             {
-                'name': 'Rubik’s Showdown (4×4 Speedcube)',
+                'name': 'Rubik’s Showdown (3×3 Speedcube)',
                 'slug': 'rubiks-showdown',
                 'short_name': 'Rubik’s Showdown',
                 'category': 'OTHER',
@@ -392,23 +398,35 @@ class Command(BaseCommand):
                 'submission_type': 'PHYSICAL',
                 'highlight': False,
                 'icon': 'Box',
-                'description': 'Official 4×4 Rubik’s Cube speed solving showdown. Standard 4×4 cubes scrambled by organizers. Fastest valid solving times take the podium.',
+                'description': 'Official 3×3 Rubik’s Cube speed solving showdown. Standard 3×3 cubes scrambled by organizers. Fastest valid solving times take the podium. Open to Grade 3 to 12 (Group A to D).',
                 'rules': (
                     "### Category\n"
-                    "**4×4 Rubik’s Cube Competition**\n\n"
+                    "**3x3 Rubik’s Cube**\n\n"
                     "### Grade Eligibility\n"
-                    "- Grade 3 to 12 (Group A to Group D)\n\n"
+                    "- Grade 3 to 12 (Group A to D)\n\n"
                     "### Task\n"
-                    "Participants must solve a standard 4×4 Rubik’s Cube within the given time. The participant with the fastest valid solving time will be ranked higher.\n\n"
+                    "Participants must solve a standard 3×3 Rubik’s Cube within the given time. The participant with the fastest valid solving time will be ranked higher.\n\n"
                     "### Guidelines\n"
-                    "1. **Cube Requirements:** Standard 4×4 cube only. Participants may bring their own 4×4 cube in proper working condition. Electronic or modified advantage cubes strictly banned.\n"
-                    "2. **Scrambling:** Each cube will be scrambled by organizers/judges. Participants must not observe the scrambling process.\n"
-                    "3. **Procedure:** Timing begins on official signal. A cube is considered solved only when all six faces are completely solved with respective colours.\n"
-                    "4. **Timing:** Best valid solving time considered for final ranking.\n"
-                    "5. **Fair Play:** No external notes, algorithms, or devices allowed during solving."
+                    "1. **Cube Requirements:** The competition will be conducted using a standard 3×3 Rubik’s Cube. Participants may bring their own 3×3 cube unless instructed otherwise by the organizers. The cube must be in proper working condition. Any electronic or specially modified cube that provides an unfair advantage will not be allowed. The organizers reserve the right to inspect the cube before the competition.\n"
+                    "2. **Scrambling the Cube:** Each participant's cube will be scrambled before the competition by event organizers or judges to ensure fairness. Participants must not observe or interfere with the scrambling process.\n"
+                    "3. **Competition Procedure:** Participants must wait for the official signal before starting. Timing will begin according to instructions of judges. Participants must stop immediately after completing the cube. A cube will be considered solved only when all six faces are completely solved with their respective colours.\n"
+                    "4. **Timing:** Official timing system will record each participant's solving time. Each participant given attempts determined by organizers; best valid solving time considered for final ranking. Judges' recorded time considered final.\n"
+                    "5. **Fair Play:** Solve without external assistance. No mobile phones, smart devices, notes, algorithms, or solving guides permitted.\n"
+                    "6. **Participant Conduct:** Report to venue on time; follow instructions of judges.\n"
+                    "7. **Judging & Results:** Ranked by fastest valid solving time. Ties: additional attempts or tie-breaking rules applied.\n\n"
+                    "### IMPORTANT NOTE\n"
+                    "- Only standard 3×3 Rubik’s Cubes will be allowed for this competition.\n"
+                    "- Participants must ensure that their cubes are in proper working condition.\n"
+                    "- Any form of cheating or external assistance will result in immediate disqualification.\n"
+                    "- The decision of the judges will be final."
                 ),
-                'judging_criteria': "",
-                'faqs': []
+                'judging_criteria': "Ranked by fastest valid solving time on standard 3×3 Rubik's Cube.",
+                'faqs': [
+                    {
+                        'question': 'Can I use a magnetic 3x3 cube?',
+                        'answer': 'Yes, factory magnetic 3x3 speedcubes are allowed, provided they have no electronic sensors or Bluetooth connectivity.'
+                    }
+                ]
             },
             {
                 'name': 'PowerPoint Presentation',

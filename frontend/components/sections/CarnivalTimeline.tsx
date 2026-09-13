@@ -158,26 +158,26 @@ export default function CarnivalTimeline() {
 
   // Day 1 Inauguration Ceremony Steps
   const day1InaugurationSteps = [
-    { time: '09:00 AM – 09:30 AM', title: 'Red Carpet Reception & Assembly', desc: 'Arrival of Revered Holy Cross Brothers, Chief Guest, JTC Executives & School Delegates.' },
-    { time: '09:30 AM – 09:40 AM', title: 'National Anthem & St. Joseph Hymn', desc: 'Opening solemn invocation and college hymn rendered by the St. Joseph Student Choir.' },
-    { time: '09:40 AM – 09:55 AM', title: 'Welcome Address & JTC 2026 Trailer Premiere', desc: 'Opening keynote by Siam Ulla Aziz (President, JTC) with exclusive festival trailer launch.' },
-    { time: '09:55 AM – 10:15 AM', title: 'Address by Chief Convener', desc: 'Speech by Snigdha K. Paul (Chief Convener) outlining competitive integrity and arena setup.' },
-    { time: '10:15 AM – 10:35 AM', title: 'Speech of Vice Principal', desc: 'Inspirational message by Brother Bikash Victor Rozario, CSC, Vice Principal.' },
-    { time: '10:35 AM – 11:05 AM', title: 'Inaugural Keynote by Chief Guest', desc: 'Keynote address by the Distinguished Chief Guest & presentation of commemorative floral tributes.' },
-    { time: '11:05 AM – 11:25 AM', title: 'Inaugural Address by Principal', desc: 'Official festival opening declaration and blessings by Brother Chandon B. Gomes, CSC, Principal.' },
-    { time: '11:25 AM – 11:45 AM', title: 'Digital Torch Lighting & Ribbon Cutting', desc: 'Ceremonial digital torch activation & grand inauguration ribbon cutting marking Day 1 kickoff.' },
+    { order: 'Order 01', title: 'Reception & Assembly of Delegates', desc: 'Arrival and seating of school delegations, participants, and distinguished guests in the Main Auditorium.' },
+    { order: 'Order 02', title: 'National Anthem & St. Joseph Hymn', desc: 'Solemn invocation and college anthem rendered by the St. Joseph Student Choir.' },
+    { order: 'Order 03', title: 'Welcome Address & Carnival Trailer Premiere', desc: 'Opening address by Josephite Tech Club leadership and premiere of the official festival trailer.' },
+    { order: 'Order 04', title: 'Address by Chief Convener', desc: 'Briefing on competitive arenas, scoring transparency, and festival guidelines.' },
+    { order: 'Order 05', title: 'Address by Vice Principal', desc: 'Inspirational message and institutional welcome to all participating schools and colleges.' },
+    { order: 'Order 06', title: 'Inaugural Keynote by Chief Guest', desc: 'Keynote address by the Chief Guest & presentation of commemorative floral tributes.' },
+    { order: 'Order 07', title: 'Inaugural Address by Principal', desc: 'Official festival opening declaration and blessings by the Principal.' },
+    { order: 'Order 08', title: 'Digital Torch Lighting & Ribbon Cutting', desc: 'Ceremonial digital torch activation & ribbon cutting marking the official kickoff of Day 1.' },
   ];
 
   // Day 1 Dedicated St. Joseph Submission Desks
   const day1SubmissionDesks = [
     {
       station: 'Station 01',
-      title: 'Captura (Photography Prints Desk)',
+      title: 'Video Making Competition (USB Drop)',
       venue: 'Art & Media Hall (Ground Floor)',
-      format: 'Physical 7×9 in Laminated Prints',
-      icon: Camera,
-      badge: 'Group A, B, C, D, E',
-      desc: 'Submit properly laminated 7×9 inches photographs. Write Name, Class, Section, Group, and Title on the back before laminating.',
+      format: '1080p MP4 (Max 5 Mins)',
+      icon: Video,
+      badge: 'Group A, B, C, D',
+      desc: 'Submit video via USB drive in 1080p MP4 (max 5 mins) with doc file containing student info and title on Day 1.',
     },
     {
       station: 'Station 02',
@@ -190,12 +190,12 @@ export default function CarnivalTimeline() {
     },
     {
       station: 'Station 03',
-      title: 'Game Sync Symphony (Video Montage)',
-      venue: 'Audiovisual Screening Room N-201',
-      format: '1080p MP4 (Max 5 Mins)',
-      icon: Video,
-      badge: 'Group A, B, C, D',
-      desc: 'Video montage submissions turned in via USB drive. Judges perform initial codec verification & staging for Day 3 main auditorium projection.',
+      title: 'Photography Submissions Desk',
+      venue: 'Art & Media Hall (Ground Floor)',
+      format: 'Physical 7×9 in Laminated Prints (Day 2 Submission)',
+      icon: Camera,
+      badge: 'Group A, B, C, D, E',
+      desc: 'Official submissions on Day 2. Submit properly laminated 7×9 in photos. Write Name, Class, Section, Group, and Title on the back before laminating.',
     },
     {
       station: 'Station 04',
@@ -235,7 +235,7 @@ export default function CarnivalTimeline() {
 
   const day2Events: TimelineEvent[] = [
     {
-      title: "Rubik's Cube Speedcubing Championship",
+      title: "Rubik's Showdown (3×3 Speedcubing)",
       category: 'CONTEST',
       mainTime: '09:40 AM – 11:00 AM',
       venue: 'Main Stage Arena',
@@ -452,7 +452,7 @@ export default function CarnivalTimeline() {
       note: 'Hands-on practical skill session led by official learning partner VTutor.',
     },
     {
-      title: 'Game Sync Symphony (Gaming Video Montage Defense)',
+      title: 'Video Making Competition (Screening & Defense)',
       category: 'CONTEST',
       mainTime: '11:00 AM – 01:00 PM',
       venue: 'Computer Lab',
@@ -495,18 +495,15 @@ export default function CarnivalTimeline() {
 
   // Closing Ceremony Timeline
   const closingCeremonySteps = [
-    { time: '03:00 PM – 03:05 PM', title: 'Guard of Honour', desc: 'Guests received with floral tribute on stage' },
-    { time: '03:05 PM – 03:10 PM', title: 'National Anthem, Josephite Song & Speech of Vice Principal', desc: 'Speech by Br. Bikash Victor Rozario, CSC (Crest presentation)' },
-    { time: '03:10 PM – 03:15 PM', title: 'Musical Performance', desc: 'Special vocal and instrumental performance' },
-    { time: '03:15 PM – 03:20 PM', title: 'Speech of President, JTC', desc: 'Address by Siam Ulla Aziz, President of Josephite Tech Club' },
-    { time: '03:20 PM – 03:30 PM', title: 'Speech of Chief Guest', desc: 'Keynote address & presentation of honorary crest' },
-    { time: '03:30 PM – 03:35 PM', title: 'Cultural Dance Performance', desc: 'St. Joseph student cultural presentation' },
-    { time: '03:35 PM – 03:40 PM', title: 'Speech of Chief Convener, JTC', desc: 'Address by Snigdha K. Paul, Chief Convener (Crest presentation)' },
-    { time: '03:45 PM – 03:55 PM', title: 'Speech of Special Guest', desc: 'Distinguished guest address & honorary crest handover' },
-    { time: '03:55 PM – 04:00 PM', title: 'Speech of Chief Advisor', desc: 'Address by the Chief Advisor of Josephite Tech Club' },
-    { time: '04:05 PM – 04:10 PM', title: 'Grand Cultural Dance', desc: 'Special thematic dance performance' },
-    { time: '04:10 PM – 04:15 PM', title: 'Vote of Thanks by Principal', desc: 'Official concluding remarks by Brother Chandon B. Gomes, CSC, Principal' },
-    { time: '04:20 PM – 06:00 PM', title: 'Grand Award & Prize Giving Ceremony', desc: 'Distribution of Champion Crests, Medals, Certificates & Best Institution Shield across all 17 arenas' },
+    { order: 'Order 01', title: 'Guard of Honour & Reception', desc: 'Guests received with floral tribute on stage.' },
+    { order: 'Order 02', title: 'National Anthem & Josephite Song', desc: 'Opening solemn invocation and college anthem rendered by students.' },
+    { order: 'Order 03', title: 'Musical Performance & Cultural Showcase', desc: 'Special vocal, instrumental, and cultural dance presentations by St. Joseph students.' },
+    { order: 'Order 04', title: 'Address by Tech Club Leadership', desc: 'Reflection on festival highlights and student innovations by JTC Executive Council.' },
+    { order: 'Order 05', title: 'Speech of Vice Principal', desc: 'Address of appreciation to participants, mentors, and organizing committees.' },
+    { order: 'Order 06', title: 'Speeches of Chief Guest & Special Guests', desc: 'Keynote remarks by honored dignitaries & presentation of commemorative crests.' },
+    { order: 'Order 07', title: 'Address by Chief Convener', desc: 'Concluding remarks on fair play, scoring audits, and congratulations to all finalists.' },
+    { order: 'Order 08', title: 'Vote of Thanks & Concluding Remarks by Principal', desc: 'Official institutional gratitude to participating institutions, judges, and festival partners.' },
+    { order: 'Order 09', title: 'Grand Award & Prize Giving Ceremony', desc: 'Distribution of Champion Crests, Medals, Certificates & Best Institution Shield across all 17 arenas.' },
   ];
 
   // Cultural Program
@@ -813,9 +810,12 @@ export default function CarnivalTimeline() {
                       Grand Carnival Inauguration Program
                     </h3>
                   </div>
-                  <Badge variant="champagne" size="md">
-                    Ceremonial Order & Dignitary Addresses
-                  </Badge>
+                  <div className="flex flex-col sm:items-end gap-1">
+                    <Badge variant="champagne" size="md">
+                      Ceremonial Order & Dignitary Addresses
+                    </Badge>
+                    <span className="text-[10px] font-mono text-slate-400">Sequential order • Flexible live duration</span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -829,7 +829,7 @@ export default function CarnivalTimeline() {
                       </div>
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-[11px] font-mono font-bold text-gold-light">{step.time}</span>
+                          <span className="text-[11px] font-mono font-bold text-gold-light">{step.order}</span>
                         </div>
                         <h5 className="font-bold text-white text-sm">{step.title}</h5>
                         <p className="text-xs text-slate-400">{step.desc}</p>
@@ -959,9 +959,12 @@ export default function CarnivalTimeline() {
                       Grand Closing & Award Ceremony
                     </h3>
                   </div>
-                  <Badge variant="champagne" size="md">
-                    Stage Gala & Crest Handover
-                  </Badge>
+                  <div className="flex flex-col sm:items-end gap-1">
+                    <Badge variant="champagne" size="md">
+                      Stage Gala & Crest Handover
+                    </Badge>
+                    <span className="text-[10px] font-mono text-slate-400">Sequential order • Flexible live duration</span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -975,7 +978,7 @@ export default function CarnivalTimeline() {
                       </div>
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-[11px] font-mono font-bold text-gold-light">{step.time}</span>
+                          <span className="text-[11px] font-mono font-bold text-gold-light">{step.order}</span>
                         </div>
                         <h5 className="font-bold text-white text-sm">{step.title}</h5>
                         <p className="text-xs text-slate-400">{step.desc}</p>

@@ -159,7 +159,7 @@ ${ev.rules || 'Standard tournament rules apply.'}
             <Search className="w-4 h-4 text-gold absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search competitions, rules, keywords (e.g. 'Prompting', '4x4', 'Drone', '7x9', 'Zero')..."
+              placeholder="Search competitions, rules, keywords (e.g. 'Prompting', '3x3', 'Drone', '7x9', 'Zero')..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-elevated/90 border border-surface-border text-white text-xs sm:text-sm placeholder-slate-400 focus:outline-none focus:border-gold transition-colors"
