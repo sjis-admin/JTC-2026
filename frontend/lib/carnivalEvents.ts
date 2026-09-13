@@ -116,16 +116,8 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 2. **Safety Compliance:** Must not violate the host platform’s (major) safety guidelines (NSFW, extreme violence, etc.).
 3. **Reproducibility Check:** The prompt history must match the generated image. The prompts will be test-run by judges if any suspicion arises to validate the prompts.
 4. **Text-Only Rule:** The prompt history must not include any other resource (such as images or files) other than text typed by the participant. Each instruction MUST be typed by the participant completely (autocorrect and suggestions are still allowed).
-5. **Submission:** Submission into the google form link provided on the time of competition.
-
-### 🏆 Judging Criteria
-- **Prompt Effectiveness:** 35 Marks
-- **Accuracy of Output:** 25 Marks
-- **Creativity & Innovation:** 20 Marks
-- **Prompt Structure & Clarity:** 10 Marks
-- **Efficiency (Fewest Effective Prompts):** 10 Marks
-- **Total:** 100 Marks`,
-    judging_criteria: `Prompt Effectiveness (35), Accuracy of Output (25), Creativity & Innovation (20), Prompt Structure & Clarity (10), Efficiency (10). Total: 100.`,
+5. **Submission:** Submission into the google form link provided on the time of competition.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Which AI platforms are permitted?',
@@ -168,16 +160,8 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 - Submissions must be original. AI is prohibited.
 - Using trademarked or copyrighted characters or assets is forbidden. Participants must use self-made assets or royalty free ones.
 - Submit the submission through a pen drive.
-- Participants must bring their physical artwork to the submission site on time.
-
-### 🏆 Judgement Criteria (Marks)
-- **Creativity & Originality:** 25 Marks
-- **Relevance to Theme:** 30 Marks
-- **Artistic Skill & Technique:** 20 Marks
-- **Visual Appeal / Presentation:** 15 Marks
-- **In-depth Message / Meaning:** 10 Marks
-- **Total:** 100 Marks`,
-    judging_criteria: `Creativity & Originality (25), Relevance to theme (30), Artistic skill & technique (20), Visual appeal/presentation (15), In-depth message/meaning (10). Total: 100.`,
+- Participants must bring their physical artwork to the submission site on time.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Are AI tools allowed for digital art?',
@@ -223,7 +207,7 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 - Syllabus will be different and difficulty will be arranged according to the groups.
 - Different groups will have different syllabus.
 - Syllabus of individual groups will be uploaded soon on the Facebook and Instagram pages of JTC.`,
-    judging_criteria: `Qualifiers: 20 marks MCQ OMR (Top 5 advance). Finals: 10-question stage buzzer round. Ties: 11-question sudden-death buzzer round.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -257,11 +241,8 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 - The event will be held in the school computer lab. Bringing your own device (excluding keyboard) is not allowed.
 - No auto-correct, macros or copy-pasting.
 - 5 minutes will be given before the competition for warming up.
-- Each try will be a 15 second test. The best of five tries will be chosen for judging.
-
-### 🏆 Judging
-- The participants with the 3 highest WPMs will be awarded.`,
-    judging_criteria: `Highest Net Words Per Minute (WPM) on MonkeyType across 15-second speed bursts.`,
+- Each try will be a 15 second test. The best of five tries will be chosen.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Can I bring my custom mechanical keyboard?',
@@ -299,13 +280,8 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 - All participants must use an offline code editor.
 - The event will be held in the school computer lab. Bringing your own device is not allowed.
 - Any functionality in the webpage will be mentioned. Participants must recreate the functionality as accurately as possible.
-- Making an extra JS file for the functionality is allowed and must be included with the webpage files.
-
-### 🏆 Judging
-- **Accuracy:** 60%
-- **Functionality:** 25%
-- **Code Quality & Structure:** 15%`,
-    judging_criteria: `Accuracy (60%), Functionality (25%), Code Quality & Structure (15%).`,
+- Making an extra JS file for the functionality is allowed and must be included with the webpage files.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Can I use CSS frameworks like Bootstrap or Tailwind?',
@@ -350,14 +326,8 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 - The resolution of the video must be 1080p and mp4 format.
 
 ### Student Information
-- The submitted Folder should contain the video and in a doc file students personal information and title of the video needs to be written.
-
-### 🏆 Judging
-The videos will be judged by our judges on stage after being reviewed.
-- **Creativity & Storytelling:** 25%
-- **Editing, Audio & Video Quality:** 35%
-- **Theme Relevance:** 40%`,
-    judging_criteria: `Creativity & Storytelling (25%), Editing, Audio & Video Quality (35%), Theme Relevance (40%).`,
+- The submitted Folder should contain the video and in a doc file students personal information and title of the video needs to be written.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -411,15 +381,8 @@ The videos will be judged by our judges on stage after being reviewed.
 
 5. **Important Note:**
    - Photographs that are not laminated, incorrectly sized, or missing student information may not be considered for the exhibition.
-   - **NO AI Generated photos/photos that is downloaded from internet will be allowed.**
-
-### 🏆 Judging
-The photos will be judged by our judges on stage after being reviewed.
-- **Technical Quality:** 10%
-- **Composition:** 20%
-- **Creativity & Originality:** 30%
-- **Theme Relevance:** 40%`,
-    judging_criteria: `Technical Quality (10%), Composition (20%), Creativity & Originality (30%), Theme Relevance (40%).`,
+   - **NO AI Generated photos/photos that is downloaded from internet will be allowed.**`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Can I frame my photograph with glass or cardboard?',
@@ -478,13 +441,8 @@ Grade: Group A to D
 - The final round will also be a buzzer round.
 - The finalists will compete for the highest score.
 - Negative marking will apply in this round.
-- The top 2 scorers at the end of the final round will be declared the winners and will receive the prizes.
-
-#### 🏆 Judging & Tie-Breaker
-- Scores from each round will be recorded and used to determine qualification and final ranking.
-- In case of a tie affecting qualification or prize positions, an additional tie-breaker/rapid-fire question round may be conducted.
-- The judges' decision will be final and binding.`,
-    judging_criteria: `Round 1: Written (20 marks). Round 2: Buzzer (top 4 advance). Round 3: Final Buzzer with negative marking (top 2 win).`,
+- The top 2 scorers at the end of the final round will be declared the winners and will receive the prizes.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -522,7 +480,7 @@ Grade: Group A to D
 - **Round 3 — Hidden Message:** Give them an image containing a hidden message using visual clues.
 - **Round 4 — Encryption Challenge:** Teams solve a riddle to obtain a decryption. Entering it on a webpage reveals a URL.
 - **Final Round — The Treasure:** The URL provides a combination of Key and box number that opens the treasure box on stage that has the Bitcoin.`,
-    judging_criteria: `Speed and accuracy across 5 phases: QR Hunt, Tech Puzzle, Hidden Message, Encryption Challenge, and Stage Treasure Chest Unlock.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'How many members can be in a Treasure Hunt team?',
@@ -597,17 +555,12 @@ Participants must solve a standard 3×3 Rubik’s Cube within the given time. Th
    - Participants must follow the instructions of the judges and event organizers.
    - Any disruptive or inappropriate behaviour may result in disqualification.
 
-7. **Judging & Results:**
-   - Participants will be ranked according to their fastest valid solving time.
-   - In the case of a tie, additional attempts or tie-breaking rules may be applied by the judges.
-   - The decision of the judges and organizers will be final.
-
 ### IMPORTANT NOTE
 - **Only standard 3×3 Rubik’s Cubes will be allowed for this competition.**
 - Participants must ensure that their cubes are in proper working condition.
 - Any form of cheating or external assistance will result in immediate disqualification.
 - The decision of the judges will be final.`,
-    judging_criteria: `Ranked by fastest valid solving time on standard 3×3 Rubik's Cube. Best of official attempts.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Can I use a magnetic 3x3 cube?',
@@ -673,24 +626,12 @@ Participants will work individually to create and present a PowerPoint presentat
 6. **Originality & Fair Play:** **AI-generated presentations or fully AI-generated content will not be allowed.**
 7. **Student’s Information:** Participant’s Name, School Name, Class & Section, Group (A/B/C/D), Title of the Presentation.
 
-### 🏆 Judging Criteria
-Groups will be evaluated based on:
-- Relevance to the given theme/topic
-- Creativity and originality
-- Quality and accuracy of content
-- Slide design and visual appeal
-- Effective use of Microsoft PowerPoint features
-- Teamwork and coordination
-- Presentation and communication skills
-- Organization and clarity
-- Time management
-
 ### IMPORTANT NOTE
 - This is an Individual competition.
 - The presentation must be created using Microsoft PowerPoint.
 - AI-generated presentations or fully AI-generated content will not be allowed.
 - The decision of the judges and event organizers will be final.`,
-    judging_criteria: `Relevance, Creativity & Originality, Quality & Accuracy, Slide Design, PowerPoint Features, Presentation & Communication, Organization & Clarity, Time Management.`,
+    judging_criteria: '',
     faqs: [
       {
         question: 'Can I use Gamma or Tome AI to generate my slides?',
@@ -735,21 +676,12 @@ Participants will write a technology-related article on the spot based on a topi
 6. **Writing Materials:** Bring own writing materials; organizers provide writing paper or answer sheets.
 7. **Student Information:** Student's Name, Class & Section, Group (A/B/C/D), Title of the Article.
 
-### 🏆 Judging Criteria
-Participants will be evaluated based on:
-- Relevance to the given topic
-- Quality and depth of ideas
-- Creativity and expression
-- Organization and structure
-- Language and grammar
-- Clarity and presentation
-
 ### IMPORTANT NOTE
 - This is an on-the-spot writing competition.
 - The topic/theme will be announced at the competition venue.
 - All articles must be written in English.
 - The decision of the judges and event organizers will be final.`,
-    judging_criteria: `Relevance to given topic, Quality and depth of ideas, Creativity and expression, Organization and structure, Language and grammar, Clarity and presentation.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -778,32 +710,22 @@ Participants will be evaluated based on:
 **Individual / Submission-Based Competition** (Grade 3 to 12 — Group A to D)
 
 ### Task
-Participants must create and submit a technology-related meme based on a topic, theme, or concept related to technology, computers, programming, artificial intelligence, robotics, digital life, or other relevant technology-related subjects. All submitted memes will first go through a screening and auditing process to ensure that the content is appropriate before being shortlisted for judging.
+Participants must create and submit a technology-related meme based on a topic, theme, or concept related to technology, computers, programming, artificial intelligence, robotics, digital life, or other relevant technology-related subjects. All submitted memes will first go through a screening and auditing process to ensure that the content is appropriate before being shortlisted.
 
 ### Guidelines
 1. **Meme Content:** Related to technology, humorous, creative, understandable, and suitable for a general audience. Offensive or inappropriate content will not be accepted.
 2. **Submission:** Each participant may submit one meme only before the deadline.
 3. **Meme Format:** Clear and high-quality digital format (JPG, JPEG, or PNG).
 4. **Originality & Copyright:** Original creative work of the participant. No direct copying from another person, website, or social media. Permitted templates allowed with appropriate credit.
-5. **Content Screening & Auditing:** All submissions screened and audited before judging.
+5. **Content Screening & Auditing:** All submissions screened and audited for appropriateness.
 6. **Student Information:** Student's Name, Class & Section, Group (A/B/C/D), Title or Caption of the Meme.
-
-### 🏆 Judging Criteria
-Shortlisted memes will be evaluated based on:
-- Creativity and humour
-- Relevance to technology
-- Originality of concept
-- Clarity of the message
-- Visual presentation
-- Effective use of text and imagery
-- Overall impact and audience engagement
 
 ### IMPORTANT NOTE
 - This is a submission-based competition.
-- All submissions will be screened and audited for content appropriateness before judging.
+- All submissions will be screened and audited for content appropriateness.
 - The submitted meme must be the participant's original creative work.
-- The decision of the judges and event organizers will be final.`,
-    judging_criteria: `Creativity and humour, Relevance to technology, Originality of concept, Clarity of message, Visual presentation, Effective use of text and imagery, Overall impact.`,
+- The decision of the event organizers will be final.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -836,12 +758,8 @@ Shortlisted memes will be evaluated based on:
 - The robot cannot exceed dimensions 25cm × 25cm × 25cm.
 - The robot must move autonomously after the run starts. No physical contact or electronic communication with the robot is allowed.
 - If the robot leaves the track, a time penalty will be applied as decided by the judges.
-- Any misconduct will result in disqualification.
-
-### 🏆 Judging
-- The robots with the fastest times will be awarded.
-- Ties will be handled by preferring the smaller/lighter robot.`,
-    judging_criteria: `Fastest line course completion time. Strict 25cm × 25cm × 25cm dimension compliance. Ties: smaller/lighter robot preferred.`,
+- Any misconduct will result in disqualification.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -875,12 +793,8 @@ Shortlisted memes will be evaluated based on:
 - All drones must stay in the designated competition area.
 - Missing a checkpoint or colliding with an obstacle will result in a 5 second time penalty.
 - Sabotaging other participants’ drones, colliding with them or leaving the flight zone will result in disqualification.
-- Participants entering the flight zone will be disqualified.
-
-### 🏆 Judging
-- The drones with the fastest times will be awarded.
-- Ties will be handled by redoing the course.`,
-    judging_criteria: `Fastest obstacle course completion time. 5-second penalty per missed checkpoint or obstacle collision. Ties: redoing course.`,
+- Participants entering the flight zone will be disqualified.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -918,7 +832,7 @@ BDRO Coding Marathon tests algorithmic logic, computational efficiency, and clea
 - Contest conducted in the SJIS Computer Lab.
 - External code generation assistants (ChatGPT, Copilot, Cursor) are strictly blocked and banned.
 - Standard language libraries are fully permitted.`,
-    judging_criteria: `Correctness of test cases, execution time, and algorithmic complexity.`,
+    judging_criteria: '',
     faqs: [],
   },
   {
@@ -953,7 +867,7 @@ Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT
 ### Presentation Rules
 - Hardware must be demonstrated live in front of the judging panel.
 - Teams must be prepared for a 5-minute technical presentation followed by a jury Q&A on schematics, components, code, and practical impact.`,
-    judging_criteria: `Innovation, technical complexity, working prototype demonstration, and presentation defense.`,
+    judging_criteria: '',
     faqs: [],
   },
 ];

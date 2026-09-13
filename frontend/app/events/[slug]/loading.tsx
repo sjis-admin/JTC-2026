@@ -33,14 +33,6 @@ export default function EventDetailLoading() {
             </div>
           </div>
 
-          {/* Judging Criteria Skeleton */}
-          <div className="p-6 rounded-2xl bg-surface/50 border border-surface-border space-y-4">
-            <Skeleton className="h-6 w-44" />
-            <div className="space-y-2">
-              <Skeleton className="h-3.5 w-full" />
-              <Skeleton className="h-3.5 w-2/3" />
-            </div>
-          </div>
         </div>
 
         {/* Sidebar Summary Card Skeleton (1 Col) */}

@@ -41,12 +41,25 @@ function renderInline(text: string): React.ReactNode[] {
   });
 }
 
+function isJudgingHeader(text: string): boolean {
+  const clean = text.toLowerCase();
+  return (
+    clean.includes('judging') ||
+    clean.includes('judgement') ||
+    clean.includes('evaluation criteria') ||
+    clean.includes('judging criteria') ||
+    clean.includes('scoring criteria') ||
+    clean.includes('tie-breaker')
+  );
+}
+
 export default function MarkdownRulesRenderer({ content, className = '' }: MarkdownRulesRendererProps) {
   if (!content) return null;
 
   const lines = content.split('\n');
   const blocks: Block[] = [];
   let currentList: { type: 'ul' | 'ol'; items: any[] } | null = null;
+  let skippingJudgingSection = false;
 
   for (let i = 0; i < lines.length; i++) {
     const rawLine = lines[i];
@@ -60,19 +73,48 @@ export default function MarkdownRulesRenderer({ content, className = '' }: Markd
       continue;
     }
 
+    // Check for section headings
     if (trimmed.startsWith('### ')) {
       if (currentList) {
         blocks.push(currentList as Block);
         currentList = null;
       }
-      blocks.push({ type: 'h3', text: trimmed.replace(/^###\s+/, '') });
+      const headingText = trimmed.replace(/^###\s+/, '');
+      if (isJudgingHeader(headingText)) {
+        skippingJudgingSection = true;
+        continue;
+      } else {
+        skippingJudgingSection = false;
+      }
+      blocks.push({ type: 'h3', text: headingText });
+      continue;
     } else if (trimmed.startsWith('#### ')) {
       if (currentList) {
         blocks.push(currentList as Block);
         currentList = null;
       }
-      blocks.push({ type: 'h4', text: trimmed.replace(/^####\s+/, '') });
-    } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      const headingText = trimmed.replace(/^####\s+/, '');
+      if (isJudgingHeader(headingText)) {
+        skippingJudgingSection = true;
+        continue;
+      } else {
+        skippingJudgingSection = false;
+      }
+      blocks.push({ type: 'h4', text: headingText });
+      continue;
+    }
+
+    // Skip all lines belonging to the internal judging criteria section
+    if (skippingJudgingSection) {
+      continue;
+    }
+
+    // Skip standalone judging items
+    if (/^(\d+\.\s+)?\*\*(judging|judgement)/i.test(trimmed)) {
+      continue;
+    }
+
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
       const itemText = trimmed.replace(/^[-*]\s+/, '');
       if (currentList && currentList.type === 'ul') {
         currentList.items.push(itemText);
