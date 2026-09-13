@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
@@ -29,10 +30,47 @@ import {
   FileCheck,
   Search,
   X,
+  Filter,
+  Navigation,
 } from 'lucide-react';
 
 type DayKey = 'day1' | 'day2' | 'day3';
 type GroupFilter = 'ALL' | 'Group A' | 'Group B' | 'Group C' | 'Group D' | 'Group E';
+type CategoryFilter = 'ALL' | 'FLAGSHIP' | 'ROBOTICS' | 'CONTEST' | 'ESPORTS' | 'CEREMONY';
+
+const CATEGORY_CHIPS: { id: CategoryFilter; label: string; icon: any }[] = [
+  { id: 'ALL', label: 'All Segments', icon: Sparkles },
+  { id: 'FLAGSHIP', label: 'Flagship Arenas', icon: Trophy },
+  { id: 'ROBOTICS', label: 'Robotics & Drones', icon: Cpu },
+  { id: 'CONTEST', label: 'Academic & Creative', icon: Laptop },
+  { id: 'ESPORTS', label: 'Gaming & E-Sports', icon: Gamepad2 },
+  { id: 'CEREMONY', label: 'Ceremonies & Gala', icon: Music },
+];
+
+const VENUE_DIRECTIONS: Record<string, string> = {
+  'SJIS Main Auditorium & Ceremonial Stage': 'Ground Floor • Main Atrium entrance',
+  'Art & Media Hall (Ground Floor)': 'Ground Floor • South Wing past Reception',
+  'Room S-301': 'South Building • 3rd Floor • Staircase B',
+  'Room S-303': 'South Building • 3rd Floor • Oral Defense Suite',
+  'Room S-305': 'South Building • 3rd Floor • Academic Wing',
+  'Room N-202': 'North Building • 2nd Floor • Waiting Lounge',
+  'Room N-203': 'North Building • 2nd Floor • Olympiad Hall',
+  'Room N-204': 'North Building • 2nd Floor • Robotics Track Arena',
+  'Room N-204 (Robotics Track Arena)': 'North Building • 2nd Floor • Robotics Track Arena',
+  'Room N-318': 'North Building • 3rd Floor • Contestant Holding Room',
+  'Main Computer Lab': 'Level 3 IT Wing • Terminal Suite A',
+  'Computer Lab': 'Level 3 & 4 IT Wing • High-Speed LAN Lab',
+  'Media Lab & Audiovisual Wing (Level 2)': 'Level 2 Audiovisual Center',
+  'Media Lab (Level 2)': 'Level 2 Audiovisual Center',
+  'SJIS Basement Arena': 'Basement Level • Follow Robotics Signage',
+  'SJIS Basement Exhibition Hall': 'Basement Level • Gallery Wing',
+  'Basement Exhibition Hall': 'Basement Level • Gallery Wing',
+  'Main Stage Arena': 'Main Stage & Auditorium Wing',
+  'Main Stage / Open Flight Arena': 'Campus Main Stage & Outdoor Drone Flight Cage',
+  'New Building-1 (Dedicated Gaming Zone)': 'New Building 1 • LAN Gaming Arena',
+  'SJIS Cafeteria & Prayer Hall': 'Ground Floor & 1st Floor Dining Pavilion',
+  'Campus Grounds, Stage & Designated Classrooms': 'Outdoor Campus Grounds & South Wing Rooms',
+};
 
 interface GroupSlot {
   group: string;
@@ -64,6 +102,7 @@ interface OngoingItem {
 export default function CarnivalTimeline() {
   const [activeDay, setActiveDay] = useState<DayKey>('day1');
   const [selectedGroup, setSelectedGroup] = useState<GroupFilter>('ALL');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Day 1 Data
@@ -522,7 +561,7 @@ export default function CarnivalTimeline() {
     { time: '07:30 PM – 07:40 PM', title: 'Grand Carnival Finale & Farewell', duration: '10 Mins', icon: Trophy },
   ];
 
-  // Filter events by group and search query
+  // Filter events by group, category, and search query
   const filteredEvents = useMemo(() => {
     const list = activeDay === 'day1' ? day1Events : activeDay === 'day2' ? day2Events : activeDay === 'day3' ? day3Events : [];
 
@@ -538,7 +577,16 @@ export default function CarnivalTimeline() {
         }
       }
 
-      // 2. Search Query Filter
+      // 2. Category Filter
+      if (selectedCategory !== 'ALL') {
+        if (selectedCategory === 'CEREMONY') {
+          if (ev.category !== 'CEREMONY' && ev.category !== 'CULTURAL') return false;
+        } else if (ev.category !== selectedCategory) {
+          return false;
+        }
+      }
+
+      // 3. Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchesTitle = ev.title.toLowerCase().includes(q);
@@ -557,7 +605,7 @@ export default function CarnivalTimeline() {
 
       return true;
     });
-  }, [activeDay, selectedGroup, searchQuery, day1Events, day2Events, day3Events]);
+  }, [activeDay, selectedGroup, selectedCategory, searchQuery, day1Events, day2Events, day3Events]);
 
   const getCategoryBadgeClass = (category: TimelineEvent['category']) => {
     switch (category) {
@@ -584,6 +632,28 @@ export default function CarnivalTimeline() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.04,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.28,
+        ease: 'easeOut',
+      },
+    },
+  };
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto" id="schedule">
       {/* Header */}
@@ -600,7 +670,7 @@ export default function CarnivalTimeline() {
         </p>
       </div>
 
-      {/* Day Navigation Tabs */}
+      {/* Day Navigation Tabs with Framer Motion Animated Slider */}
       <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
         {[
           { id: 'day1', label: 'Day 1 • Oct 1 (Thu)', subtitle: '09:00 AM – 05:00 PM • Inauguration & Submissions' },
@@ -614,16 +684,24 @@ export default function CarnivalTimeline() {
               onClick={() => {
                 setActiveDay(tab.id as DayKey);
                 setSelectedGroup('ALL');
+                setSelectedCategory('ALL');
                 setSearchQuery('');
               }}
-              className={`px-5 py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer flex flex-col items-center gap-1 text-center ${
-                isActive
-                  ? 'bg-gradient-to-r from-gold via-yellow-400 to-amber-500 text-slate-950 shadow-xl shadow-gold/25 font-black scale-105 border-transparent'
-                  : 'bg-surface/80 text-slate-300 border border-surface-border hover:border-gold/50 hover:text-white'
+              className={`relative px-5 py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer flex flex-col items-center gap-1 text-center ${
+                !isActive ? 'bg-surface/80 text-slate-300 border border-surface-border hover:border-gold/50 hover:text-white' : ''
               }`}
             >
-              <span className="leading-tight">{tab.label}</span>
-              <span className={`text-[10px] font-mono font-normal ${isActive ? 'text-slate-900 font-semibold' : 'text-slate-400'}`}>
+              {isActive && (
+                <motion.div
+                  layoutId="activeTimelineDayTab"
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-gold via-yellow-400 to-amber-500 shadow-xl shadow-gold/25"
+                  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                />
+              )}
+              <span className={`relative z-10 leading-tight ${isActive ? 'text-slate-950 font-black' : 'text-slate-300'}`}>
+                {tab.label}
+              </span>
+              <span className={`relative z-10 text-[10px] font-mono ${isActive ? 'text-slate-900 font-semibold' : 'text-slate-400'}`}>
                 {tab.subtitle}
               </span>
             </button>
@@ -683,47 +761,77 @@ export default function CarnivalTimeline() {
           </div>
         )}
 
-        {/* Search and Group Filters Toolbar */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-surface-elevated/90 border border-surface-border backdrop-blur-md">
-          {/* Quick Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search event, segment, or room (e.g. Drone, Rubik, Coding)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 rounded-lg bg-surface border border-surface-border text-xs text-white placeholder-slate-400 focus:outline-none focus:border-gold transition-colors"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5"
-                title="Clear search"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
+        {/* Search and Filters Superbar */}
+        <div className="p-3.5 sm:p-5 rounded-2xl bg-surface-elevated/90 border border-surface-border backdrop-blur-md space-y-3.5 shadow-xl">
+          {/* Top Row: Search + Group Filters */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+            {/* Quick Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search event, segment, or room (e.g. Drone, Rubik, Coding)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-surface border border-surface-border text-xs text-white placeholder-slate-400 focus:outline-none focus:border-gold transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Academic Group Filter Pills */}
+            <div className="flex items-center flex-wrap gap-1.5">
+              <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold flex items-center gap-1 mr-1">
+                <Users className="w-3.5 h-3.5 text-gold" /> Grade Group:
+              </span>
+              {(['ALL', 'Group A', 'Group B', 'Group C', 'Group D', 'Group E'] as GroupFilter[]).map((grp) => (
+                <button
+                  key={grp}
+                  onClick={() => setSelectedGroup(grp)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    selectedGroup === grp
+                      ? 'bg-gold text-slate-950 shadow-md shadow-gold/20 font-black'
+                      : 'bg-surface text-slate-300 hover:text-white hover:bg-surface-border border border-surface-border'
+                  }`}
+                >
+                  {grp === 'ALL' ? 'All Groups' : grp === 'Group E' ? 'Group E (Uni)' : grp}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Academic Group Filter Pills */}
-          <div className="flex items-center flex-wrap gap-1.5">
-            <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold flex items-center gap-1 mr-1">
-              <Users className="w-3.5 h-3.5 text-gold" /> Filter Group:
+          {/* Bottom Row: Category Filter Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs border-t border-surface-border/60 pt-3">
+            <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold shrink-0 flex items-center gap-1 mr-1">
+              <Filter className="w-3.5 h-3.5 text-gold" /> Segment Category:
             </span>
-            {(['ALL', 'Group A', 'Group B', 'Group C', 'Group D', 'Group E'] as GroupFilter[]).map((grp) => (
-              <button
-                key={grp}
-                onClick={() => setSelectedGroup(grp)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedGroup === grp
-                    ? 'bg-gold text-slate-950 shadow-md shadow-gold/20 font-black'
-                    : 'bg-surface text-slate-300 hover:text-white hover:bg-surface-border border border-surface-border'
-                }`}
-              >
-                {grp === 'ALL' ? 'All Groups' : grp === 'Group E' ? 'Group E (Uni)' : grp}
-              </button>
-            ))}
+            <div className="flex flex-wrap gap-1.5">
+              {CATEGORY_CHIPS.map((cat) => {
+                const Icon = cat.icon;
+                const isSelected = selectedCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-3 py-1 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer text-xs ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-gold/25 via-amber-400/25 to-yellow-500/25 text-gold border border-gold/60 shadow-md shadow-gold/15 font-bold'
+                        : 'bg-surface text-slate-400 hover:text-white hover:bg-surface-border border border-surface-border'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5 text-gold" />
+                    <span>{cat.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -771,15 +879,23 @@ export default function CarnivalTimeline() {
               <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-gold flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" /> Scheduled Contests & Arena Segments
               </h4>
-              <div className="flex items-center gap-2 text-xs font-mono">
+              <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
                 {selectedGroup !== 'ALL' && (
-                  <span className="text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/30">
+                  <span className="text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-md border border-sky-500/30 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
                     Group: {selectedGroup}
                   </span>
                 )}
+                {selectedCategory !== 'ALL' && (
+                  <span className="text-purple-300 bg-purple-500/10 px-2.5 py-0.5 rounded-md border border-purple-500/30 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                    {CATEGORY_CHIPS.find((c) => c.id === selectedCategory)?.label || selectedCategory}
+                  </span>
+                )}
                 {searchQuery && (
-                  <span className="text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-                    Matching: &ldquo;{searchQuery}&rdquo;
+                  <span className="text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    &ldquo;{searchQuery}&rdquo;
                   </span>
                 )}
               </div>
@@ -788,101 +904,137 @@ export default function CarnivalTimeline() {
             {filteredEvents.length === 0 ? (
               <div className="p-8 rounded-xl bg-surface-elevated/70 border border-surface-border text-center text-slate-400 text-sm space-y-3">
                 <p>
-                  No events found matching {searchQuery ? `"${searchQuery}"` : ''} {selectedGroup !== 'ALL' ? `for ${selectedGroup}` : ''} on this day.
+                  No events found matching your current filter criteria on this day.
                 </p>
                 <button
                   onClick={() => {
                     setSelectedGroup('ALL');
+                    setSelectedCategory('ALL');
                     setSearchQuery('');
                   }}
                   className="px-4 py-1.5 rounded-lg bg-gold/15 text-gold border border-gold/40 text-xs font-bold hover:bg-gold hover:text-slate-950 transition-all cursor-pointer"
                 >
-                  Reset Filters & Search
+                  Reset All Filters & Search
                 </button>
               </div>
             ) : (
-              filteredEvents.map((ev, idx) => (
-                <div
-                  key={idx}
-                  className={`p-5 rounded-2xl border transition-all ${
-                    ev.category === 'BREAK'
-                      ? 'bg-surface/50 border-dashed border-slate-700'
-                      : 'bg-surface-elevated/90 border-surface-border hover:border-gold/40'
-                  }`}
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                    {/* Left: Info */}
-                    <div className="space-y-2 flex-1">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <div className="px-3 py-1 rounded-lg bg-surface border border-gold/30 text-gold font-mono text-xs font-bold inline-flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{ev.mainTime}</span>
-                        </div>
-                        <span className={`text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full font-bold border ${getCategoryBadgeClass(ev.category)}`}>
-                          {ev.category}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                          {ev.title}
-                        </h4>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300 mt-1">
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
-                            <span>{ev.venue}</span>
-                          </div>
-                          {ev.waitingRoom && (
-                            <div className="flex items-center gap-1 text-amber-300 font-mono">
-                              <span>Waiting Room: {ev.waitingRoom}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {ev.note && (
-                        <p className="text-xs text-slate-300 italic bg-surface/60 px-3 py-1.5 rounded-lg border border-surface-border inline-block">
-                          ℹ️ {ev.note}
-                        </p>
-                      )}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                key={`${activeDay}-${selectedGroup}-${selectedCategory}-${searchQuery}`}
+                className="relative pl-6 sm:pl-8 space-y-4 before:absolute before:left-[11px] sm:before:left-[15px] before:top-4 before:bottom-4 before:w-[2px] before:bg-gradient-to-b before:from-gold/60 before:via-sky-500/35 before:to-purple-500/20"
+              >
+                {filteredEvents.map((ev, idx) => (
+                  <motion.div
+                    key={idx}
+                    variants={cardVariants}
+                    className={`relative p-5 rounded-2xl border transition-all ${
+                      ev.category === 'BREAK'
+                        ? 'bg-surface/50 border-dashed border-slate-700'
+                        : 'bg-surface-elevated/90 border-surface-border hover:border-gold/40 hover:shadow-lg hover:shadow-gold/5'
+                    }`}
+                  >
+                    {/* Glowing Timeline Marker Node on Spine */}
+                    <div className="absolute -left-[30px] sm:-left-[38px] top-6 w-5 h-5 rounded-full bg-slate-950 border-2 border-gold flex items-center justify-center shadow-lg shadow-gold/30 z-10">
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          ev.category === 'FLAGSHIP'
+                            ? 'bg-gold animate-ping'
+                            : ev.category === 'ROBOTICS'
+                            ? 'bg-sky-400'
+                            : ev.category === 'ESPORTS'
+                            ? 'bg-purple-400'
+                            : ev.category === 'CEREMONY'
+                            ? 'bg-amber-300'
+                            : 'bg-emerald-400'
+                        }`}
+                      />
                     </div>
 
-                    {/* Right: Group Slots Grid */}
-                    {ev.groupSlots && ev.groupSlots.length > 0 && (
-                      <div className="lg:w-96 shrink-0 bg-surface/80 p-3 rounded-xl border border-surface-border/80">
-                        <div className="text-[11px] font-mono uppercase font-bold text-slate-400 mb-2 flex items-center justify-between">
-                          <span>Group Slots</span>
-                          <span>Time & Room</span>
+                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                      {/* Left: Info */}
+                      <div className="space-y-2 flex-1">
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <div className="px-3 py-1 rounded-lg bg-surface border border-gold/30 text-gold font-mono text-xs font-bold inline-flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{ev.mainTime}</span>
+                          </div>
+                          <span className={`text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full font-bold border ${getCategoryBadgeClass(ev.category)}`}>
+                            {ev.category}
+                          </span>
                         </div>
-                        <div className="space-y-1.5">
-                          {ev.groupSlots.map((slot, sIdx) => {
-                            const isHighlighted = selectedGroup !== 'ALL' && slot.group.toLowerCase() === selectedGroup.toLowerCase();
-                            return (
-                              <div
-                                key={sIdx}
-                                className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
-                                  isHighlighted
-                                    ? 'bg-gold/20 border-gold text-gold font-bold'
-                                    : 'bg-surface-elevated/80 border-surface-border text-slate-200'
-                                }`}
-                              >
-                                <span className="font-bold flex items-center gap-1">
-                                  {isHighlighted && <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />}
-                                  {slot.group}
+
+                        <div>
+                          <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                            {ev.title}
+                          </h4>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-300 mt-1">
+                            {/* Venue with Hover Tooltip */}
+                            <div className="group relative inline-flex items-center gap-1.5 cursor-help">
+                              <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
+                              <span className="group-hover:text-gold transition-colors font-medium underline decoration-dotted decoration-gold/40 underline-offset-2">
+                                {ev.venue}
+                              </span>
+                              {VENUE_DIRECTIONS[ev.venue] && (
+                                <span className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-full left-0 mb-2 z-30 px-3 py-1.5 rounded-lg bg-slate-950/95 border border-gold/40 text-[11px] font-mono text-gold-light whitespace-nowrap shadow-xl backdrop-blur-md pointer-events-none flex items-center gap-1.5">
+                                  <Navigation className="w-3 h-3 text-gold" />
+                                  {VENUE_DIRECTIONS[ev.venue]}
                                 </span>
-                                <div className="text-right font-mono text-[11px]">
-                                  <span className="text-slate-300 font-semibold">{slot.time}</span>
-                                  {slot.room && <span className="text-amber-400 ml-1">({slot.room})</span>}
-                                </div>
+                              )}
+                            </div>
+                            {ev.waitingRoom && (
+                              <div className="flex items-center gap-1 text-amber-300 font-mono">
+                                <span>Waiting Room: {ev.waitingRoom}</span>
                               </div>
-                            );
-                          })}
+                            )}
+                          </div>
                         </div>
+
+                        {ev.note && (
+                          <p className="text-xs text-slate-300 italic bg-surface/60 px-3 py-1.5 rounded-lg border border-surface-border inline-block">
+                            ℹ️ {ev.note}
+                          </p>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
-              ))
+
+                      {/* Right: Group Slots Grid */}
+                      {ev.groupSlots && ev.groupSlots.length > 0 && (
+                        <div className="lg:w-96 shrink-0 bg-surface/80 p-3 rounded-xl border border-surface-border/80">
+                          <div className="text-[11px] font-mono uppercase font-bold text-slate-400 mb-2 flex items-center justify-between">
+                            <span>Group Slots</span>
+                            <span>Time & Room</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            {ev.groupSlots.map((slot, sIdx) => {
+                              const isHighlighted = selectedGroup !== 'ALL' && slot.group.toLowerCase() === selectedGroup.toLowerCase();
+                              return (
+                                <div
+                                  key={sIdx}
+                                  className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
+                                    isHighlighted
+                                      ? 'bg-gold/20 border-gold text-gold font-bold'
+                                      : 'bg-surface-elevated/80 border-surface-border text-slate-200'
+                                  }`}
+                                >
+                                  <span className="font-bold flex items-center gap-1">
+                                    {isHighlighted && <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />}
+                                    {slot.group}
+                                  </span>
+                                  <div className="text-right font-mono text-[11px]">
+                                    <span className="text-slate-300 font-semibold">{slot.time}</span>
+                                    {slot.room && <span className="text-amber-400 ml-1">({slot.room})</span>}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
           </div>
 
