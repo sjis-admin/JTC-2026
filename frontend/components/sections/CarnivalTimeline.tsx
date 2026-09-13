@@ -27,10 +27,12 @@ import {
   Video,
   Info,
   FileCheck,
+  Search,
+  X,
 } from 'lucide-react';
 
 type DayKey = 'day1' | 'day2' | 'day3';
-type GroupFilter = 'ALL' | 'Group A' | 'Group B' | 'Group C' | 'Group D';
+type GroupFilter = 'ALL' | 'Group A' | 'Group B' | 'Group C' | 'Group D' | 'Group E';
 
 interface GroupSlot {
   group: string;
@@ -62,6 +64,7 @@ interface OngoingItem {
 export default function CarnivalTimeline() {
   const [activeDay, setActiveDay] = useState<DayKey>('day1');
   const [selectedGroup, setSelectedGroup] = useState<GroupFilter>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Day 1 Data
   const day1Ongoing: OngoingItem[] = [
@@ -353,6 +356,7 @@ export default function CarnivalTimeline() {
         { group: 'Group B', time: '04:55 PM – 05:15 PM', venue: 'Stage' },
         { group: 'Group C', time: '05:20 PM – 05:40 PM', venue: 'Stage' },
         { group: 'Group D', time: '05:40 PM – 06:00 PM', venue: 'Stage' },
+        { group: 'Group E', time: '05:40 PM – 06:00 PM', venue: 'Stage' },
       ],
     },
   ];
@@ -386,13 +390,14 @@ export default function CarnivalTimeline() {
     {
       title: 'Photography Jury Evaluation & Scoring',
       category: 'CONTEST',
-      mainTime: '09:40 AM – 11:00 AM',
+      mainTime: '09:40 AM – 11:20 AM',
       venue: 'Basement Exhibition Hall',
       groupSlots: [
         { group: 'Group D', time: '09:40 AM – 10:00 AM', venue: 'Basement' },
         { group: 'Group C', time: '10:00 AM – 10:20 AM', venue: 'Basement' },
         { group: 'Group B', time: '10:20 AM – 10:40 AM', venue: 'Basement' },
         { group: 'Group A', time: '10:40 AM – 11:00 AM', venue: 'Basement' },
+        { group: 'Group E', time: '11:00 AM – 11:20 AM', venue: 'Basement' },
       ],
     },
     {
@@ -405,6 +410,7 @@ export default function CarnivalTimeline() {
         { group: 'Group B', time: '10:00 AM – 10:20 AM', venue: 'Stage' },
         { group: 'Group D', time: '10:20 AM – 10:40 AM', venue: 'Stage' },
         { group: 'Group C', time: '10:40 AM – 11:00 AM', venue: 'Stage' },
+        { group: 'Group E', time: '10:40 AM – 11:00 AM', venue: 'Stage' },
       ],
     },
     {
@@ -460,7 +466,8 @@ export default function CarnivalTimeline() {
         { group: 'Group C', time: '11:00 AM – 11:30 AM', venue: 'Computer Lab' },
         { group: 'Group D', time: '11:30 AM – 12:00 PM', venue: 'Computer Lab' },
         { group: 'Group B', time: '12:00 PM – 12:30 PM', venue: 'Computer Lab' },
-        { group: 'Group A', time: '12:30 PM – 01:00 PM', venue: 'Computer Lab' },
+        { group: 'Group A', time: '12:30 PM – 12:45 PM', venue: 'Computer Lab' },
+        { group: 'Group E', time: '12:45 PM – 01:00 PM', venue: 'Computer Lab' },
       ],
     },
     {
@@ -470,7 +477,8 @@ export default function CarnivalTimeline() {
       venue: 'Main Stage / Open Flight Arena',
       groupSlots: [
         { group: 'Group C', time: '11:50 AM – 12:20 PM', venue: 'Flight Arena' },
-        { group: 'Group D', time: '12:25 PM – 01:00 PM', venue: 'Flight Arena' },
+        { group: 'Group D', time: '12:25 PM – 12:45 PM', venue: 'Flight Arena' },
+        { group: 'Group E', time: '12:45 PM – 01:00 PM', venue: 'Flight Arena' },
       ],
     },
     {
@@ -514,17 +522,42 @@ export default function CarnivalTimeline() {
     { time: '07:30 PM – 07:40 PM', title: 'Grand Carnival Finale & Farewell', duration: '10 Mins', icon: Trophy },
   ];
 
-  // Filter events by group
+  // Filter events by group and search query
   const filteredEvents = useMemo(() => {
     const list = activeDay === 'day1' ? day1Events : activeDay === 'day2' ? day2Events : activeDay === 'day3' ? day3Events : [];
-    if (selectedGroup === 'ALL') return list;
 
     return list.filter((ev) => {
-      if (ev.category === 'BREAK' || ev.category === 'CEREMONY') return true;
-      if (!ev.groupSlots || ev.groupSlots.length === 0) return true;
-      return ev.groupSlots.some((slot) => slot.group.toLowerCase() === selectedGroup.toLowerCase());
+      // 1. Group Filter
+      if (selectedGroup !== 'ALL') {
+        const isExempt = ev.category === 'BREAK' || ev.category === 'CEREMONY';
+        if (!isExempt) {
+          const hasGroup = ev.groupSlots && ev.groupSlots.length > 0
+            ? ev.groupSlots.some((slot) => slot.group.toLowerCase() === selectedGroup.toLowerCase())
+            : true;
+          if (!hasGroup) return false;
+        }
+      }
+
+      // 2. Search Query Filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchesTitle = ev.title.toLowerCase().includes(q);
+        const matchesVenue = ev.venue.toLowerCase().includes(q);
+        const matchesNote = ev.note ? ev.note.toLowerCase().includes(q) : false;
+        const matchesCategory = ev.category.toLowerCase().includes(q);
+        const matchesWaitingRoom = ev.waitingRoom ? ev.waitingRoom.toLowerCase().includes(q) : false;
+        const matchesSlots = ev.groupSlots?.some(
+          (s) => s.group.toLowerCase().includes(q) || (s.venue && s.venue.toLowerCase().includes(q)) || (s.room && s.room.toLowerCase().includes(q))
+        );
+
+        if (!matchesTitle && !matchesVenue && !matchesNote && !matchesCategory && !matchesWaitingRoom && !matchesSlots) {
+          return false;
+        }
+      }
+
+      return true;
     });
-  }, [activeDay, selectedGroup, day1Events, day2Events, day3Events]);
+  }, [activeDay, selectedGroup, searchQuery, day1Events, day2Events, day3Events]);
 
   const getCategoryBadgeClass = (category: TimelineEvent['category']) => {
     switch (category) {
@@ -581,6 +614,7 @@ export default function CarnivalTimeline() {
               onClick={() => {
                 setActiveDay(tab.id as DayKey);
                 setSelectedGroup('ALL');
+                setSearchQuery('');
               }}
               className={`px-5 py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer flex flex-col items-center gap-1 text-center ${
                 isActive
@@ -598,7 +632,7 @@ export default function CarnivalTimeline() {
       </div>
 
       {/* ALL DAYS CONTENT */}
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Day Overview Banner */}
         <div className="p-6 rounded-2xl bg-surface/90 border border-surface-border backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -628,27 +662,68 @@ export default function CarnivalTimeline() {
               </span>
             </div>
           </div>
+        </div>
 
-          {/* Group Filter Pills */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold flex items-center gap-1">
-              <Users className="w-3.5 h-3.5 text-gold" /> Filter by Academic Group:
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {(['ALL', 'Group A', 'Group B', 'Group C', 'Group D'] as GroupFilter[]).map((grp) => (
-                <button
-                  key={grp}
-                  onClick={() => setSelectedGroup(grp)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    selectedGroup === grp
-                      ? 'bg-gold text-slate-950 shadow-md shadow-gold/20 font-black'
-                      : 'bg-surface-elevated text-slate-300 hover:text-white hover:bg-surface-border border border-surface-border'
-                  }`}
-                >
-                  {grp === 'ALL' ? 'All Groups' : grp}
-                </button>
-              ))}
+        {/* Notice for External Institutions on Day 1 */}
+        {activeDay === 'day1' && (
+          <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-start gap-3.5 text-xs text-slate-300">
+            <Info className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <strong className="text-sky-300 font-bold uppercase tracking-wider text-[11px]">Notice for External Institutions & Participants</strong>
+                <Badge variant="cyan" size="sm">Important</Badge>
+              </div>
+              <p className="leading-relaxed">
+                Day 1 (Oct 1) is dedicated to the <strong>Grand Inauguration Ceremony</strong> (all invited school delegates & teachers welcome to attend), St. Joseph internal student submissions, and robotics arena track testing.
+                <strong className="text-white block mt-0.5">
+                  Main competitive tournaments & lab exams for all participating schools, colleges, and universities officially commence on Day 2 morning (Oct 2, 09:00 AM).
+                </strong>
+              </p>
             </div>
+          </div>
+        )}
+
+        {/* Search and Group Filters Toolbar */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-surface-elevated/90 border border-surface-border backdrop-blur-md">
+          {/* Quick Search Input */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search event, segment, or room (e.g. Drone, Rubik, Coding)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 rounded-lg bg-surface border border-surface-border text-xs text-white placeholder-slate-400 focus:outline-none focus:border-gold transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Academic Group Filter Pills */}
+          <div className="flex items-center flex-wrap gap-1.5">
+            <span className="text-[11px] font-mono text-slate-400 uppercase font-semibold flex items-center gap-1 mr-1">
+              <Users className="w-3.5 h-3.5 text-gold" /> Filter Group:
+            </span>
+            {(['ALL', 'Group A', 'Group B', 'Group C', 'Group D', 'Group E'] as GroupFilter[]).map((grp) => (
+              <button
+                key={grp}
+                onClick={() => setSelectedGroup(grp)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedGroup === grp
+                    ? 'bg-gold text-slate-950 shadow-md shadow-gold/20 font-black'
+                    : 'bg-surface text-slate-300 hover:text-white hover:bg-surface-border border border-surface-border'
+                }`}
+              >
+                {grp === 'ALL' ? 'All Groups' : grp === 'Group E' ? 'Group E (Uni)' : grp}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -692,20 +767,38 @@ export default function CarnivalTimeline() {
 
           {/* Competitions Timeline Cards */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-gold flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" /> Scheduled Contests & Arena Segments
               </h4>
-              {selectedGroup !== 'ALL' && (
-                <span className="text-xs font-mono text-sky-400">
-                  Showing events for {selectedGroup}
-                </span>
-              )}
+              <div className="flex items-center gap-2 text-xs font-mono">
+                {selectedGroup !== 'ALL' && (
+                  <span className="text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/30">
+                    Group: {selectedGroup}
+                  </span>
+                )}
+                {searchQuery && (
+                  <span className="text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                    Matching: &ldquo;{searchQuery}&rdquo;
+                  </span>
+                )}
+              </div>
             </div>
 
             {filteredEvents.length === 0 ? (
-              <div className="p-8 rounded-xl bg-surface/50 border border-surface-border text-center text-slate-400 text-sm">
-                No events found matching your filter. Select "All Groups" to see all segments.
+              <div className="p-8 rounded-xl bg-surface-elevated/70 border border-surface-border text-center text-slate-400 text-sm space-y-3">
+                <p>
+                  No events found matching {searchQuery ? `"${searchQuery}"` : ''} {selectedGroup !== 'ALL' ? `for ${selectedGroup}` : ''} on this day.
+                </p>
+                <button
+                  onClick={() => {
+                    setSelectedGroup('ALL');
+                    setSearchQuery('');
+                  }}
+                  className="px-4 py-1.5 rounded-lg bg-gold/15 text-gold border border-gold/40 text-xs font-bold hover:bg-gold hover:text-slate-950 transition-all cursor-pointer"
+                >
+                  Reset Filters & Search
+                </button>
               </div>
             ) : (
               filteredEvents.map((ev, idx) => (
