@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Turnstile } from '@/components/ui/Turnstile';
-import { API_BASE, setAdminToken } from '@/lib/api';
+import { API_BASE, setAdminToken, getAdminToken } from '@/lib/api';
 import { ShieldCheck, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
 
 function AdminLoginForm() {
@@ -20,6 +20,17 @@ function AdminLoginForm() {
   const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // If already authenticated, redirect straight to target admin route
+  React.useEffect(() => {
+    if (getAdminToken()) {
+      window.location.href = fromUrl;
+    }
+  }, [fromUrl]);
+
+  const handleTurnstileSuccess = React.useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,10 +54,10 @@ function AdminLoginForm() {
       }
 
       setAdminToken(data.access);
-      router.push(fromUrl);
+      // Hard navigation ensures browser attaches the fresh auth cookie immediately to edge middleware
+      window.location.href = fromUrl;
     } catch (err: any) {
       setError(err.message || 'Login failed');
-    } finally {
       setLoading(false);
     }
   };
@@ -120,7 +131,7 @@ function AdminLoginForm() {
           </div>
 
           {/* Cloudflare Turnstile Bot Defense */}
-          <Turnstile onSuccess={(token) => setTurnstileToken(token)} />
+          <Turnstile onSuccess={handleTurnstileSuccess} />
 
           <div className="pt-2">
             <Button variant="glow" type="submit" isLoading={loading} className="w-full font-bold">

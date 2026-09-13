@@ -14,22 +14,21 @@ import { cn } from '@/lib/utils';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [authorized, setAuthorized] = useState(false);
+  // Optimistic authorization: if token is present, render immediately without waterfall delay
+  const [authorized, setAuthorized] = useState<boolean>(() => !!getAdminToken());
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<{ username: string; role: string } | null>(null);
-  const [isPageSwitching, setIsPageSwitching] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>('/images/jtc-logo.png');
 
   useEffect(() => {
     const token = getAdminToken();
     if (!token) {
+      setAuthorized(false);
       router.replace('/');
       return;
     }
 
-    // Only verify once per session
-    if (authorized && user) return;
-
+    // Verify session in background without blocking initial render
     adminFetch('/admin/me/')
       .then(async (res) => {
         if (res.ok) {
@@ -38,55 +37,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           setAuthorized(true);
         } else {
           clearAdminToken();
+          setAuthorized(false);
           router.replace('/');
         }
       })
       .catch(() => {
         clearAdminToken();
+        setAuthorized(false);
         router.replace('/');
       });
 
-    // Fetch site settings for branding logo (pre-validated)
+    // Fetch site settings for branding logo
     fetchSiteSettings()
       .then((settings) => {
-        if (settings?.logo_url && settings.logo_url !== logoUrl) {
-          const testImg = new window.Image();
-          testImg.onload = () => {
-            setLogoUrl(settings.logo_url!);
-          };
-          testImg.src = settings.logo_url;
+        if (settings?.logo_url) {
+          setLogoUrl(settings.logo_url);
         }
       })
       .catch(() => {});
-  }, [router, authorized, user, logoUrl]);
-
-  // Reset page switching loader when pathname updates
-  useEffect(() => {
-    setIsPageSwitching(false);
-  }, [pathname]);
-
-  // Detect navigation clicks targeting any /admin route
-  useEffect(() => {
-    const handleLinkClick = (e: MouseEvent) => {
-      const anchor = (e.target as HTMLElement).closest('a');
-      if (!anchor) return;
-      const href = anchor.getAttribute('href');
-      if (
-        href &&
-        href.startsWith('/admin') &&
-        href !== pathname &&
-        !anchor.getAttribute('target') &&
-        !e.metaKey &&
-        !e.ctrlKey &&
-        !e.shiftKey
-      ) {
-        setIsPageSwitching(true);
-      }
-    };
-
-    document.addEventListener('click', handleLinkClick);
-    return () => document.removeEventListener('click', handleLinkClick);
-  }, [pathname]);
+  }, [router]);
 
   if (!authorized) {
     return (
@@ -188,21 +157,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content Area - Only This Panel Scrolls */}
       <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative">
-        {/* Sleek Golden Topbar Progress Loader when switching pages */}
-        {isPageSwitching && <AdminLoader variant="topbar" />}
-
-        {/* Floating Page Switching Pill */}
-        {isPageSwitching && (
-          <div className="fixed top-4 right-6 z-50 flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-elevated/95 border border-gold/50 text-gold shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-none">
-            <div className="relative w-3.5 h-3.5 flex items-center justify-center">
-              <div className="w-3.5 h-3.5 rounded-full border-2 border-gold/30 border-t-gold animate-spin" />
-              <div className="absolute w-1.5 h-1.5 rounded-full bg-gold animate-ping" />
-            </div>
-            <span className="font-mono text-[11px] font-black tracking-wider text-glow-gold">
-              SWITCHING CONSOLE...
-            </span>
-          </div>
-        )}
 
         {/* Top bar for mobile */}
         <header className="lg:hidden bg-surface border-b border-surface-border p-4 flex items-center justify-between shrink-0">

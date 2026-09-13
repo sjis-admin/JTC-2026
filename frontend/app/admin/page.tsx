@@ -21,16 +21,33 @@ interface StatsData {
   event_popularity: { event__name: string; event__category: string; count: number }[];
 }
 
-export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<StatsData | null>(null);
-  const [loading, setLoading] = useState(true);
+// Module-level cache to make admin navigation instant
+let cachedStats: StatsData | null = null;
+let lastStatsFetchTime = 0;
+const CACHE_TTL_MS = 30000; // 30 seconds
 
-  const loadStats = async () => {
-    setLoading(true);
+export default function AdminDashboardPage() {
+  const [stats, setStats] = useState<StatsData | null>(cachedStats);
+  const [loading, setLoading] = useState(!cachedStats);
+
+  const loadStats = async (force = false) => {
+    const now = Date.now();
+    if (!force && cachedStats && now - lastStatsFetchTime < CACHE_TTL_MS) {
+      setStats(cachedStats);
+      setLoading(false);
+      return;
+    }
+
+    if (!cachedStats) {
+      setLoading(true);
+    }
+
     try {
       const res = await adminFetch('/admin/stats/');
       if (res.ok) {
         const data = await res.json();
+        cachedStats = data;
+        lastStatsFetchTime = Date.now();
         setStats(data);
       }
     } catch (err) {
@@ -61,7 +78,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Button variant="secondary" size="sm" onClick={loadStats} disabled={loading}>
+          <Button variant="secondary" size="sm" onClick={() => loadStats(true)} disabled={loading}>
             <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
           <Link href="/admin/scanner">
@@ -83,7 +100,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-white font-mono mt-3 text-glow-gold">
-            ৳{stats?.total_revenue_verified.toLocaleString() || 0} BDT
+            ৳{(stats?.total_revenue_verified ?? 0).toLocaleString()} BDT
           </div>
           <span className="text-[11px] text-emerald-400 font-semibold block mt-1">
             ✓ Confirmed bKash/Nagad/Bank
@@ -99,7 +116,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-amber-300 font-mono mt-3">
-            ৳{stats?.total_revenue_pending?.toLocaleString() || 0} BDT
+            ৳{(stats?.total_revenue_pending ?? 0).toLocaleString()} BDT
           </div>
           <span className="text-[11px] text-amber-400/90 font-semibold block mt-1">
             {stats?.pending || 0} submissions awaiting check

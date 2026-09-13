@@ -38,14 +38,26 @@ export function Turnstile({
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const hasBypassedRef = useRef(false);
+
+  // Keep callback refs stable to prevent infinite re-render loops
+  const onSuccessRef = useRef(onSuccess);
+  onSuccessRef.current = onSuccess;
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
 
   const isEnabled = process.env.NEXT_PUBLIC_TURNSTILE_ENABLED === 'true';
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000000000000000000AA';
 
   useEffect(() => {
-    // Development / local server bypass
+    // Development / local server bypass - run strictly once
     if (!isEnabled) {
-      onSuccess('dev-bypass-token');
+      if (!hasBypassedRef.current) {
+        hasBypassedRef.current = true;
+        onSuccessRef.current('dev-bypass-token');
+      }
       return;
     }
 
@@ -64,9 +76,9 @@ export function Turnstile({
         try {
           widgetIdRef.current = window.turnstile.render(containerRef.current, {
             sitekey: siteKey,
-            callback: (token: string) => onSuccess(token),
-            'error-callback': (err: any) => onError && onError(err),
-            'expired-callback': () => onExpire && onExpire(),
+            callback: (token: string) => onSuccessRef.current(token),
+            'error-callback': (err: any) => onErrorRef.current && onErrorRef.current(err),
+            'expired-callback': () => onExpireRef.current && onExpireRef.current(),
             theme: theme,
           });
         } catch (e) {
@@ -97,7 +109,7 @@ export function Turnstile({
         widgetIdRef.current = null;
       }
     };
-  }, [isEnabled, siteKey, onSuccess, onError, onExpire, theme]);
+  }, [isEnabled, siteKey, theme]);
 
   if (!isEnabled) {
     return null;

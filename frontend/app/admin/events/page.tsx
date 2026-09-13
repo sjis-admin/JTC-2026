@@ -23,9 +23,14 @@ const CATEGORY_CHOICES = [
   { value: 'OTHER', label: 'Other Arenas' },
 ];
 
+// Module-level cache for instant tab navigation
+let cachedAdminEvents: EventItem[] | null = null;
+let lastEventsFetchTime = 0;
+const EVENTS_CACHE_TTL_MS = 30000;
+
 export default function AdminEventsPage() {
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<EventItem[]>(cachedAdminEvents || []);
+  const [loading, setLoading] = useState(!cachedAdminEvents);
   const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -42,13 +47,26 @@ export default function AdminEventsPage() {
   const [newRules, setNewRules] = useState('');
   const [newCriteria, setNewCriteria] = useState('');
 
-  const loadEvents = async () => {
-    setLoading(true);
+  const loadEvents = async (force = false) => {
+    const now = Date.now();
+    if (!force && cachedAdminEvents && now - lastEventsFetchTime < EVENTS_CACHE_TTL_MS) {
+      setEvents(cachedAdminEvents);
+      setLoading(false);
+      return;
+    }
+
+    if (!cachedAdminEvents) {
+      setLoading(true);
+    }
+
     try {
       const res = await adminFetch('/admin/events/');
       if (res.ok) {
         const data = await res.json();
-        setEvents(Array.isArray(data) ? data : data.results || []);
+        const list = Array.isArray(data) ? data : data.results || [];
+        cachedAdminEvents = list;
+        lastEventsFetchTime = Date.now();
+        setEvents(list);
       }
     } catch (err) {
       console.error(err);
@@ -87,7 +105,7 @@ export default function AdminEventsPage() {
 
       if (res.ok) {
         setEditingEvent(null);
-        loadEvents();
+        loadEvents(true);
       }
     } catch (err) {
       console.error(err);
@@ -129,7 +147,7 @@ export default function AdminEventsPage() {
         setNewDesc('');
         setNewRules('');
         setNewCriteria('');
-        loadEvents();
+        loadEvents(true);
       }
     } catch (err) {
       console.error(err);
@@ -148,7 +166,7 @@ export default function AdminEventsPage() {
         method: 'DELETE',
       });
       if (res.ok) {
-        loadEvents();
+        loadEvents(true);
       }
     } catch (err) {
       console.error(err);
