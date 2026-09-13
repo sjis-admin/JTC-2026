@@ -41,7 +41,7 @@ class Command(BaseCommand):
             groups[code] = grp
         self.stdout.write(self.style.SUCCESS('Event groups seeded.'))
 
-        # 3. Schools
+        # 3. Schools & Universities
         initial_schools = [
             ('St. Joseph International School', 'SJIS', 1),
             ('St. Joseph Higher Secondary School', 'SJHSS', 2),
@@ -58,17 +58,27 @@ class Command(BaseCommand):
             ('Birshreshtha Noor Mohammad Public College', 'BNMPC', 13),
             ('Dhaka City College', 'DCC', 14),
             ('University of Dhaka', 'DU', 15),
-            ('BUET', 'BUET', 16),
-            ('BRAC University', 'BRACU', 17),
-            ('North South University', 'NSU', 18),
-            ('Independent University, Bangladesh', 'IUB', 19),
+            ('Bangladesh University of Engineering and Technology', 'BUET', 16),
+            ('Islamic University of Technology', 'IUT', 17),
+            ('BRAC University', 'BRACU', 18),
+            ('North South University', 'NSU', 19),
+            ('Independent University Bangladesh', 'IUB', 20),
+            ('East West University', 'EWU', 21),
+            ('American International University - Bangladesh', 'AIUB', 22),
+            ('United International University', 'UIU', 23),
+            ('Northern University Bangladesh', 'NUB', 24),
         ]
         for name, short_name, order in initial_schools:
-            School.objects.get_or_create(
-                name=name,
-                defaults={'short_name': short_name, 'order': order, 'is_active': True}
-            )
-        self.stdout.write(self.style.SUCCESS('Schools seeded.'))
+            sch = School.objects.filter(name=name).first() or School.objects.filter(short_name=short_name).first()
+            if sch:
+                sch.name = name
+                sch.short_name = short_name
+                sch.order = order
+                sch.is_active = True
+                sch.save()
+            else:
+                School.objects.create(name=name, short_name=short_name, order=order, is_active=True)
+        self.stdout.write(self.style.SUCCESS('Schools & Universities seeded.'))
 
         # 4. Events definition
         events_data = [

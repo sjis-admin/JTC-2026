@@ -241,16 +241,44 @@ export async function fetchEventBySlug(slug: string): Promise<EventItem | null> 
   return CARNIVAL_EVENTS.find((e) => e.slug === slug) || null;
 }
 
+export const DEFAULT_SCHOOLS: SchoolItem[] = [
+  { id: 1, name: 'St. Joseph International School', short_name: 'SJIS', order: 1, is_active: true },
+  { id: 2, name: 'St. Joseph Higher Secondary School', short_name: 'SJHSS', order: 2, is_active: true },
+  { id: 3, name: 'Notre Dame College', short_name: 'NDC', order: 3, is_active: true },
+  { id: 4, name: 'Scholastica', short_name: 'Scholastica', order: 4, is_active: true },
+  { id: 5, name: 'Mastermind English Medium School', short_name: 'Mastermind', order: 5, is_active: true },
+  { id: 6, name: 'Sunnydale School', short_name: 'Sunnydale', order: 6, is_active: true },
+  { id: 7, name: 'Dhaka Residential Model College', short_name: 'DRMC', order: 7, is_active: true },
+  { id: 8, name: 'Rajuk Uttara Model College', short_name: 'RUMC', order: 8, is_active: true },
+  { id: 9, name: 'Viqarunnisa Noon School & College', short_name: 'VNSC', order: 9, is_active: true },
+  { id: 10, name: 'Holy Cross College', short_name: 'HCC', order: 10, is_active: true },
+  { id: 11, name: 'SFX Greenherald International School', short_name: 'Greenherald', order: 11, is_active: true },
+  { id: 12, name: 'Maple Leaf International School', short_name: 'MLIS', order: 12, is_active: true },
+  { id: 13, name: 'Birshreshtha Noor Mohammad Public College', short_name: 'BNMPC', order: 13, is_active: true },
+  { id: 14, name: 'Dhaka City College', short_name: 'DCC', order: 14, is_active: true },
+  { id: 15, name: 'University of Dhaka', short_name: 'DU', order: 15, is_active: true },
+  { id: 16, name: 'Bangladesh University of Engineering and Technology', short_name: 'BUET', order: 16, is_active: true },
+  { id: 21, name: 'Islamic University of Technology', short_name: 'IUT', order: 17, is_active: true },
+  { id: 17, name: 'BRAC University', short_name: 'BRACU', order: 18, is_active: true },
+  { id: 18, name: 'North South University', short_name: 'NSU', order: 19, is_active: true },
+  { id: 19, name: 'Independent University Bangladesh', short_name: 'IUB', order: 20, is_active: true },
+  { id: 22, name: 'East West University', short_name: 'EWU', order: 21, is_active: true },
+  { id: 23, name: 'American International University - Bangladesh', short_name: 'AIUB', order: 22, is_active: true },
+  { id: 24, name: 'United International University', short_name: 'UIU', order: 23, is_active: true },
+  { id: 25, name: 'Northern University Bangladesh', short_name: 'NUB', order: 24, is_active: true },
+];
+
 export async function fetchSchools(): Promise<SchoolItem[]> {
   try {
     const res = await fetch(`${getApiBase()}/schools/`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) throw new Error('Failed to fetch schools');
-    return await res.json();
+    const data = await res.json();
+    return Array.isArray(data) && data.length > 0 ? data : DEFAULT_SCHOOLS;
   } catch (err) {
-    console.error('API fetchSchools failed:', err);
-    return [];
+    console.error('API fetchSchools failed, using fallback:', err);
+    return DEFAULT_SCHOOLS;
   }
 }
 
