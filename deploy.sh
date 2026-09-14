@@ -9,6 +9,7 @@
 #   ./deploy.sh                  # Standard update & zero-downtime deploy
 #   ./deploy.sh --seed           # Deploy + seed carnival events & site settings
 #   ./deploy.sh --create-admin   # Deploy + create Django superuser
+#   ./deploy.sh --create-staff   # Deploy + create Staff Admin (non-superuser)
 #   ./deploy.sh --ssl            # Obtain / renew Let's Encrypt SSL certificate
 #   ./deploy.sh --logs           # Tail live container logs
 #   ./deploy.sh --status         # Inspect current running container status
@@ -202,9 +203,15 @@ if [[ "$1" == "--seed" ]]; then
 fi
 
 # ─── Optional: Create Superuser ───────────────────────────────────────────────
-if [[ "$1" == "--create-admin" ]]; then
+if [[ "$1" == "--create-admin" || "$1" == "--create-superuser" ]]; then
     log_info "Launching interactive Django superuser creation..."
     ${DOCKER_COMPOSE} exec backend python manage.py createsuperuser
+fi
+
+# ─── Optional: Create Staff Admin (Non-Superuser) ─────────────────────────────
+if [[ "$1" == "--create-staff" ]]; then
+    log_info "Launching interactive Staff Admin user creation..."
+    ${DOCKER_COMPOSE} exec backend python manage.py create_admin
 fi
 
 # ─── Optional: SSL Provisioning ───────────────────────────────────────────────
