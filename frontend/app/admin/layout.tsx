@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = () => {
     clearAdminToken();
-    router.push('/');
+    window.location.href = '/';
   };
 
   return (
@@ -114,13 +114,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href={item.href}
                   prefetch={true}
                   className={cn(
-                    'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all',
                     isActive
-                      ? 'bg-gradient-to-r from-gold via-yellow-400 to-amber-500 text-slate-950 font-black shadow-lg shadow-gold/20'
-                      : 'text-slate-300 hover:text-white hover:bg-surface-elevated'
+                      ? 'bg-gold/15 text-gold border border-gold/40 shadow-sm'
+                      : 'text-slate-300 hover:bg-surface-elevated hover:text-white'
                   )}
                 >
-                  {item.icon}
+                  <span className={cn(isActive ? 'text-gold' : 'text-slate-400')}>{item.icon}</span>
                   {item.label}
                 </Link>
               );
@@ -139,13 +139,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="text-[10px] text-gold font-mono uppercase">{user.role || 'Superuser'}</span>
             </div>
           )}
-          <Link
+          <a
             href="/"
-            prefetch={true}
-            className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-gold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-gold rounded-lg transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" /> View Public Website
-          </Link>
+          </a>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer font-semibold"
@@ -194,6 +193,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {item.label}
               </Link>
             ))}
+            <a
+              href="/"
+              onClick={() => setSidebarOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-200 hover:bg-surface hover:text-gold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              View Public Website
+            </a>
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-rose-400 mt-2 border-t border-surface-border pt-3"
