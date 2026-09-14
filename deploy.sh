@@ -94,6 +94,46 @@ if [[ "$1" == "--nginx" ]]; then
     exit 0
 fi
 
+if [[ "$1" == "--create-staff" ]]; then
+    log_info "Launching interactive Staff Admin user creation..."
+    ${DOCKER_COMPOSE} exec backend python manage.py create_admin 2>/dev/null || \
+    ${DOCKER_COMPOSE} exec backend python manage.py shell -c "
+import getpass
+from django.contrib.auth.models import User
+from apps.accounts.models import AdminProfile
+
+username = input('Enter username: ').strip()
+if not username:
+    print('Username cannot be empty!')
+    exit(1)
+email = input('Enter email (optional): ').strip()
+pwd = getpass.getpass('Enter password: ')
+pwd_c = getpass.getpass('Confirm password: ')
+if pwd != pwd_c or not pwd:
+    print('Password mismatch or empty!')
+    exit(1)
+role = input('Enter role [ADMIN / VERIFIER / VIEWER] (default: ADMIN): ').strip().upper() or 'ADMIN'
+
+u, _ = User.objects.get_or_create(username=username, defaults={'email': email})
+u.set_password(pwd)
+u.is_staff = True
+u.is_superuser = False
+u.save()
+
+p, _ = AdminProfile.objects.get_or_create(user=u)
+p.role = role
+p.save()
+print(f'✅ Successfully created Staff Admin user \"{username}\" with role \"{role}\"!')
+"
+    exit 0
+fi
+
+if [[ "$1" == "--create-admin" || "$1" == "--create-superuser" ]]; then
+    log_info "Launching interactive Django superuser creation..."
+    ${DOCKER_COMPOSE} exec backend python manage.py createsuperuser
+    exit 0
+fi
+
 # ─── Step 1: Pre-flight Validations ───────────────────────────────────────────
 log_info "Step 1/7: Validating production environment..."
 
@@ -200,18 +240,6 @@ if [[ "$1" == "--seed" ]]; then
     log_info "Seeding carnival events, site settings, and schools into database..."
     ${DOCKER_COMPOSE} exec -T backend python manage.py seed_data
     log_success "19 carnival events & settings seeded successfully!"
-fi
-
-# ─── Optional: Create Superuser ───────────────────────────────────────────────
-if [[ "$1" == "--create-admin" || "$1" == "--create-superuser" ]]; then
-    log_info "Launching interactive Django superuser creation..."
-    ${DOCKER_COMPOSE} exec backend python manage.py createsuperuser
-fi
-
-# ─── Optional: Create Staff Admin (Non-Superuser) ─────────────────────────────
-if [[ "$1" == "--create-staff" ]]; then
-    log_info "Launching interactive Staff Admin user creation..."
-    ${DOCKER_COMPOSE} exec backend python manage.py create_admin
 fi
 
 # ─── Optional: SSL Provisioning ───────────────────────────────────────────────
