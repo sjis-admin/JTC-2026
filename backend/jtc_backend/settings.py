@@ -71,24 +71,32 @@ TEMPLATES = [
 WSGI_APPLICATION = 'jtc_backend.wsgi.application'
 
 # ─── Database ─────────────────────────────────────────────────────────────────
-DATABASE_URL = os.environ.get('DATABASE_URL', '')
+DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
 
-if DATABASE_URL and DATABASE_URL.startswith('postgres'):
-    import re
-    m = re.match(r'postgres(?:ql)?://([^:]+):([^@]+)@([^:/]+):?(\d*)/(.+)', DATABASE_URL)
-    if m:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'USER': m.group(1),
-                'PASSWORD': m.group(2),
-                'HOST': m.group(3),
-                'PORT': m.group(4) or '5432',
-                'NAME': m.group(5),
-            }
+if DATABASE_URL and (DATABASE_URL.startswith('postgres://') or DATABASE_URL.startswith('postgresql://')):
+    from urllib.parse import urlparse, unquote
+    parsed = urlparse(DATABASE_URL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'USER': unquote(parsed.username or ''),
+            'PASSWORD': unquote(parsed.password or ''),
+            'HOST': parsed.hostname or 'localhost',
+            'PORT': str(parsed.port or 5432),
+            'NAME': unquote(parsed.path.lstrip('/').split('?')[0]),
         }
-    else:
-        raise ValueError('Invalid DATABASE_URL format')
+    }
+elif os.environ.get('POSTGRES_DB'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'USER': os.environ.get('POSTGRES_USER', 'jtc_admin'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            'NAME': os.environ.get('POSTGRES_DB'),
+        }
+    }
 else:
     DATABASES = {
         'default': {

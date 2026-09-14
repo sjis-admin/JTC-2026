@@ -9,7 +9,7 @@ from apps.registrations.serializers import RegistrationCreateSerializer
 
 class BundleEligibilityTestCase(APITestCase):
     def setUp(self):
-        self.school = School.objects.create(name='St. Joseph International School')
+        self.school, _ = School.objects.get_or_create(name='St. Joseph International School')
         
         # Create groups A, B, C, D, E
         self.groups = {}
