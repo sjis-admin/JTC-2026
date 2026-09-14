@@ -595,7 +595,7 @@ class Command(BaseCommand):
                 'team_fee': 1000,
                 'team_min': 1,
                 'team_max': 3,
-                'groups': ['A', 'B', 'C', 'D'],
+                'groups': ['A', 'B', 'C', 'D', 'E'],
                 'venue_detail': 'Robotics Arena Track',
                 'submission_type': 'PHYSICAL',
                 'highlight': False,
@@ -603,7 +603,7 @@ class Command(BaseCommand):
                 'description': 'BDRO Line-Following Robot race across a precision track. Robots must navigate fully autonomously and adhere to strict 25cm × 25cm × 25cm dimensional bounds.',
                 'rules': (
                     "### BDRO Line-Following Competition\n"
-                    "- Grade 3 to 12 (Group A to Group D)\n"
+                    "- Grade 3 to 12 & University Level (Group A to Group E)\n"
                     "- Individual (৳300) or Team of up to 3 (৳1000)\n\n"
                     "### Guidelines (BDRO Rules)\n"
                     "- **Dimensions:** The robot **cannot exceed dimensions 25cm × 25cm × 25cm**.\n"

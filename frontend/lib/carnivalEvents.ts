@@ -739,7 +739,7 @@ Participants must create and submit a technology-related meme based on a topic, 
     team_fee: 1000,
     team_min: 1,
     team_max: 3,
-    eligibility_groups: [ACADEMIC_GROUPS.A, ACADEMIC_GROUPS.B, ACADEMIC_GROUPS.C, ACADEMIC_GROUPS.D],
+    eligibility_groups: [ACADEMIC_GROUPS.A, ACADEMIC_GROUPS.B, ACADEMIC_GROUPS.C, ACADEMIC_GROUPS.D, ACADEMIC_GROUPS.E],
     submission_type: 'PHYSICAL',
     venue_detail: 'Robotics Arena Track',
     is_active: true,
@@ -751,7 +751,7 @@ Participants must create and submit a technology-related meme based on a topic, 
     description:
       'BDRO Line-Following Robot race across a precision track. Robots must navigate fully autonomously and adhere to strict 25cm × 25cm × 25cm dimensional bounds.',
     rules: `### Rules
-- **Grade:** 3 to 12 (Group A to D)
+- **Grade:** 3 to 12 & University Level (Group A to E)
 - **Task:** Participants must design and make a line-following robot. In the event the robots will have to traverse a line course.
 
 ### Guidelines

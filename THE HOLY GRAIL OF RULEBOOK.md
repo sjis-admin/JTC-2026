@@ -480,7 +480,7 @@ Participants will work individually to create and present a PowerPoint presentat
 # 14. Line Robot Showcase (BDRO)
 
 ### Rules
-* **Grade:** 3 to 12 (Group A to D)
+* **Grade:** 3 to 12 & University Level (Group A to E)
 * **Task:** Participants must design and make a line-following robot. In the event the robots will have to traverse a line course.
 * **Guidelines:**
   * The robot cannot exceed dimensions 25cm × 25cm × 25cm.
