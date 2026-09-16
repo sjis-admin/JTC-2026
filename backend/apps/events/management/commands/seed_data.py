@@ -248,7 +248,7 @@ class Command(BaseCommand):
                 'description': 'Speed typing showdown on MonkeyType in the SJIS Computer Lab. Test your pure WPM and accuracy over 15-second bursts. Participants may bring their own keyboards.',
                 'rules': (
                     "### Task Description\n"
-                    "Participants will have timed attempts to type as fast as possible on MonkeyType in the computer lab.\n\n"
+                    "Participants will have 5 attempts to type as fast as possible in a 15-second test on MonkeyType in the computer lab. The best of five tries will be chosen for judging.\n\n"
                     "### Grade Eligibility\n"
                     "- **Grade 3 to Grade 12** (Group A to Group D)\n\n"
                     "### Guidelines\n"
@@ -256,7 +256,7 @@ class Command(BaseCommand):
                     "- The event will be held in the school computer lab on desktop workstations. Bringing personal laptops is not allowed.\n"
                     "- No auto-correct, macros, scripts, or copy-pasting.\n"
                     "- 5 minutes will be given before the competition for warming up.\n"
-                    "- Each try will be a 15-second test. The best of attempts will be chosen for judging.\n\n"
+                    "- Each try will be a 15-second test. The best of five tries will be chosen for judging.\n\n"
                     "### Judging\n"
                     "- The participants with the 3 highest recorded WPMs will be awarded."
                 ),
@@ -553,7 +553,7 @@ class Command(BaseCommand):
                     "- Must include title, introduction, main content, and conclusion with practical tech examples.\n"
                     "- Word limit will be announced before writing begins.\n"
                     "- Organizers provide official writing paper. Participants bring pens.\n"
-                    "- Header must clearly list: Student's Name, School, Class & Section, Group (A/B/C/D), and Article Title."
+                    "- Header must clearly list: Student's Name, School / Institution, Group (A/B/C/D), and Article Title."
                 ),
                 'judging_criteria': "",
                 'faqs': []
@@ -578,9 +578,10 @@ class Command(BaseCommand):
                     "### Guidelines & Screening Process\n"
                     "- All submitted memes will first go through a **screening and auditing process** for appropriateness and originality before shortlisting.\n"
                     "- Must be related to technology, programming, AI, robotics, or digital student life.\n"
+                    "- AI must not be used in the generation of the meme.\n"
                     "- Each participant may submit **one meme only** in JPG, JPEG, or PNG.\n"
                     "- Must be the original creative work of the participant. Submissions found to contain unauthorized or directly copied content will be disqualified.\n"
-                    "- Provide: Student's Name, School, Class & Section, Group (A/B/C/D), and Caption of the Meme."
+                    "- Provide: Student's Name, School / Institution, Group (A/B/C/D), and Caption of the Meme."
                 ),
                 'judging_criteria': "",
                 'faqs': []
@@ -636,7 +637,7 @@ class Command(BaseCommand):
                     "- Grade 7 to 12 & University Level (Group C to Group E)\n"
                     "- Individual (৳500) or Team of up to 3 (৳1000)\n\n"
                     "### Guidelines (BDRO Rules)\n"
-                    "- Participants must bring their own drones complying with safety limits.\n"
+                    "- Participants must bring their own drones complying with safety limits (detailed specifications and arena track dimensions will be added later by BDRO).\n"
                     "- All drones must stay in the designated competition flight arena.\n"
                     "- Missing a checkpoint or colliding with an obstacle results in a **5-second time penalty**.\n"
                     "- Sabotaging other participants’ drones, colliding with them, or leaving the flight zone will result in disqualification.\n"

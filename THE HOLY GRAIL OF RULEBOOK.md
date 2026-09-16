@@ -70,7 +70,7 @@
 
 ### Rules
 * **Grade:** 3 to 12 (Group A to D)
-* **Task:** Participants will have 3 tries to type as fast as possible in one minute on MonkeyType.
+* **Task:** Participants will have 5 tries to type as fast as possible in a 15-second test on MonkeyType. The best of five tries will be chosen for judging.
 * **Guidelines:**
   * Participants are allowed to bring their own keyboards.
   * The event will be held in the school computer lab. Bringing your own device (excluding keyboard) is not allowed.
@@ -207,7 +207,7 @@ The photos will be judged by our judges on stage after being reviewed.
 “A mysterious hacker called ZERO has stolen the Tech Fest’s Golden Code. The code has been split into 5 fragments and hidden across the campus. Your team has 60 minutes to recover all fragments before ZERO deletes them forever.”
 
 ### How it works:
-* **Round 1 — QR Hunt:** Place QR codes given in a paper to each team. Scanning each QR code reveals the room location on the 2nd and 3rd floor or SJIS building.
+* **Round 1 — QR Hunt:** Place QR codes given in a paper to each team. Scanning each QR code reveals the room location on the 2nd and 3rd floor of the SJIS building.
 * **Round 2 — Tech Puzzle:** Give teams a simple coding/debugging challenge. This will be presented in the form of printed paper in the designated rooms. The correct output gives them a number.
 * **Round 3 — Hidden Message:** Give them an image containing a hidden message using visual clues.
 * **Round 4 — Encryption Challenge:** Teams solve a riddle to obtain a decryption. Entering it on a webpage reveals a URL.
@@ -384,7 +384,7 @@ Participants will work individually to create and present a PowerPoint presentat
    * The organizers will provide the required writing paper or answer sheets.
 7. **Student Information:**
    * Student's Name
-   * Class & Section
+   * Institution / School Name
    * Group (A/B/C/D)
    * Title of the Article
 8. **Judging Criteria:**
@@ -433,6 +433,7 @@ Participants will work individually to create and present a PowerPoint presentat
    * Participants should ensure that all text and visual elements are clearly visible.
 4. **Originality & Copyright:**
    * The meme must be the original creative work of the participant.
+   * **AI must not be used in the generation of the meme.**
    * Participants must not submit a meme copied directly from another person, website, social media page, or previous competition.
    * Participants may use existing images, templates, or publicly available visual materials as part of their meme only when their use is permitted and does not violate copyright.
    * Any third-party images, graphics, icons, or other materials used should be appropriately credited where required.
@@ -446,7 +447,7 @@ Participants will work individually to create and present a PowerPoint presentat
    * Submissions containing inappropriate, offensive, or unsuitable content may be rejected without proceeding to the judging stage.
 6. **Student Information:**
    * Student's Name
-   * Class & Section
+   * Institution / School Name
    * Group (A/B/C/D)
    * Title or Caption of the Meme
 7. **Judging Criteria:**
@@ -498,11 +499,13 @@ Participants will work individually to create and present a PowerPoint presentat
 * **Grade:** 7 to 12 & University Level (Group C to E)
 * **Task:** Participants must control drones and navigate through an obstacle course.
 * **Guidelines:**
-  * Participants must bring their own drones. Drones must comply with the specifications mentioned below.
+  * Participants must bring their own drones. Detailed drone specifications, weight/size limits, and arena obstacle dimensions will be announced later by BDRO (to be added later).
   * All drones must stay in the designated competition area.
   * Missing a checkpoint or colliding with an obstacle will result in a 5 second time penalty.
   * Sabotaging other participants’ drones, colliding with them or leaving the flight zone will result in disqualification.
   * Participants entering the flight zone will be disqualified.
+* **Technical Specifications:**
+  * Detailed drone hardware specifications, battery limits, weight restrictions, and arena obstacle course schematics will be added later upon final release by BDRO.
 * **Judging:**
   * The drones with the fastest times will be awarded. Ties will be handled by redoing the course.
 

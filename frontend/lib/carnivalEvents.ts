@@ -234,7 +234,7 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
       'High-octane speed typing showdown on MonkeyType in the SJIS Computer Lab. Test your pure WPM and accuracy over 15-second bursts. Participants may bring their own keyboards.',
     rules: `### Rules
 - **Grade:** 3 to 12 (Group A to D)
-- **Task:** Participants will have 3 tries to type as fast as possible in one minute on MonkeyType.
+- **Task:** Participants will have 5 tries to type as fast as possible in a 15-second test on MonkeyType. The best of five tries will be chosen.
 
 ### Guidelines
 - Participants are allowed to bring their own keyboards.
@@ -475,7 +475,7 @@ Grade: Group A to D
 - Teams of 2 to 4 members
 
 ### How it works:
-- **Round 1 — QR Hunt:** Place QR codes given in a paper to each team. Scanning each QR code reveals the room location on the 2nd and 3rd floor or SJIS building.
+- **Round 1 — QR Hunt:** Place QR codes given in a paper to each team. Scanning each QR code reveals the room location on the 2nd and 3rd floor of the SJIS building.
 - **Round 2 — Tech Puzzle:** Give teams a simple coding/debugging challenge. This will be presented in the form of printed paper in the designated rooms. The correct output gives them a number.
 - **Round 3 — Hidden Message:** Give them an image containing a hidden message using visual clues.
 - **Round 4 — Encryption Challenge:** Teams solve a riddle to obtain a decryption. Entering it on a webpage reveals a URL.
@@ -554,6 +554,11 @@ Participants must solve a standard 3×3 Rubik’s Cube within the given time. Th
    - Participants must report to the competition venue on time.
    - Participants must follow the instructions of the judges and event organizers.
    - Any disruptive or inappropriate behaviour may result in disqualification.
+
+7. **Judging & Results:**
+   - Participants will be ranked according to their fastest valid solving time.
+   - In the case of a tie, additional attempts or tie-breaking rules may be applied by the judges.
+   - The decision of the judges and organizers will be final.
 
 ### IMPORTANT NOTE
 - **Only standard 3×3 Rubik’s Cubes will be allowed for this competition.**
@@ -674,7 +679,7 @@ Participants will write a technology-related article on the spot based on a topi
 4. **Language:** Must be written in **English**. Proper grammar, spelling, punctuation, and sentence structure.
 5. **Word Limit:** Announced by organizers before competition.
 6. **Writing Materials:** Bring own writing materials; organizers provide writing paper or answer sheets.
-7. **Student Information:** Student's Name, Class & Section, Group (A/B/C/D), Title of the Article.
+7. **Student Information:** Student's Name, Institution / School Name, Group (A/B/C/D), Title of the Article.
 
 ### IMPORTANT NOTE
 - This is an on-the-spot writing competition.
@@ -716,9 +721,9 @@ Participants must create and submit a technology-related meme based on a topic, 
 1. **Meme Content:** Related to technology, humorous, creative, understandable, and suitable for a general audience. Offensive or inappropriate content will not be accepted.
 2. **Submission:** Each participant may submit one meme only before the deadline.
 3. **Meme Format:** Clear and high-quality digital format (JPG, JPEG, or PNG).
-4. **Originality & Copyright:** Original creative work of the participant. No direct copying from another person, website, or social media. Permitted templates allowed with appropriate credit.
+4. **Originality & Copyright:** Original creative work of the participant. **AI must not be used in the generation of the meme.** No direct copying from another person, website, or social media. Permitted templates allowed with appropriate credit.
 5. **Content Screening & Auditing:** All submissions screened and audited for appropriateness.
-6. **Student Information:** Student's Name, Class & Section, Group (A/B/C/D), Title or Caption of the Meme.
+6. **Student Information:** Student's Name, Institution / School Name, Group (A/B/C/D), Title or Caption of the Meme.
 
 ### IMPORTANT NOTE
 - This is a submission-based competition.
@@ -789,11 +794,15 @@ Participants must create and submit a technology-related meme based on a topic, 
 - **Task:** Participants must control drones and navigate through an obstacle course.
 
 ### Guidelines
-- Participants must bring their own drones. Drones must comply with the specifications mentioned below.
+- Participants must bring their own drones. Detailed drone specifications, weight/size limits, and arena obstacle dimensions will be announced later by BDRO (to be added later).
 - All drones must stay in the designated competition area.
 - Missing a checkpoint or colliding with an obstacle will result in a 5 second time penalty.
 - Sabotaging other participants’ drones, colliding with them or leaving the flight zone will result in disqualification.
-- Participants entering the flight zone will be disqualified.`,
+- Participants entering the flight zone will be disqualified.
+- **Technical Specifications:** Detailed hardware guidelines and arena obstacle course schematics will be added later upon release by BDRO.
+
+### Judging
+- The drones with the fastest times will be awarded. Ties will be handled by redoing the course.`,
     judging_criteria: '',
     faqs: [],
   },
