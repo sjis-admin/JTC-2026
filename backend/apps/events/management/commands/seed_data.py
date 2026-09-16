@@ -420,7 +420,7 @@ class Command(BaseCommand):
                 'category': 'OTHER',
                 'event_type': 'TEAM',
                 'individual_fee': 0,
-                'team_fee': 600,
+                'team_fee': 500,
                 'team_min': 2,
                 'team_max': 4,
                 'groups': ['A', 'B', 'C', 'D'],
@@ -434,7 +434,7 @@ class Command(BaseCommand):
                     "“A mysterious hacker called ZERO has stolen the Tech Fest’s Golden Code. The code has been split into 5 fragments and hidden across the campus. Your team has 60 minutes to recover all fragments before ZERO deletes them forever.”\n\n"
                     "### Eligibility & Teams\n"
                     "- Group A to Group D (Grade 3 to Grade 12)\n"
-                    "- Teams of 2 to 4 participants (৳600 per team)\n\n"
+                    "- Teams of 2 to 4 participants (৳500 per team)\n\n"
                     "### How It Works (5 Rounds)\n"
                     "• **Round 1 — QR Hunt:** Place QR codes given in a paper to each team. Scanning each QR code reveals the room location on the 2nd and 3rd floor of the SJIS building.\n"
                     "• **Round 2 — Tech Puzzle:** Teams find a simple coding/debugging challenge on printed paper in designated rooms. The correct output gives a secret number.\n"
@@ -593,7 +593,7 @@ class Command(BaseCommand):
                 'category': 'ROBOTICS',
                 'event_type': 'BOTH',
                 'individual_fee': 300,
-                'team_fee': 1000,
+                'team_fee': 500,
                 'team_min': 1,
                 'team_max': 3,
                 'groups': ['A', 'B', 'C', 'D', 'E'],
@@ -605,7 +605,7 @@ class Command(BaseCommand):
                 'rules': (
                     "### BDRO Line-Following Competition\n"
                     "- Grade 3 to 12 & University Level (Group A to Group E)\n"
-                    "- Individual (৳300) or Team of up to 3 (৳1000)\n\n"
+                    "- Individual (৳300) or Team of up to 3 (৳500)\n\n"
                     "### Guidelines (BDRO Rules)\n"
                     "- **Dimensions:** The robot **cannot exceed dimensions 25cm × 25cm × 25cm**.\n"
                     "- **Autonomous Operation:** The robot must move autonomously after the run starts. No physical contact or electronic/wireless communication with the robot is allowed.\n"
