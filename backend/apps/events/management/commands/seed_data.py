@@ -314,7 +314,6 @@ class Command(BaseCommand):
                     "### Grade Eligibility\n"
                     "- **Grade 3 to Grade 12** (Group A to Group D)\n\n"
                     "### General Guidelines\n"
-                    "- The video must be based on the given theme.\n"
                     "- Offensive, copyrighted, or inappropriate content is prohibited.\n"
                     "- All footage and content must be original and theme-based.\n"
                     "- Submit the submission through a physical pen drive on Day 1.\n\n"

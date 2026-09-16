@@ -316,7 +316,6 @@ Based on the theme given on spot, use prompt to generate an image. Contestants a
 - **Task:** Participants must create a video based on the theme given and submit it on the first day of the fest.
 
 ### General Guidelines
-- The video must be based on the given theme.
 - Offensive, copyrighted, or inappropriate content is prohibited.
 - All footage and content must be original and theme based.
 - Submit the submission through a pen drive on the first day of the fest.
