@@ -23,6 +23,8 @@ urlpatterns = [
 
     # --- Admin ----------------------------------------------------------------
     path('admin/registrations/export/excel/', views.admin_export_excel, name='admin-registrations-export-excel'),
+    path('admin/registrations/send_reminders/', views.admin_send_all_reminders, name='admin-registrations-send-all-reminders'),
+    path('admin/registrations/<str:pk>/send_reminder/', views.admin_send_reminder, name='admin-registrations-send-reminder'),
     path('admin/registrations/', views.admin_registrations_list, name='admin-registrations'),
     path('admin/registrations/<str:pk>/payment/', views.admin_update_payment, name='admin-payment-update'),
     path('admin/registrations/<str:pk>/update_payment/', views.admin_update_payment, name='admin-payment-update-alt'),

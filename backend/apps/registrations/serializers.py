@@ -229,5 +229,7 @@ class RegistrationReadSerializer(serializers.ModelSerializer):
             'registration_events', 'total_fee', 'payment_method',
             'payment_reference', 'payment_status', 'payment_status_display',
             'is_bundle', 'bundle_bonus_fc',
-            'email_sent', 'sms_sent', 'registered_at',
+            'email_sent', 'sms_sent',
+            'last_reminder_sent_at', 'reminder_count',
+            'registered_at',
         ]

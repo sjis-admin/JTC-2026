@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.utils import timezone
 from .models import Participant, Registration, RegistrationEvent, GRADE_TO_GROUP
 from .serializers import RegistrationCreateSerializer, RegistrationReadSerializer
-from .notifications import send_confirmation_email, send_confirmation_sms
+from .notifications import send_confirmation_email, send_confirmation_sms, send_pending_reminder_email
 from .guest_auth import (
     GoogleTokenVerifier, OTPStore,
     generate_session_jwt, verify_session_jwt, is_valid_email,
@@ -420,6 +420,82 @@ def admin_update_payment(request, pk):
         send_confirmation_sms(reg)
 
     return Response(RegistrationReadSerializer(reg, context={'request': request}).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def admin_send_reminder(request, pk):
+    """Admin: Manually trigger a cart reminder email for a specific registration."""
+    try:
+        if str(pk).isdigit():
+            reg = Registration.objects.get(pk=int(pk))
+        else:
+            reg = Registration.objects.get(confirmation_code=pk)
+    except Registration.DoesNotExist:
+        return Response({'error': 'Registration not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    force = request.data.get('force', False) or request.query_params.get('force') == 'true'
+    success, msg = send_pending_reminder_email(reg, force=force)
+    if not success:
+        return Response({'error': msg}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({
+        'message': msg,
+        'registration': RegistrationReadSerializer(reg, context={'request': request}).data
+    })
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def admin_send_all_reminders(request):
+    """Admin: Batch scan and send daily reminder emails to all eligible pending registrations."""
+    from datetime import timedelta
+    force = request.data.get('force', False) or request.query_params.get('force') == 'true'
+    min_hours = int(request.data.get('min_hours', 2))
+    max_reminders = int(request.data.get('max_reminders', 7))
+
+    now = timezone.now()
+    cutoff_created = now - timedelta(hours=min_hours)
+    cutoff_last_sent = now - timedelta(hours=23)
+
+    qs = Registration.objects.filter(
+        payment_status='PENDING',
+        total_fee__gt=0,
+        participant__email__isnull=False,
+    ).select_related('participant').prefetch_related('registration_events__event')
+
+    total_pending = qs.count()
+    sent_count = 0
+    skipped_count = 0
+    fail_count = 0
+    results = []
+
+    for reg in qs:
+        if not force and reg.registered_at > cutoff_created:
+            skipped_count += 1
+            continue
+        if not force and reg.reminder_count >= max_reminders:
+            skipped_count += 1
+            continue
+        if not force and reg.last_reminder_sent_at and reg.last_reminder_sent_at > cutoff_last_sent:
+            skipped_count += 1
+            continue
+
+        ok, msg = send_pending_reminder_email(reg, force=force)
+        if ok:
+            sent_count += 1
+            results.append({'code': reg.short_code, 'status': 'sent', 'message': msg})
+        else:
+            fail_count += 1
+            results.append({'code': reg.short_code, 'status': 'failed', 'message': msg})
+
+    return Response({
+        'total_pending': total_pending,
+        'sent': sent_count,
+        'skipped': skipped_count,
+        'failed': fail_count,
+        'details': results[:50]
+    })
 
 
 @api_view(['GET'])

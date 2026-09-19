@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { adminFetch } from '@/lib/api';
+import { adminFetch, sendPendingReminder, sendAllPendingReminders } from '@/lib/api';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { AdminLoader } from '@/components/ui/AdminLoader';
 import {
   Search, CheckCircle2, XCircle, Clock, Filter, Check, Eye, Download, FileSpreadsheet, RefreshCw, X, ShieldCheck, Sparkles, FileText,
-  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
+  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Mail, Send
 } from 'lucide-react';
 
 interface RegistrationItem {
@@ -25,6 +25,8 @@ interface RegistrationItem {
   payment_reference: string;
   payment_status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'REFUNDED';
   payment_status_display: string;
+  last_reminder_sent_at?: string | null;
+  reminder_count?: number;
   registered_at: string;
   registration_events: {
     event: { name: string };
@@ -41,6 +43,9 @@ export default function AdminRegistrationsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [exportingExcel, setExportingExcel] = useState(false);
+  const [sendingReminderCode, setSendingReminderCode] = useState<string | null>(null);
+  const [sendingAllReminders, setSendingAllReminders] = useState(false);
+  const [actionFeedback, setActionFeedback] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedReg, setSelectedReg] = useState<RegistrationItem | null>(null);
@@ -170,6 +175,56 @@ export default function AdminRegistrationsPage() {
     }
   };
 
+  // 1-Click Send Cart Reminder to Single Pending Contestant
+  const handleSendReminder = async (code: string, shortCode: string, force = false) => {
+    setSendingReminderCode(code);
+    setActionFeedback(null);
+    try {
+      const res = await sendPendingReminder(code, force);
+      // Update local state with latest reminder count and timestamp
+      setRegistrations((prev) =>
+        prev.map((r) =>
+          r.confirmation_code === code
+            ? {
+                ...r,
+                reminder_count: res.registration.reminder_count,
+                last_reminder_sent_at: res.registration.last_reminder_sent_at,
+              }
+            : r
+        )
+      );
+      setActionFeedback(`✓ Reminder sent to ${shortCode}!`);
+      setTimeout(() => setActionFeedback(null), 5000);
+    } catch (err: any) {
+      alert(err.message || 'Failed to send reminder email.');
+    } finally {
+      setSendingReminderCode(null);
+    }
+  };
+
+  // Batch Trigger Daily Reminders for All Eligible Pending Registrations
+  const handleSendAllReminders = async () => {
+    const confirmSend = window.confirm(
+      'Scan and send 1 daily cart reminder email to all eligible pending contestants?'
+    );
+    if (!confirmSend) return;
+
+    setSendingAllReminders(true);
+    setActionFeedback(null);
+    try {
+      const res = await sendAllPendingReminders();
+      const feedbackMsg = `✓ Daily Reminders Processed: ${res.sent} sent, ${res.skipped} skipped (already sent today or <2h), ${res.failed} failed.`;
+      setActionFeedback(feedbackMsg);
+      alert(feedbackMsg);
+      // Reload current page to refresh reminder counts
+      loadRegistrations(page, pageSize, search, statusFilter);
+    } catch (err: any) {
+      alert(err.message || 'Failed to process batch reminders.');
+    } finally {
+      setSendingAllReminders(false);
+    }
+  };
+
   // Export to Native Excel (.xlsx) with 3 Rich Tabs
   const exportToExcel = async () => {
     setExportingExcel(true);
@@ -280,6 +335,19 @@ export default function AdminRegistrationsPage() {
             <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
           
+          {/* Daily Cart Reminders Batch Trigger */}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleSendAllReminders}
+            isLoading={sendingAllReminders}
+            disabled={loading}
+            className="text-xs font-semibold text-amber-300 border-amber-500/40 hover:bg-amber-950/40 hover:text-amber-200"
+            title="Scan and send 1 daily reminder email to all pending cart contestants"
+          >
+            <Mail className="w-3.5 h-3.5 mr-1.5 text-amber-400" /> Send Reminders (Pending)
+          </Button>
+
           {/* Native Excel (.xlsx) Export Button */}
           <Button
             variant="glow"
@@ -304,6 +372,22 @@ export default function AdminRegistrationsPage() {
           </Button>
         </div>
       </div>
+
+      {/* Action Feedback Banner */}
+      {actionFeedback && (
+        <div className="p-3 px-4 rounded-xl bg-amber-950/70 border border-amber-500/60 text-amber-200 text-xs font-semibold flex items-center justify-between shadow-lg">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>{actionFeedback}</span>
+          </div>
+          <button
+            onClick={() => setActionFeedback(null)}
+            className="text-amber-400 hover:text-white p-1"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Filter & Search Bar */}
       <Card glow="none" className="p-4 border border-surface-border bg-surface">
@@ -408,6 +492,27 @@ export default function AdminRegistrationsPage() {
                         </Badge>
                       </td>
                       <td className="p-3.5 text-right space-x-1.5">
+                        {/* 1-Click Send Cart Reminder Button */}
+                        {r.payment_status === 'PENDING' && (
+                          <button
+                            onClick={() => handleSendReminder(r.confirmation_code, r.short_code)}
+                            disabled={sendingReminderCode === r.confirmation_code}
+                            className="px-2.5 py-1 rounded bg-amber-950/70 border border-amber-500/70 text-amber-300 hover:bg-amber-800 hover:text-white text-xs font-bold cursor-pointer inline-flex items-center gap-1 transition-colors"
+                            title={
+                              r.last_reminder_sent_at
+                                ? `Last reminder: ${new Date(r.last_reminder_sent_at).toLocaleString()} (Sent ${r.reminder_count || 0} time(s))`
+                                : 'Send 1 cart reminder email'
+                            }
+                          >
+                            <Mail className={`w-3.5 h-3.5 ${sendingReminderCode === r.confirmation_code ? 'animate-pulse' : ''}`} />
+                            {sendingReminderCode === r.confirmation_code
+                              ? 'Sending...'
+                              : r.reminder_count && r.reminder_count > 0
+                              ? `Remind (${r.reminder_count})`
+                              : 'Remind'}
+                          </button>
+                        )}
+
                         {/* 1-Click Verify Button */}
                         {r.payment_status !== 'VERIFIED' && (
                           <button
@@ -576,6 +681,17 @@ export default function AdminRegistrationsPage() {
               <div><strong>TrxID / Reference:</strong> <span className="font-mono text-gold font-bold">{selectedReg.payment_reference || 'Online Gateway Trx'}</span></div>
               <div><strong>Payment Method:</strong> {selectedReg.payment_method}</div>
               <div><strong>Registered At:</strong> {new Date(selectedReg.registered_at).toLocaleString()}</div>
+              {selectedReg.reminder_count !== undefined && (
+                <div>
+                  <strong>Cart Reminders:</strong>{' '}
+                  <span className="text-amber-300 font-mono">
+                    {selectedReg.reminder_count} sent
+                    {selectedReg.last_reminder_sent_at
+                      ? ` (Last: ${new Date(selectedReg.last_reminder_sent_at).toLocaleString()})`
+                      : ' (None sent yet)'}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="pt-2 border-t border-surface-border space-y-1.5">
@@ -591,7 +707,7 @@ export default function AdminRegistrationsPage() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-surface-border gap-2">
+            <div className="flex items-center justify-between pt-4 border-t border-surface-border gap-2 flex-wrap">
               <a
                 href={`/verify?code=${selectedReg.confirmation_code}`}
                 target="_blank"
@@ -601,6 +717,18 @@ export default function AdminRegistrationsPage() {
                 View Public Pass ↗
               </a>
               <div className="flex items-center gap-2">
+                {selectedReg.payment_status === 'PENDING' && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleSendReminder(selectedReg.confirmation_code, selectedReg.short_code, true)}
+                    isLoading={sendingReminderCode === selectedReg.confirmation_code}
+                    className="text-xs font-semibold text-amber-300 border-amber-500/40 hover:bg-amber-950/40"
+                    title="Send reminder email now (overrides 24h limit)"
+                  >
+                    <Mail className="w-3.5 h-3.5 mr-1 text-amber-400" /> Send Reminder Email
+                  </Button>
+                )}
                 {selectedReg.payment_status !== 'VERIFIED' && (
                   <Button
                     variant="glow"

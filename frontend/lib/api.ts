@@ -141,6 +141,8 @@ export interface RegistrationResponse {
   bundle_bonus_fc: boolean;
   email_sent: boolean;
   sms_sent: boolean;
+  last_reminder_sent_at?: string | null;
+  reminder_count?: number;
   registered_at: string;
   registration_events: {
     event: EventItem;
@@ -425,4 +427,30 @@ export async function adminFetch(endpoint: string, options: RequestInit = {}) {
   }
 
   return res;
+}
+
+export async function sendPendingReminder(code: string, force = false): Promise<{ message: string; registration: RegistrationResponse }> {
+  const res = await adminFetch(`/admin/registrations/${code}/send_reminder/`, {
+    method: 'POST',
+    body: JSON.stringify({ force }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to send reminder email.');
+  return data;
+}
+
+export async function sendAllPendingReminders(force = false): Promise<{
+  total_pending: number;
+  sent: number;
+  skipped: number;
+  failed: number;
+  details: { code: string; status: string; message: string }[];
+}> {
+  const res = await adminFetch('/admin/registrations/send_reminders/', {
+    method: 'POST',
+    body: JSON.stringify({ force }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to trigger batch reminder emails.');
+  return data;
 }

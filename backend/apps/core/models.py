@@ -40,6 +40,7 @@ class SiteSettings(models.Model):
     
     # Email settings
     email_confirmation_enabled = models.BooleanField(default=True)
+    email_reminder_enabled = models.BooleanField(default=True, help_text='Enable automated daily cart reminder emails for pending registrations')
     email_from_name = models.CharField(max_length=100, default='Josephite Tech Club')
 
     class Meta:

@@ -88,6 +88,8 @@ class Registration(models.Model):
     admin_notes = models.TextField(blank=True)
     email_sent = models.BooleanField(default=False)
     sms_sent = models.BooleanField(default=False)
+    last_reminder_sent_at = models.DateTimeField(null=True, blank=True, help_text='Timestamp of last cart reminder email sent')
+    reminder_count = models.PositiveIntegerField(default=0, help_text='Number of cart reminder emails sent')
     registered_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 

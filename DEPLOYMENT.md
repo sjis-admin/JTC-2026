@@ -168,7 +168,27 @@ cd /var/www/jtc
 | **Renew/Issue SSL** | `./deploy.sh --ssl` |
 | **Restart Backend Only** | `docker compose -f docker-compose.prod.yml restart backend` |
 | **Restart Frontend Only** | `docker compose -f docker-compose.prod.yml restart frontend` |
+| **Send Cart Reminders** | `docker compose -f docker-compose.prod.yml exec backend python manage.py send_pending_reminders` |
 | **Django Shell** | `docker compose -f docker-compose.prod.yml exec backend python manage.py shell` |
+
+---
+
+## ⏰ Automated Daily Cart Reminders (Crontab)
+
+To automatically send 1 reminder email every day to all contestants whose registration is pending on cart:
+
+Open server crontab:
+```bash
+crontab -e
+```
+
+Add the following daily cron entry (runs daily at 10:00 AM server time):
+```cron
+# Send 1 daily cart reminder email to pending contestants at 10:00 AM
+0 10 * * * cd /var/www/jtc && docker compose -f docker-compose.prod.yml exec -T backend python manage.py send_pending_reminders >> /var/log/jtc_reminders.log 2>&1
+```
+
+*Note: Registrations are rate-limited to at most 1 reminder every 24 hours. The command also respects the `email_reminder_enabled` toggle in Site Settings.*
 
 ---
 

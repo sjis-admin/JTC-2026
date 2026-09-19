@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Registration — {{ site.carnival_name }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #030712;
+      color: #f1f5f9;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      width: 100%;
+      background-color: #030712;
+      padding: 24px 12px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #0a152e;
+      border: 1px solid #1e3a8a;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+    .header {
+      background: linear-gradient(135deg, #001233 0%, #002855 50%, #00183F 100%);
+      padding: 36px 24px 28px;
+      text-align: center;
+      border-bottom: 2px solid #f59e0b;
+      position: relative;
+    }
+    .badge-alert {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #f59e0b;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 9999px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+    }
+    .header p {
+      margin: 8px 0 0;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .body {
+      padding: 32px 28px;
+    }
+    .greeting {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 0;
+      margin-bottom: 14px;
+    }
+    .lead-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+    .lead-text strong {
+      color: #ffffff;
+    }
+    .cart-card {
+      background: #040c1e;
+      border: 1px solid #1e293b;
+      border-top: 3px solid #f59e0b;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 26px;
+    }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .cart-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .cart-code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px dashed rgba(245, 158, 11, 0.4);
+    }
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cart-table th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      padding-bottom: 8px;
+    }
+    .cart-table td {
+      padding: 10px 0;
+      border-top: 1px solid #0f1c3f;
+      font-size: 13px;
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+    .cart-table td.arena-name {
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .cart-table td.arena-fee {
+      text-align: right;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      color: #f59e0b;
+    }
+    .bundle-badge {
+      background: linear-gradient(90deg, #d97706, #f59e0b);
+      color: #030712;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-block;
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+    .bundle-perk {
+      font-size: 12px;
+      color: #38bdf8;
+      font-weight: 600;
+      margin: 4px 0 0;
+    }
+    .cart-total-row td {
+      border-top: 2px solid #1e3a8a;
+      padding-top: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .cart-total-row td.total-amount {
+      text-align: right;
+      color: #f59e0b;
+      font-size: 20px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .urgency-box {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+    .urgency-title {
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .urgency-desc {
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .cta-container {
+      text-align: center;
+      margin: 32px 0;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #020617 !important;
+      font-size: 15px;
+      font-weight: 800;
+      text-decoration: none;
+      padding: 16px 36px;
+      border-radius: 8px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+      transition: transform 0.2s ease;
+    }
+    .cta-subtext {
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .perks-grid {
+      background: #061127;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 26px;
+    }
+    .perks-heading {
+      font-size: 12px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    .perk-item {
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .perk-item strong {
+      color: #ffffff;
+    }
+    .help-section {
+      border-top: 1px solid #1e293b;
+      padding-top: 20px;
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .help-section a {
+      color: #f59e0b;
+      text-decoration: none;
+    }
+    .footer {
+      background: #030712;
+      padding: 24px;
+      text-align: center;
+      border-top: 1px solid #111e38;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .footer a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      
+      <!-- Top Brand Header -->
+      <div class="header">
+        <div class="badge-alert">⏳ Action Required • Reserved in Cart</div>
+        <h1>Your Arena Registration is Waiting</h1>
+        <p>{{ site.carnival_name }} • St. Joseph International School</p>
+      </div>
+
+      <!-- Main Body -->
+      <div class="body">
+        
+        <div class="greeting">Hi {{ participant.name }},</div>
+        
+        <p class="lead-text">
+          The stage is set, the challenges are primed, and hundreds of top student innovators from schools across the nation are confirming their participation. We noticed that your competition registration for <strong>{{ events_summary }}</strong> is currently waiting in your cart.
+        </p>
+
+        <!-- Cart Breakdown Card -->
+        <div class="cart-card">
+          <table style="width: 100%; margin-bottom: 12px;">
+            <tr>
+              <td style="text-align: left;"><span class="cart-title">Your Reserved Cart</span></td>
+              <td style="text-align: right;"><span class="cart-code">{{ registration.short_code }}</span></td>
+            </tr>
+          </table>
+
+          {% if registration.is_bundle %}
+            <div class="bundle-badge">✨ 5-IN-1 FESTIVAL ALL-ACCESS BUNDLE</div>
+            <div class="bundle-perk">⚽ Includes 1 Complimentary Free FC Game Zone Round!</div>
+          {% endif %}
+
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>Competition / Arena</th>
+                <th style="text-align: right;">Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for re in reg_events %}
+                <tr>
+                  <td class="arena-name">
+                    {{ re.event.name }}
+                    {% if re.is_team %}
+                      <span style="font-size: 11px; color: #94a3b8; font-weight: normal; display: block;">Team: {{ re.team_name }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="arena-fee">
+                    {% if registration.is_bundle %}
+                      <span style="text-decoration: line-through; color: #64748b; font-size: 11px;">৳{{ re.fee_charged }}</span>
+                    {% else %}
+                      ৳{{ re.fee_charged }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              <tr class="cart-total-row">
+                <td>Total Investment Due</td>
+                <td class="total-amount">৳{{ registration.total_fee }} <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">BDT</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Limited Seating Urgency Notice -->
+        <div class="urgency-box">
+          <strong class="urgency-title">⚠️ Arena Slots are Strictly Limited</strong>
+          <p class="urgency-desc">
+            To ensure an elite competitive standard and fair judging, arena capacities are capped. Unpaid reservations are released on a rolling basis. Finalize your checkout today to secure your official slot and entry pass before it gets over!
+          </p>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-container">
+          <a href="{{ checkout_url }}" class="cta-button" target="_blank">
+            Complete Registration Now (৳{{ registration.total_fee }} BDT) →
+          </a>
+          <span class="cta-subtext">
+            🔒 Instant verification via SSLCommerz: bKash • Nagad • Cards • Internet Banking
+          </span>
+        </div>
+
+        <!-- What You Unlock -->
+        <div class="perks-grid">
+          <div class="perks-heading">What Unlocks When You Complete</div>
+          <div class="perk-item">🎟️ <strong>Official Contestant Pass:</strong> Instant Gate QR Code, contestant badge & lanyard access.</div>
+          <div class="perk-item">🏆 <strong>National Competitor Honors:</strong> Eligible for championship trophies, crests, and certificates.</div>
+          <div class="perk-item">🎪 <strong>Full Festival Immersion:</strong> Access to cutting-edge tech exhibitions, food court, and festival arena.</div>
+        </div>
+
+        <!-- Support Info -->
+        <div class="help-section">
+          <strong>Need Assistance or Have Questions?</strong><br>
+          If you experienced an issue during checkout or need guidance, our organizing team is here to assist:<br>
+          Email: <a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a> | Phone: <a href="tel:{{ site.contact_phone }}">{{ site.contact_phone }}</a><br>
+          Direct Checkout Link: <a href="{{ checkout_url }}">{{ checkout_url }}</a>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <strong>Josephite Tech Club • St. Joseph International School</strong><br>
+        {{ site.venue }}<br><br>
+        This reminder was sent for Registration Code <span style="font-family: monospace; color: #94a3b8;">{{ registration.short_code }}</span> associated with {{ participant.email }}.<br>
+        If you have already settled your payment or believe this was sent in error, please disregard or reach out to our helpdesk.
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
