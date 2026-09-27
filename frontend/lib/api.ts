@@ -301,7 +301,9 @@ export async function submitRegistration(payload: RegistrationPayload): Promise<
   const data = await res.json();
   if (!res.ok) {
     const errorMsg = typeof data === 'object' ? Object.values(data).flat().join(', ') : 'Registration failed';
-    throw new Error(errorMsg);
+    const error = new Error(errorMsg) as Error & { data?: any };
+    error.data = data;
+    throw error;
   }
   return data;
 }
@@ -366,6 +368,84 @@ export function storeRegSession(token: string): void {
 /** Clears the registration session token. */
 export function clearRegSession(): void {
   if (typeof window !== 'undefined') sessionStorage.removeItem('jtc_reg_session');
+}
+
+export function getRegSession(): string | null {
+  if (typeof window !== 'undefined') return sessionStorage.getItem('jtc_reg_session');
+  return null;
+}
+
+export interface MyRegistrationStatusResponse {
+  has_registration: boolean;
+  status: 'VERIFIED' | 'PENDING' | 'NONE';
+  registration: RegistrationResponse | null;
+}
+
+/** Fetch active registration for authenticated participant (Amazon-style status check). */
+export async function getMyRegistrationStatus(email?: string, phone?: string): Promise<MyRegistrationStatusResponse> {
+  const token = getRegSession();
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const params = new URLSearchParams();
+  if (email) params.set('email', email);
+  if (phone) params.set('phone', phone);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${getApiBase()}/registrations/my-status/${query}`, {
+    method: 'GET',
+    headers,
+  });
+  if (!res.ok) {
+    return { has_registration: false, status: 'NONE', registration: null };
+  }
+  return res.json();
+}
+
+/** Allows participant to cancel/void their own pending registration to start fresh. */
+export async function cancelPendingRegistration(code: string, email?: string): Promise<{ success: boolean; detail: string }> {
+  const token = getRegSession();
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${getApiBase()}/registrations/cancel-pending/`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ confirmation_code: code, email }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to cancel registration.');
+  }
+  return data;
+}
+
+/** Allows participant to submit manual bKash/Nagad TrxID for pending registration. */
+export async function submitPaymentReference(
+  code: string,
+  reference: string,
+  method: 'BKASH' | 'NAGAD' | 'BANK' = 'BKASH'
+): Promise<{ success: boolean; message: string; registration: RegistrationResponse }> {
+  const token = getRegSession();
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${getApiBase()}/registrations/submit-reference/`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      confirmation_code: code,
+      payment_reference: reference,
+      payment_method: method,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to submit transaction reference.');
+  }
+  return data;
 }
 
 export async function initiateSSLCommerzPayment(code: string): Promise<{ gateway_url: string; status: string }> {

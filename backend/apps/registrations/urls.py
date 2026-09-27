@@ -12,6 +12,9 @@ urlpatterns = [
     path('schools/', views.school_list, name='school-list'),
     path('settings/', views.site_settings_public, name='site-settings-public'),
     path('registrations/', views.RegistrationCreateView.as_view(), name='registration-create'),
+    path('registrations/my-status/', views.my_registration_status, name='registration-my-status'),
+    path('registrations/cancel-pending/', views.cancel_pending_registration, name='registration-cancel-pending'),
+    path('registrations/submit-reference/', views.submit_payment_reference, name='registration-submit-reference'),
     path('registrations/<str:code>/', views.registration_lookup, name='registration-lookup'),
 
     # --- SSLCommerz Payment Gateway -------------------------------------------

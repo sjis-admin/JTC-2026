@@ -13,6 +13,7 @@ from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Q
 from apps.registrations.models import Registration
 
 
@@ -29,8 +30,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--method',
             type=str,
-            default='SSLCOMMERZ',
-            help='Filter by payment method (SSLCOMMERZ, BKASH, NAGAD, BANK, or ALL). Default is SSLCOMMERZ.'
+            default='AUTO',
+            help='Filter by payment method (AUTO, SSLCOMMERZ, BKASH, NAGAD, BANK, or ALL). AUTO expires SSLCommerz + abandoned manual orders with no TrxID.'
         )
         parser.add_argument(
             '--dry-run',
@@ -51,7 +52,13 @@ class Command(BaseCommand):
             registered_at__lte=cutoff
         )
 
-        if method != 'ALL':
+        if method == 'AUTO':
+            # Expire SSLCommerz unpaid + any manual payment with NO reference submitted
+            qs = qs.filter(
+                Q(payment_method='SSLCOMMERZ') |
+                (Q(payment_method__in=['BKASH', 'NAGAD', 'BANK']) & Q(payment_reference=''))
+            )
+        elif method != 'ALL':
             qs = qs.filter(payment_method=method)
 
         count = qs.count()

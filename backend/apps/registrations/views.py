@@ -1,5 +1,7 @@
+import re
+from datetime import timedelta
 from rest_framework import generics, status
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes, authentication_classes
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from django.conf import settings
@@ -17,6 +19,15 @@ from apps.core.models import School, SiteSettings
 from apps.core.serializers import SchoolSerializer
 from apps.events.models import EventGroup
 from apps.core.throttles import RegistrationRateThrottle, BurstAnonThrottle, VerifyRateThrottle
+
+
+def normalize_bd_phone(raw_phone: str) -> str:
+    """Normalizes Bangladeshi mobile number formats (+88017..., 88017..., 017...) to standard 11 digits."""
+    if not raw_phone:
+        return ''
+    cleaned = re.sub(r'[\s\-()]', '', str(raw_phone).strip())
+    match = re.search(r'(01[3-9]\d{8})$', cleaned)
+    return match.group(1) if match else cleaned
 
 
 # ─── Auth Gate Endpoints ───────────────────────────────────────────────────────
@@ -146,6 +157,7 @@ def site_settings_public(request):
 
 class RegistrationCreateView(generics.CreateAPIView):
     serializer_class = RegistrationCreateSerializer
+    authentication_classes = []
     permission_classes = [AllowAny]
     throttle_classes = [RegistrationRateThrottle, BurstAnonThrottle]
 
@@ -161,9 +173,24 @@ class RegistrationCreateView(generics.CreateAPIView):
         data = serializer.validated_data
         events = data['_events']
         email = data['email'].strip().lower()
-        phone = data['phone'].strip()
+        phone = normalize_bd_phone(data['phone'])
         requested_event_ids = [e.id for e in events]
         is_bundle = data.get('is_bundle', False)
+
+        # Amazon-style Self-Healing Expiry:
+        # If an abandoned PENDING registration older than 24 hours has no payment reference submitted,
+        # auto-expire it so it never locks the user out of registering.
+        stale_cutoff = timezone.now() - timedelta(hours=24)
+        Registration.objects.filter(
+            Q(participant__email__iexact=email) | Q(participant__phone=phone),
+            payment_status='PENDING',
+            payment_reference='',
+            total_fee__gt=0,
+            registered_at__lt=stale_cutoff,
+        ).update(
+            payment_status='EXPIRED',
+            admin_notes='[Auto-TTL] Expired stale abandoned order on re-registration attempt.'
+        )
 
         # Duplicate Registration Guard:
         # Prevent double registration for the same event if there is an active (PENDING or VERIFIED) registration.
@@ -177,10 +204,13 @@ class RegistrationCreateView(generics.CreateAPIView):
         if existing_event_regs.exists():
             conflict_names = list({re.event.name for re in existing_event_regs})
             conflict_str = ", ".join(conflict_names)
+            first_reg = existing_event_regs.first().registration
             return Response(
                 {
                     'error': f'An active registration (Pending or Verified) already exists for this email/phone in: {conflict_str}. '
-                             f'If your previous payment failed or expired, please check your status or contact support.'
+                             f'If your previous payment failed or expired, you can complete payment or cancel it to start fresh.',
+                    'existing_code': first_reg.confirmation_code,
+                    'existing_status': first_reg.payment_status,
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -349,6 +379,223 @@ def registration_lookup(request, code):
         return Response({'error': 'Registration not found.'}, status=status.HTTP_404_NOT_FOUND)
 
     return Response(RegistrationReadSerializer(reg, context={'request': request}).data)
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def my_registration_status(request):
+    """
+    Checks if the user has an active (VERIFIED or PENDING) registration.
+    Determined via session JWT in Authorization or X-Session-Token header, or via ?email=<email> query param.
+    """
+    token = None
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ', 1)[1].strip()
+    elif request.headers.get('X-Session-Token'):
+        token = request.headers.get('X-Session-Token').strip()
+
+    email = None
+    if token:
+        payload = verify_session_jwt(token)
+        if payload:
+            email = payload.get('email')
+
+    if not email:
+        email = request.query_params.get('email', '').strip().lower()
+
+    phone = normalize_bd_phone(request.query_params.get('phone', ''))
+
+    if not email and not phone:
+        return Response({'has_registration': False, 'status': 'NONE', 'registration': None})
+
+    lookup_q = Q()
+    if email:
+        lookup_q |= Q(participant__email__iexact=email)
+    if phone:
+        lookup_q |= Q(participant__phone=phone)
+
+    # 1. Check for VERIFIED registration first
+    verified_reg = Registration.objects.select_related(
+        'participant', 'participant__school'
+    ).prefetch_related(
+        'registration_events__event__eligibility_groups'
+    ).filter(
+        lookup_q,
+        payment_status='VERIFIED'
+    ).order_by('-registered_at').first()
+
+    if verified_reg:
+        return Response({
+            'has_registration': True,
+            'status': 'VERIFIED',
+            'registration': RegistrationReadSerializer(verified_reg, context={'request': request}).data
+        })
+
+    # 2. Check for PENDING registration
+    pending_reg = Registration.objects.select_related(
+        'participant', 'participant__school'
+    ).prefetch_related(
+        'registration_events__event__eligibility_groups'
+    ).filter(
+        lookup_q,
+        payment_status='PENDING'
+    ).order_by('-registered_at').first()
+
+    if pending_reg:
+        # Check if this pending registration has expired (> 24 hours with no submitted payment reference)
+        stale_cutoff = timezone.now() - timedelta(hours=24)
+        if pending_reg.total_fee > 0 and not pending_reg.payment_reference and pending_reg.registered_at < stale_cutoff:
+            pending_reg.payment_status = 'EXPIRED'
+            pending_reg.admin_notes = f"{pending_reg.admin_notes}\n[Auto-TTL] Expired stale pending order on status check.".strip()
+            pending_reg.save(update_fields=['payment_status', 'admin_notes'])
+            return Response({
+                'has_registration': False,
+                'status': 'NONE',
+                'registration': None
+            })
+
+        return Response({
+            'has_registration': True,
+            'status': 'PENDING',
+            'registration': RegistrationReadSerializer(pending_reg, context={'request': request}).data
+        })
+
+    return Response({
+        'has_registration': False,
+        'status': 'NONE',
+        'registration': None
+    })
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def cancel_pending_registration(request):
+    """
+    Allows a participant to cancel their own PENDING registration so they can
+    modify their events or start a fresh registration without admin intervention.
+    """
+    token = None
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header.split(' ', 1)[1].strip()
+    elif request.headers.get('X-Session-Token'):
+        token = request.headers.get('X-Session-Token').strip()
+
+    auth_email = None
+    if token:
+        payload = verify_session_jwt(token)
+        if payload:
+            auth_email = payload.get('email')
+
+    email = auth_email or request.data.get('email', '').strip().lower()
+    phone = normalize_bd_phone(request.data.get('phone', ''))
+    code = str(request.data.get('confirmation_code', '')).strip()
+
+    if not code:
+        return Response({'error': 'Confirmation code is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    code_clean = code.strip().upper()
+    reg = None
+    if code_clean.isdigit():
+        reg = Registration.objects.filter(id=int(code_clean)).select_related('participant').first()
+    elif code_clean.startswith('JTC26') and code_clean[5:].isdigit():
+        reg = Registration.objects.filter(id=int(code_clean[5:])).select_related('participant').first()
+    elif code_clean.startswith('JTC-26-') and code_clean[7:].isdigit():
+        reg = Registration.objects.filter(id=int(code_clean[7:])).select_related('participant').first()
+    else:
+        try:
+            reg = Registration.objects.filter(confirmation_code=code.strip()).select_related('participant').first()
+        except (ValueError, Exception):
+            pass
+
+    if not reg:
+        return Response({'error': 'Registration not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Security check: if email or phone is present, verify ownership
+    match_owner = False
+    if email and reg.participant.email.strip().lower() == email:
+        match_owner = True
+    if phone and reg.participant.phone.strip() == phone:
+        match_owner = True
+    if not email and not phone:
+        match_owner = True
+
+    if not match_owner:
+        return Response({'error': 'Unauthorized: This registration does not belong to your account.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if reg.payment_status != 'PENDING':
+        return Response(
+            {'error': f'Registration has status {reg.payment_status} and cannot be cancelled.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    with transaction.atomic():
+        reg.payment_status = 'REJECTED'
+        cancel_note = f"[User Self-Cancel {timezone.now().strftime('%Y-%m-%d %H:%M:%S UTC')}] Cancelled by participant to start over."
+        reg.admin_notes = f"{reg.admin_notes or ''}\n{cancel_note}".strip()
+        reg.save(update_fields=['payment_status', 'admin_notes'])
+
+    return Response({
+        'success': True,
+        'detail': 'Your pending registration has been cancelled. You may now select new events and register afresh.'
+    })
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def submit_payment_reference(request):
+    """
+    Allows a participant with a PENDING registration to submit or update their manual
+    bKash/Nagad/Bank transaction reference for administrative verification.
+    """
+    code = str(request.data.get('confirmation_code', '')).strip()
+    trx_id = str(request.data.get('payment_reference', '')).strip()
+    method = str(request.data.get('payment_method', 'BKASH')).strip().upper()
+
+    if not code or not trx_id:
+        return Response({'error': 'Confirmation code and transaction reference are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check for duplicate transaction ID across verified/pending registrations
+    if Registration.objects.filter(payment_reference__iexact=trx_id).exclude(confirmation_code=code).exists():
+        return Response({'error': 'This transaction ID has already been submitted for another registration.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    code_clean = code.strip().upper()
+    reg = None
+    if code_clean.isdigit():
+        reg = Registration.objects.filter(id=int(code_clean)).first()
+    elif code_clean.startswith('JTC26') and code_clean[5:].isdigit():
+        reg = Registration.objects.filter(id=int(code_clean[5:])).first()
+    elif code_clean.startswith('JTC-26-') and code_clean[7:].isdigit():
+        reg = Registration.objects.filter(id=int(code_clean[7:])).first()
+    else:
+        try:
+            reg = Registration.objects.filter(confirmation_code=code.strip()).first()
+        except (ValueError, Exception):
+            pass
+
+    if not reg:
+        return Response({'error': 'Registration not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if reg.payment_status == 'VERIFIED':
+        return Response({'error': 'Registration is already verified.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        reg.payment_reference = trx_id
+        if method in ['BKASH', 'NAGAD', 'BANK']:
+            reg.payment_method = method
+        note = f"[Manual TrxID Submitted {timezone.now().strftime('%Y-%m-%d %H:%M:%S UTC')}] Trx: {trx_id} via {method}"
+        reg.admin_notes = f"{reg.admin_notes or ''}\n{note}".strip()
+        reg.save(update_fields=['payment_reference', 'payment_method', 'admin_notes'])
+
+    return Response({
+        'success': True,
+        'message': f'Transaction reference {trx_id} submitted successfully! Your payment is under review by the JTC committee.',
+        'registration': RegistrationReadSerializer(reg, context={'request': request}).data
+    })
 
 
 # ─── Admin views ──────────────────────────────────────────────────────────────

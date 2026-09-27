@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes, authentication_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(['POST', 'GET'])
+@authentication_classes([])
 @permission_classes([AllowAny])
 @throttle_classes([BurstAnonThrottle])
 def sslcommerz_initiate(request, code):

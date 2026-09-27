@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import {
-  Menu, X, Cpu, Search, Sparkles, ArrowRight, BookOpen, ShieldCheck, Home, Trophy, Users, FileText
+  Menu, X, Cpu, Search, Sparkles, ArrowRight, BookOpen, ShieldCheck, Home, Trophy, Users, FileText,
+  Clock, CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fetchSiteSettings } from '@/lib/api';
@@ -14,7 +15,28 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoSrc, setLogoSrc] = useState<string>('/images/jtc-logo.png');
+  const [activeRegCode, setActiveRegCode] = useState<string | null>(null);
+  const [activeRegStatus, setActiveRegStatus] = useState<string | null>(null);
   const pathname = usePathname();
+
+  // Listen to active order/pass changes from localStorage and custom events
+  useEffect(() => {
+    const updateActiveReg = () => {
+      if (typeof window !== 'undefined') {
+        const code = localStorage.getItem('jtc_active_reg_code');
+        const status = localStorage.getItem('jtc_active_reg_status');
+        setActiveRegCode(code);
+        setActiveRegStatus(status);
+      }
+    };
+    updateActiveReg();
+    window.addEventListener('storage', updateActiveReg);
+    window.addEventListener('jtc_reg_update', updateActiveReg);
+    return () => {
+      window.removeEventListener('storage', updateActiveReg);
+      window.removeEventListener('jtc_reg_update', updateActiveReg);
+    };
+  }, []);
 
   useEffect(() => {
     fetchSiteSettings()
@@ -130,6 +152,33 @@ export default function Navbar() {
 
           {/* Right CTA Actions (Desktop) */}
           <div className="hidden sm:flex items-center gap-2 shrink-0">
+            {/* Amazon-style Active Order / Pass Status Pill */}
+            {activeRegCode && activeRegStatus === 'PENDING' && (
+              <Link href={`/register?code=${activeRegCode}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-amber-500/70 bg-amber-950/50 text-amber-300 hover:bg-amber-900/60 text-xs py-1.5 px-3 font-bold inline-flex items-center gap-1.5 shadow-sm shadow-amber-500/20"
+                >
+                  <Clock className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <span>Resume Order (Pay)</span>
+                </Button>
+              </Link>
+            )}
+
+            {activeRegCode && activeRegStatus === 'VERIFIED' && (
+              <Link href={`/verify?code=${activeRegCode}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-emerald-500/60 bg-emerald-950/50 text-emerald-300 hover:bg-emerald-900/60 text-xs py-1.5 px-3 font-bold inline-flex items-center gap-1.5 shadow-sm shadow-emerald-500/20"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>My Entry Pass</span>
+                </Button>
+              </Link>
+            )}
+
             <Link href="/verify">
               <Button variant="ghost" size="sm" className="text-xs text-slate-300 hover:text-gold whitespace-nowrap px-3 py-2 inline-flex items-center">
                 <Search className="w-3.5 h-3.5 mr-1.5 text-gold shrink-0" />
@@ -145,11 +194,20 @@ export default function Navbar() {
 
           {/* Mobile Action Group (< lg screens) */}
           <div className="flex lg:hidden items-center gap-2 shrink-0">
-            <Link href="/register" className="sm:hidden">
-              <Button variant="glow" size="sm" className="text-xs py-1.5 px-3 font-extrabold whitespace-nowrap">
-                Register
-              </Button>
-            </Link>
+            {activeRegCode && activeRegStatus === 'PENDING' ? (
+              <Link href={`/register?code=${activeRegCode}`} className="sm:hidden">
+                <Button variant="outline" size="sm" className="text-xs py-1.5 px-2.5 font-bold border-amber-500/70 bg-amber-950/60 text-amber-300 whitespace-nowrap flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-amber-400 animate-pulse" />
+                  <span>Pay Now</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/register" className="sm:hidden">
+                <Button variant="glow" size="sm" className="text-xs py-1.5 px-3 font-extrabold whitespace-nowrap">
+                  Register
+                </Button>
+              </Link>
+            )}
 
             {/* Hamburger Menu Toggle Button */}
             <button
@@ -173,6 +231,41 @@ export default function Navbar() {
               <span>Festival Menu</span>
               <span className="text-slate-400 font-normal">SJIS Tech Carnival</span>
             </div>
+
+            {/* Amazon-style Active Order / Pass Banner in Mobile Drawer */}
+            {activeRegCode && activeRegStatus === 'PENDING' && (
+              <Link
+                href={`/register?code=${activeRegCode}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3.5 rounded-xl bg-amber-950/60 border border-amber-500/60 text-amber-200 shadow-lg shadow-amber-950/40 animate-pulse"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Clock className="w-5 h-5 text-amber-400 shrink-0" />
+                  <div>
+                    <div className="font-bold text-xs text-amber-300">1 Unpaid Registration</div>
+                    <div className="text-[11px] text-amber-200/80 font-mono">Tap here to complete payment</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-amber-400 shrink-0" />
+              </Link>
+            )}
+
+            {activeRegCode && activeRegStatus === 'VERIFIED' && (
+              <Link
+                href={`/verify?code=${activeRegCode}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-200 shadow-lg shadow-emerald-950/40"
+              >
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <div>
+                    <div className="font-bold text-xs text-emerald-300">My Entry Pass (Verified)</div>
+                    <div className="text-[11px] text-emerald-200/80 font-mono">{activeRegCode}</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-emerald-400 shrink-0" />
+              </Link>
+            )}
 
             <div className="space-y-2">
               {navLinks.map((link) => {

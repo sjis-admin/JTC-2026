@@ -9,14 +9,16 @@ import { Card, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
   fetchEvents, fetchSchools, fetchSiteSettings, submitRegistration, initiateSSLCommerzPayment,
-  fetchBundleInfo, BUNDLE_ELIGIBLE_GROUPS,
-  EventItem, SchoolItem, SiteSettingsData, RegistrationPayload, BundleInfoData
+  fetchBundleInfo, BUNDLE_ELIGIBLE_GROUPS, getMyRegistrationStatus, cancelPendingRegistration,
+  lookupRegistration, clearRegSession, EventItem, SchoolItem, SiteSettingsData, RegistrationPayload,
+  BundleInfoData, RegistrationResponse
 } from '@/lib/api';
 import {
   CheckCircle2, AlertCircle, User, Trophy, CreditCard, ShieldCheck, ArrowRight,
-  ArrowLeft, Copy, Check, Info, Users, Sparkles, ShoppingBag, Trash2, Phone, Mail, School, ExternalLink, Zap, Lock
+  ArrowLeft, Copy, Check, Info, Users, Sparkles, ShoppingBag, Trash2, Phone, Mail, School, ExternalLink, Zap, Lock, RefreshCw
 } from 'lucide-react';
 import AuthGate from './AuthGate';
+import ExistingRegistrationHub from './ExistingRegistrationHub';
 
 const GRADE_OPTIONS = [
   { value: '3', label: 'Grade 3 (Group A)' },
@@ -64,18 +66,152 @@ function RegisterForm() {
   const searchParams = useSearchParams();
   const preselectedEventId = searchParams.get('event');
   const preselectedBundle = searchParams.get('bundle');
+  const codeParam = searchParams.get('code');
 
   // ─── Auth Gate State ──────────────────────────────────────────────────────
   const [authUnlocked, setAuthUnlocked] = useState<boolean>(false);
   const [authPicture, setAuthPicture] = useState<string>('');
 
-  // Check if session already exists (e.g. user refreshed the page mid-flow)
+  // ─── Existing Order / Pay Later Lifecycle ─────────────────────────────────
+  const [existingRegLoading, setExistingRegLoading] = useState<boolean>(false);
+  const [existingReg, setExistingReg] = useState<RegistrationResponse | null>(null);
+  const [existingRegStatus, setExistingRegStatus] = useState<'VERIFIED' | 'PENDING' | 'NONE'>('NONE');
+  const [isRedirectingToGateway, setIsRedirectingToGateway] = useState<boolean>(false);
+  const [isCancellingPending, setIsCancellingPending] = useState<boolean>(false);
+
+  // Sync active registration state to localStorage so Navbar displays live status badge
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const token = sessionStorage.getItem('jtc_reg_session');
-      if (token) setAuthUnlocked(true);
+      if (existingReg) {
+        localStorage.setItem('jtc_active_reg_code', existingReg.confirmation_code);
+        localStorage.setItem('jtc_active_reg_status', existingReg.payment_status);
+      } else {
+        localStorage.removeItem('jtc_active_reg_code');
+        localStorage.removeItem('jtc_active_reg_status');
+      }
+      window.dispatchEvent(new Event('jtc_reg_update'));
     }
-  }, []);
+  }, [existingReg]);
+
+  const checkActiveRegistration = async (targetEmail?: string, targetPhone?: string) => {
+    const emailToCheck = targetEmail || email;
+    const phoneToCheck = targetPhone || phone;
+    if (!emailToCheck && !phoneToCheck) return;
+    setExistingRegLoading(true);
+    try {
+      const res = await getMyRegistrationStatus(emailToCheck, phoneToCheck);
+      if (res.has_registration && res.registration) {
+        setExistingReg(res.registration);
+        setExistingRegStatus(res.status);
+      } else {
+        setExistingReg(null);
+        setExistingRegStatus('NONE');
+      }
+    } catch (err) {
+      console.warn('Could not check existing registration status:', err);
+    } finally {
+      setExistingRegLoading(false);
+    }
+  };
+
+  const handlePayNow = async () => {
+    if (!existingReg) return;
+    setIsRedirectingToGateway(true);
+    try {
+      const p = await initiateSSLCommerzPayment(existingReg.confirmation_code);
+      if (p.gateway_url) {
+        window.location.href = p.gateway_url;
+        return;
+      }
+    } catch (err: any) {
+      alert(err.message || 'Payment initiation failed. Please try again.');
+      setIsRedirectingToGateway(false);
+    }
+  };
+
+  const handleCancelPending = async () => {
+    if (!existingReg) return;
+    setIsCancellingPending(true);
+    try {
+      await cancelPendingRegistration(existingReg.confirmation_code, existingReg.participant_email);
+      setExistingReg(null);
+      setExistingRegStatus('NONE');
+      clearDraft();
+      setGlobalError('');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('jtc_active_reg_code');
+        localStorage.removeItem('jtc_active_reg_status');
+        window.dispatchEvent(new Event('jtc_reg_update'));
+      }
+    } catch (err: any) {
+      alert(err.message || 'Failed to cancel registration. Please contact support.');
+    } finally {
+      setIsCancellingPending(false);
+    }
+  };
+
+  const handleRegisterAnother = () => {
+    clearRegSession();
+    clearDraft();
+    setExistingReg(null);
+    setExistingRegStatus('NONE');
+    setAuthUnlocked(false);
+    setEmail('');
+    setName('');
+    setPhone('');
+    setSchoolId('1');
+    setGrade('9');
+    setSelectedEvents({});
+    setStep(1);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('jtc_active_reg_code');
+      localStorage.removeItem('jtc_active_reg_status');
+      window.dispatchEvent(new Event('jtc_reg_update'));
+    }
+  };
+
+  // URL Deep-Linking: If ?code=... is in the URL, load order hub directly
+  useEffect(() => {
+    if (codeParam) {
+      setExistingRegLoading(true);
+      lookupRegistration(codeParam)
+        .then((reg) => {
+          setExistingReg(reg);
+          setExistingRegStatus(reg.payment_status === 'VERIFIED' ? 'VERIFIED' : 'PENDING');
+          setAuthUnlocked(true);
+          if (reg.participant_email) setEmail(reg.participant_email);
+          if (reg.participant_name) setName(reg.participant_name);
+        })
+        .catch((err) => {
+          console.warn('Failed to lookup registration by code in URL:', err);
+        })
+        .finally(() => {
+          setExistingRegLoading(false);
+        });
+    }
+  }, [codeParam]);
+
+  // Check if session already exists (e.g. user refreshed the page mid-flow)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !codeParam) {
+      const token = sessionStorage.getItem('jtc_reg_session');
+      if (token) {
+        setAuthUnlocked(true);
+        try {
+          const saved = localStorage.getItem('jtc_registration_draft_v1');
+          if (saved) {
+            const draft = JSON.parse(saved);
+            if (draft.email) checkActiveRegistration(draft.email);
+            else checkActiveRegistration();
+          } else {
+            checkActiveRegistration();
+          }
+        } catch (e) {
+          checkActiveRegistration();
+        }
+      }
+    }
+  }, [codeParam]);
 
   const handleAuthUnlock = (unlockedEmail: string, unlockedName: string, picture?: string) => {
     // Pre-fill form fields from verified identity
@@ -83,6 +219,9 @@ function RegisterForm() {
     if (unlockedName) setName(unlockedName);
     if (picture) setAuthPicture(picture);
     setAuthUnlocked(true);
+    if (unlockedEmail) {
+      checkActiveRegistration(unlockedEmail);
+    }
   };
 
   const [step, setStep] = useState<number>(1);
@@ -532,6 +671,18 @@ function RegisterForm() {
 
       router.push(`/register/success?code=${res.confirmation_code}`);
     } catch (err: any) {
+      if (err.data?.existing_code) {
+        setExistingRegLoading(true);
+        lookupRegistration(err.data.existing_code)
+          .then((reg) => {
+            setExistingReg(reg);
+            setExistingRegStatus(reg.payment_status === 'VERIFIED' ? 'VERIFIED' : 'PENDING');
+          })
+          .catch(() => {})
+          .finally(() => {
+            setExistingRegLoading(false);
+          });
+      }
       setGlobalError(err.message || 'Registration failed. Please check your data and retry.');
       setLoading(false);
     }
@@ -593,75 +744,111 @@ function RegisterForm() {
         </div>
       )}
 
-      {/* Dynamic Registration Closed / Scheduled Gate */}
-      {siteSettings && !siteSettings.registration_open && (
-        <Card glow="none" className="p-8 text-center border-rose-500/50 bg-rose-950/20 max-w-2xl mx-auto mb-10">
-          <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
-            <Lock className="w-8 h-8" />
-          </div>
-          <CardTitle className="text-2xl text-rose-300 mb-2">Registration is Currently Closed</CardTitle>
-          <CardDescription className="text-slate-300 max-w-md mx-auto mb-6">
-            Online registration for SJIS Inter-School Tech Carnival 2026 has either concluded or has not opened yet. Please stay tuned to our official channels.
-          </CardDescription>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/events">
-              <Button variant="glow" size="lg" className="w-full sm:w-auto font-bold">
-                Browse All 17 Competitions
-              </Button>
-            </Link>
-            <Link href="/">
-              <Button variant="secondary" size="lg" className="w-full sm:w-auto font-semibold">
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-        </Card>
-      )}
-
-      {/* Stepper Progress */}
-      {(!siteSettings || siteSettings.registration_open) && (
-        <>
-          <div className="flex items-center justify-between max-w-lg mx-auto mb-8 sm:mb-10 relative px-1 sm:px-2">
-        <div className="absolute top-5 left-6 right-6 h-0.5 bg-surface-border -translate-y-1/2 -z-0" />
-        {[
-          { num: 1, label: 'Personal Info' },
-          { num: 2, label: 'Competitions' },
-          { num: 3, label: 'Payment & Pass' },
-        ].map((s) => {
-          const isDone = step > s.num;
-          const isCurrent = step === s.num;
-          return (
-            <div key={s.num} className="flex flex-col items-center relative z-10 bg-background px-1 sm:px-2 text-center min-w-[70px] sm:min-w-[110px]">
-              <div
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-mono font-bold text-xs sm:text-sm transition-all duration-300 ${
-                  isDone
-                    ? 'bg-gold text-slate-950 shadow-md shadow-gold/20'
-                    : isCurrent
-                    ? 'bg-gradient-to-tr from-gold via-yellow-400 to-amber-500 text-slate-950 ring-4 ring-gold/20 shadow-lg shadow-gold/30 font-black'
-                    : 'bg-surface border border-surface-border text-slate-400'
-                }`}
-              >
-                {isDone ? <Check className="w-4 h-4" /> : s.num}
-              </div>
-              <span
-                className={`text-[10px] sm:text-xs font-bold mt-1.5 sm:mt-2 leading-tight block ${
-                  isCurrent ? 'text-gold-light' : 'text-slate-400'
-                }`}
-              >
-                {s.label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Global Error Banner */}
-      {globalError && (
-        <div className="mb-6 p-4 rounded-xl bg-rose-950/80 border border-rose-600 text-rose-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in duration-200">
-          <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
-          <span>{globalError}</span>
+      {/* Existing Order / Pay Later / Verified Pass Check */}
+      {existingRegLoading && (
+        <div className="max-w-md mx-auto my-12 p-8 rounded-2xl bg-surface-elevated/80 border border-gold/30 text-center space-y-3">
+          <div className="w-10 h-10 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-mono text-slate-300">Checking your account order status...</p>
         </div>
       )}
+
+      {!existingRegLoading && existingReg && existingRegStatus !== 'NONE' && (
+        <ExistingRegistrationHub
+          registration={existingReg}
+          status={existingRegStatus}
+          onPayNow={handlePayNow}
+          onCancelPending={handleCancelPending}
+          onRegisterAnother={handleRegisterAnother}
+          isRedirecting={isRedirectingToGateway}
+          isCancelling={isCancellingPending}
+        />
+      )}
+
+      {/* Render fresh registration form only when user has no active pending/verified registration */}
+      {!existingRegLoading && existingRegStatus === 'NONE' && (
+        <>
+          {/* Dynamic Registration Closed / Scheduled Gate */}
+          {siteSettings && !siteSettings.registration_open && (
+            <Card glow="none" className="p-8 text-center border-rose-500/50 bg-rose-950/20 max-w-2xl mx-auto mb-10">
+              <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
+                <Lock className="w-8 h-8" />
+              </div>
+              <CardTitle className="text-2xl text-rose-300 mb-2">Registration is Currently Closed</CardTitle>
+              <CardDescription className="text-slate-300 max-w-md mx-auto mb-6">
+                Online registration for SJIS Inter-School Tech Carnival 2026 has either concluded or has not opened yet. Please stay tuned to our official channels.
+              </CardDescription>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link href="/events">
+                  <Button variant="glow" size="lg" className="w-full sm:w-auto font-bold">
+                    Browse All 17 Competitions
+                  </Button>
+                </Link>
+                <Link href="/">
+                  <Button variant="secondary" size="lg" className="w-full sm:w-auto font-semibold">
+                    Back to Home
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          )}
+
+          {/* Stepper Progress */}
+          {(!siteSettings || siteSettings.registration_open) && (
+            <>
+              <div className="flex items-center justify-between max-w-lg mx-auto mb-8 sm:mb-10 relative px-1 sm:px-2">
+            <div className="absolute top-5 left-6 right-6 h-0.5 bg-surface-border -translate-y-1/2 -z-0" />
+            {[
+              { num: 1, label: 'Personal Info' },
+              { num: 2, label: 'Competitions' },
+              { num: 3, label: 'Payment & Pass' },
+            ].map((s) => {
+              const isDone = step > s.num;
+              const isCurrent = step === s.num;
+              return (
+                <div key={s.num} className="flex flex-col items-center relative z-10 bg-background px-1 sm:px-2 text-center min-w-[70px] sm:min-w-[110px]">
+                  <div
+                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-mono font-bold text-xs sm:text-sm transition-all duration-300 ${
+                      isDone
+                        ? 'bg-gold text-slate-950 shadow-md shadow-gold/20'
+                        : isCurrent
+                        ? 'bg-gradient-to-tr from-gold via-yellow-400 to-amber-500 text-slate-950 ring-4 ring-gold/20 shadow-lg shadow-gold/30 font-black'
+                        : 'bg-surface border border-surface-border text-slate-400'
+                    }`}
+                  >
+                    {isDone ? <Check className="w-4 h-4" /> : s.num}
+                  </div>
+                  <span
+                    className={`text-[10px] sm:text-xs font-bold mt-1.5 sm:mt-2 leading-tight block ${
+                      isCurrent ? 'text-gold-light' : 'text-slate-400'
+                    }`}
+                  >
+                    {s.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Global Error Banner */}
+          {globalError && (
+            <div className="mb-6 p-4 rounded-xl bg-rose-950/80 border border-rose-600 text-rose-200 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in duration-200">
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+              <div className="flex-1 space-y-2">
+                <span>{globalError}</span>
+                {globalError.includes('already exists') && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => checkActiveRegistration(email)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold text-slate-950 font-bold text-xs hover:bg-yellow-400 transition-colors shadow-md shadow-gold/20"
+                    >
+                      <Zap className="w-3.5 h-3.5 fill-current" /> View Order to Complete Payment or Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
       {/* STEP 1: Personal Details with Realtime Enterprise Validation */}
       {step === 1 && (
@@ -1522,6 +1709,8 @@ function RegisterForm() {
             </Button>
           </div>
         </Card>
+      )}
+      </>
       )}
       </>
       )}

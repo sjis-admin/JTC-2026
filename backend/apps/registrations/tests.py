@@ -20,7 +20,7 @@ class BundleEligibilityTestCase(APITestCase):
             ('D', 'Group D', 'Grade 9–12'),
             ('E', 'Group E', 'University'),
         ]:
-            self.groups[code] = EventGroup.objects.create(code=code, label=label, grade_range=grange)
+            self.groups[code], _ = EventGroup.objects.get_or_create(code=code, defaults={'label': label, 'grade_range': grange})
 
         # Create bundle events
         self.bundle_slugs = getattr(settings, 'BUNDLE_EVENT_SLUGS', [
@@ -143,3 +143,54 @@ class BundleEligibilityTestCase(APITestCase):
         self.assertFalse(response.data['is_bundle'])
         self.assertEqual(response.data['total_fee'], 300)
         self.assertEqual(len(response.data['registration_events']), 1)
+
+    def test_my_registration_status_and_cancel_pending(self):
+        # 1. Initially no registration
+        resp = self.client.get('/api/registrations/my-status/?email=test.flow@example.com')
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(resp.data['has_registration'])
+        self.assertEqual(resp.data['status'], 'NONE')
+
+        # 2. Create pending registration
+        art_event = Event.objects.get(slug='tech-art-bonanza')
+        payload = {
+            'name': 'Pending Student',
+            'email': 'test.flow@example.com',
+            'phone': '01711223344',
+            'school_id': self.school.id,
+            'grade': '6',
+            'is_bundle': False,
+            'events': [{'event_id': art_event.id, 'is_team': False}],
+            'payment_method': 'SSLCOMMERZ',
+            'turnstile_token': '',
+        }
+        create_resp = self.client.post('/api/registrations/', payload, format='json')
+        self.assertEqual(create_resp.status_code, 201)
+        conf_code = create_resp.data['confirmation_code']
+
+        # 3. Check status again -> should be PENDING
+        resp = self.client.get('/api/registrations/my-status/?email=test.flow@example.com')
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.data['has_registration'])
+        self.assertEqual(resp.data['status'], 'PENDING')
+        self.assertEqual(resp.data['registration']['confirmation_code'], conf_code)
+
+        # 4. Cancel pending registration
+        cancel_resp = self.client.post(
+            '/api/registrations/cancel-pending/',
+            {'confirmation_code': conf_code, 'email': 'test.flow@example.com'},
+            format='json'
+        )
+        self.assertEqual(cancel_resp.status_code, 200)
+        self.assertTrue(cancel_resp.data['success'])
+
+        # 5. After cancel, status is NONE (unblocked)
+        resp = self.client.get('/api/registrations/my-status/?email=test.flow@example.com')
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(resp.data['has_registration'])
+        self.assertEqual(resp.data['status'], 'NONE')
+
+        # 6. User can re-register now with no duplicate conflict
+        create_resp2 = self.client.post('/api/registrations/', payload, format='json')
+        self.assertEqual(create_resp2.status_code, 201)
+
