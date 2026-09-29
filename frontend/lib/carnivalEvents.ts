@@ -854,7 +854,7 @@ BDRO Coding Marathon tests algorithmic logic, computational efficiency, and clea
     team_fee: 1000,
     team_min: 1,
     team_max: 3,
-    eligibility_groups: [ACADEMIC_GROUPS.C, ACADEMIC_GROUPS.D, ACADEMIC_GROUPS.E],
+    eligibility_groups: [ACADEMIC_GROUPS.A, ACADEMIC_GROUPS.B, ACADEMIC_GROUPS.C, ACADEMIC_GROUPS.D, ACADEMIC_GROUPS.E],
     submission_type: 'STAGE',
     venue_detail: 'Robotics & Hardware Exhibition Arena',
     is_active: true,
@@ -869,7 +869,7 @@ BDRO Coding Marathon tests algorithmic logic, computational efficiency, and clea
 Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT apparatus, and autonomous hardware.
 
 ### Eligibility
-- **Group C, D, E** (Grade 7 to University 4th Year)
+- **Group A, B, C, D, E** (Grade 3 to University 4th Year)
 - Individual (৳500) or Team of up to 3 members (৳1000)
 
 ### Presentation Rules

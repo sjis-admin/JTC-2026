@@ -515,3 +515,16 @@ Participants will work individually to create and present a PowerPoint presentat
 
 * **Grade:** 3 to 12 (Group A to D)
 * Algorithmic programming and competitive problem solving across junior and senior tiers (Scratch for Group A/B, Python/C++ for Group C/D).
+
+---
+
+# 17. Robo Showcase (Robot Display)
+
+### Rules
+* **Grade:** 3 to 12 & University Level (Group A to E)
+* **Fee:** Individual (৳500) | Team of max 3 members (৳1000)
+* **Task:** Contestants exhibit and pitch original robotic systems, embedded prototypes, IoT apparatus, and autonomous hardware.
+* **Guidelines:**
+  * Hardware prototype must be functional and demonstrated live before the jury.
+  * Teams must be prepared for a 5-minute technical presentation followed by a jury Q&A on schematics, components, code, and practical impact.
+* **Award:** Prestigious Winner Crest + Certificate.

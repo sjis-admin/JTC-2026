@@ -116,7 +116,7 @@ npm run dev
 12. **Tech Meme Contest** (Individual • ৳300 • Grp A–E • Online)
 13. **Rubik's Cube Speedcubing** (Individual • ৳200 • Grp A–D • Ao5)
 14. **Treasure Hunt** (Team • ৳500 • 3 members per team)
-15. **Robo Showcase** (Individual ৳500 / Team ৳1000 max 3 • Grp C–E)
+15. **Robo Showcase** (Individual ৳500 / Team ৳1000 max 3 • Grp A–E)
 16. **Line Follower Robot (LFR)** (Individual ৳500 / Team ৳1000 max 3 • Grp B–E)
 17. **Drone Competition (Design & Flight)** (Individual ৳500 / Team ৳1000 max 3 • Grp C–D)
 

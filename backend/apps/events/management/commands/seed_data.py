@@ -686,7 +686,7 @@ class Command(BaseCommand):
                 'team_fee': 1000,
                 'team_min': 1,
                 'team_max': 3,
-                'groups': ['C', 'D', 'E'],
+                'groups': ['A', 'B', 'C', 'D', 'E'],
                 'venue_detail': 'Robotics & Hardware Exhibition Arena',
                 'submission_type': 'STAGE',
                 'highlight': True,
@@ -694,7 +694,7 @@ class Command(BaseCommand):
                 'description': 'Robot Display & Hardware Innovation. Showcase functional IoT, robotics, automation, and AI hardware projects live before the expert jury panel.',
                 'rules': (
                     "### Hardware Innovation Showcase\n"
-                    "- Group C, D, E (Grade 7 to University 4th Year)\n"
+                    "- Group A, B, C, D, E (Grade 3 to University 4th Year)\n"
                     "- Individual (৳500) | Team of max 3 members (৳1000)\n"
                     "- Hardware prototype must be functional and demonstrated live before the jury.\n"
                     "- Award: Prestigious Winner Crest + Certificate."

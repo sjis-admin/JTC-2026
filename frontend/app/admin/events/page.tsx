@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { adminFetch, EventItem } from '@/lib/api';
+import { adminFetch, EventItem, EventGroup } from '@/lib/api';
 import { Card, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -21,6 +21,14 @@ const CATEGORY_CHOICES = [
   { value: 'TYPING', label: 'Speed Typing' },
   { value: 'QUIZ', label: 'Quizzes' },
   { value: 'OTHER', label: 'Other Arenas' },
+];
+
+const AVAILABLE_GROUPS: { code: 'A' | 'B' | 'C' | 'D' | 'E'; label: string; grades: string }[] = [
+  { code: 'A', label: 'Group A', grades: 'Grades 3–4' },
+  { code: 'B', label: 'Group B', grades: 'Grades 5–6' },
+  { code: 'C', label: 'Group C', grades: 'Grades 7–8' },
+  { code: 'D', label: 'Group D', grades: 'Grades 9–12' },
+  { code: 'E', label: 'Group E', grades: 'University' },
 ];
 
 // Module-level cache for instant tab navigation
@@ -46,6 +54,7 @@ export default function AdminEventsPage() {
   const [newDesc, setNewDesc] = useState('');
   const [newRules, setNewRules] = useState('');
   const [newCriteria, setNewCriteria] = useState('');
+  const [newGroups, setNewGroups] = useState<string[]>(['A', 'B', 'C', 'D']);
 
   const loadEvents = async (force = false) => {
     const now = Date.now();
@@ -85,6 +94,7 @@ export default function AdminEventsPage() {
 
     setSaving(true);
     try {
+      const groupCodes = editingEvent.eligibility_groups ? editingEvent.eligibility_groups.map((g) => g.code) : undefined;
       const res = await adminFetch(`/admin/events/${editingEvent.id}/`, {
         method: 'PATCH',
         body: JSON.stringify({
@@ -100,6 +110,7 @@ export default function AdminEventsPage() {
           is_active: editingEvent.is_active,
           highlight: editingEvent.highlight,
           order: editingEvent.order,
+          groups: groupCodes,
         }),
       });
 
@@ -137,6 +148,7 @@ export default function AdminEventsPage() {
           is_active: true,
           highlight: false,
           icon: 'Sparkles',
+          groups: newGroups,
         }),
       });
 
@@ -147,6 +159,7 @@ export default function AdminEventsPage() {
         setNewDesc('');
         setNewRules('');
         setNewCriteria('');
+        setNewGroups(['A', 'B', 'C', 'D']);
         loadEvents(true);
       }
     } catch (err) {
@@ -198,6 +211,7 @@ export default function AdminEventsPage() {
                 <th className="p-3.5">#</th>
                 <th className="p-3.5">Event Name</th>
                 <th className="p-3.5">Category</th>
+                <th className="p-3.5">Groups</th>
                 <th className="p-3.5">Type</th>
                 <th className="p-3.5">Fee</th>
                 <th className="p-3.5">Active</th>
@@ -214,6 +228,23 @@ export default function AdminEventsPage() {
                     <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-elevated text-gold-light border border-surface-border">
                       {ev.category}
                     </span>
+                  </td>
+                  <td className="p-3.5">
+                    <div className="flex flex-wrap gap-1">
+                      {ev.eligibility_groups && ev.eligibility_groups.length > 0 ? (
+                        ev.eligibility_groups.map((g) => (
+                          <span
+                            key={g.code}
+                            className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-elevated text-gold border border-gold/30"
+                            title={`${g.label} (${g.grade_range})`}
+                          >
+                            {g.code}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-slate-600 text-xs">-</span>
+                      )}
+                    </div>
                   </td>
                   <td className="p-3.5 font-semibold text-slate-300">{ev.event_type}</td>
                   <td className="p-3.5 font-mono font-bold text-gold">{ev.fee_display}</td>
@@ -329,6 +360,42 @@ export default function AdminEventsPage() {
                 />
               </div>
 
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-200 uppercase block">Eligible Academic Groups</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {AVAILABLE_GROUPS.map((grp) => {
+                    const isChecked = newGroups.includes(grp.code);
+                    return (
+                      <label
+                        key={grp.code}
+                        className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all ${
+                          isChecked
+                            ? 'bg-gold/15 border-gold/60 text-white'
+                            : 'bg-surface border-surface-border text-slate-400 hover:border-slate-500'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewGroups([...newGroups, grp.code]);
+                            } else {
+                              setNewGroups(newGroups.filter((c) => c !== grp.code));
+                            }
+                          }}
+                          className="accent-gold w-3.5 h-3.5 rounded cursor-pointer"
+                        />
+                        <div>
+                          <div className="text-xs font-bold">{grp.label}</div>
+                          <div className="text-[10px] text-slate-400">{grp.grades}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-200 uppercase block">Short Overview / Description</label>
                 <textarea
@@ -401,6 +468,51 @@ export default function AdminEventsPage() {
                 value={editingEvent.venue_detail || ''}
                 onChange={(e) => setEditingEvent({ ...editingEvent, venue_detail: e.target.value })}
               />
+
+              {/* ELIGIBLE ACADEMIC GROUPS */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold uppercase text-slate-300">
+                  Eligible Academic Groups
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {AVAILABLE_GROUPS.map((grp) => {
+                    const isChecked = editingEvent.eligibility_groups?.some((g) => g.code === grp.code) ?? false;
+                    return (
+                      <label
+                        key={grp.code}
+                        className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer transition-all ${
+                          isChecked
+                            ? 'bg-gold/15 border-gold/60 text-white shadow-sm shadow-gold/10'
+                            : 'bg-surface border-surface-border text-slate-400 hover:border-slate-500'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            const curGroups = editingEvent.eligibility_groups || [];
+                            let nextGroups: EventGroup[];
+                            if (e.target.checked) {
+                              nextGroups = [
+                                ...curGroups,
+                                { code: grp.code, label: grp.label, grade_range: grp.grades },
+                              ];
+                            } else {
+                              nextGroups = curGroups.filter((g) => g.code !== grp.code);
+                            }
+                            setEditingEvent({ ...editingEvent, eligibility_groups: nextGroups });
+                          }}
+                          className="accent-gold w-4 h-4 rounded cursor-pointer"
+                        />
+                        <div>
+                          <div className="text-xs font-bold">{grp.label}</div>
+                          <div className="text-[10px] text-slate-400">{grp.grades}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold uppercase text-slate-300">Rules & Format (Markdown)</label>

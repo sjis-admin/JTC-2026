@@ -49,6 +49,14 @@ class EventAdminSerializer(serializers.ModelSerializer):
         model = Event
         fields = '__all__'
 
+    def to_internal_value(self, data):
+        data = data.copy() if hasattr(data, 'copy') else dict(data)
+        if 'groups' in data and 'eligibility_group_ids' not in data:
+            codes = data.pop('groups')
+            group_ids = list(EventGroup.objects.filter(code__in=codes).values_list('id', flat=True))
+            data['eligibility_group_ids'] = group_ids
+        return super().to_internal_value(data)
+
     def update(self, instance, validated_data):
         faqs_data = validated_data.pop('faqs', None)
         instance = super().update(instance, validated_data)
