@@ -344,7 +344,7 @@ function RegisterForm() {
   useEffect(() => {
     async function loadData() {
       const [evList, schList, stData, bndInfo] = await Promise.all([
-        fetchEvents(), fetchSchools(), fetchSiteSettings(), fetchBundleInfo()
+        fetchEvents(), fetchSchools(), fetchSiteSettings({ fresh: true }), fetchBundleInfo()
       ]);
       setEvents(evList);
       setSchools(schList);
@@ -671,6 +671,9 @@ function RegisterForm() {
 
       router.push(`/register/success?code=${res.confirmation_code}`);
     } catch (err: any) {
+      if (err.data?.registration_open === false || (typeof err.message === 'string' && (err.message.includes('paused') || err.message.includes('closed')))) {
+        setSiteSettings((prev) => prev ? { ...prev, registration_open: false, registration_status_message: err.message } : prev);
+      }
       if (err.data?.existing_code) {
         setExistingRegLoading(true);
         lookupRegistration(err.data.existing_code)
@@ -693,6 +696,75 @@ function RegisterForm() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // ─── Registration Closed Gate: Block upfront before Google auth ───────────────
+  if (siteSettings && !siteSettings.registration_open) {
+    return (
+      <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 flex items-center justify-center">
+        <div className="w-full max-w-2xl text-center space-y-6">
+          <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-rose-950/40 via-surface-elevated/90 to-surface-elevated border-2 border-rose-500/50 shadow-2xl shadow-rose-950/50 relative overflow-hidden backdrop-blur-xl">
+            {/* Ambient Background Glow */}
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-40 bg-rose-500/20 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Lock Badge */}
+            <div className="relative z-10 w-20 h-20 rounded-2xl bg-rose-950/80 border border-rose-500/60 flex items-center justify-center mx-auto mb-6 text-rose-400 shadow-xl shadow-rose-950/60 animate-pulse">
+              <Lock className="w-10 h-10" />
+            </div>
+
+            <div className="relative z-10 space-y-3">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-950/90 border border-rose-500/60 text-xs font-mono font-bold text-rose-300">
+                ● REGISTRATION PAUSED
+              </span>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-display tracking-tight">
+                Registration is Currently Closed
+              </h1>
+              <p className="text-sm sm:text-base text-rose-200/90 font-medium max-w-lg mx-auto leading-relaxed">
+                {siteSettings.registration_status_message || 'Online registrations for SJIS Inter-School Tech Carnival 2026 are currently paused by the administration.'}
+              </p>
+              <p className="text-xs text-slate-400 max-w-md mx-auto pt-1">
+                Please check back soon or follow our official announcements for updates on registration reopening.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-8">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={async () => {
+                  const fresh = await fetchSiteSettings({ fresh: true });
+                  setSiteSettings(fresh);
+                }}
+                className="w-full sm:w-auto font-bold text-xs border-gold/40 text-gold hover:bg-gold/10"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" /> Check Status Again
+              </Button>
+              <Link href="/events" className="w-full sm:w-auto">
+                <Button variant="glow" size="lg" className="w-full font-bold text-xs">
+                  <Trophy className="w-4 h-4 mr-2" /> Explore 17 Competitions
+                </Button>
+              </Link>
+              <Link href="/rulebook" className="w-full sm:w-auto">
+                <Button variant="secondary" size="lg" className="w-full font-semibold text-xs">
+                  Official Rulebook
+                </Button>
+              </Link>
+            </div>
+
+            {/* Helpline / Contact */}
+            <div className="relative z-10 pt-8 mt-8 border-t border-surface-border/80 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
+              <span className="flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-gold" /> {siteSettings.contact_email}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-gold" /> {siteSettings.contact_phone}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ─── Auth Gate: show gate if not yet verified ──────────────────────────────────
   if (!authUnlocked) {
@@ -767,31 +839,6 @@ function RegisterForm() {
       {/* Render fresh registration form only when user has no active pending/verified registration */}
       {!existingRegLoading && existingRegStatus === 'NONE' && (
         <>
-          {/* Dynamic Registration Closed / Scheduled Gate */}
-          {siteSettings && !siteSettings.registration_open && (
-            <Card glow="none" className="p-8 text-center border-rose-500/50 bg-rose-950/20 max-w-2xl mx-auto mb-10">
-              <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
-                <Lock className="w-8 h-8" />
-              </div>
-              <CardTitle className="text-2xl text-rose-300 mb-2">Registration is Currently Closed</CardTitle>
-              <CardDescription className="text-slate-300 max-w-md mx-auto mb-6">
-                Online registration for SJIS Inter-School Tech Carnival 2026 has either concluded or has not opened yet. Please stay tuned to our official channels.
-              </CardDescription>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/events">
-                  <Button variant="glow" size="lg" className="w-full sm:w-auto font-bold">
-                    Browse All 17 Competitions
-                  </Button>
-                </Link>
-                <Link href="/">
-                  <Button variant="secondary" size="lg" className="w-full sm:w-auto font-semibold">
-                    Back to Home
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          )}
-
           {/* Stepper Progress */}
           {(!siteSettings || siteSettings.registration_open) && (
             <>

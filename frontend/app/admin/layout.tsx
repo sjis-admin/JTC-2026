@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { getAdminToken, clearAdminToken, adminFetch, ADMIN_AUTH_PATH, fetchSiteSettings } from '@/lib/api';
 import { AdminLoader } from '@/components/ui/AdminLoader';
+import MasterRegistrationControl from '@/components/admin/MasterRegistrationControl';
 import {
   LayoutDashboard, Users, CalendarDays, School, Settings, LogOut, Cpu, ArrowLeft, Menu, X, QrCode, ShieldCheck
 } from 'lucide-react';
@@ -158,8 +159,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative">
 
         {/* Top bar for mobile */}
-        <header className="lg:hidden bg-surface border-b border-surface-border p-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2.5">
+        <header className="lg:hidden bg-surface border-b border-surface-border px-3.5 py-2.5 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-surface-elevated border border-gold/40 flex items-center justify-center text-gold overflow-hidden shrink-0">
               <img
                 src={logoUrl || '/images/jtc-logo.png'}
@@ -168,14 +169,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onError={() => setLogoUrl('/images/jtc-logo.png')}
               />
             </div>
-            <span className="font-mono font-bold text-white text-sm">JTC Control Center</span>
+            <span className="font-mono font-bold text-white text-xs sm:text-sm">JTC Control</span>
           </div>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl bg-surface-elevated border border-gold/40 text-gold"
-          >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <MasterRegistrationControl variant="header" />
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-1.5 rounded-lg bg-surface-elevated border border-gold/40 text-gold"
+              aria-label="Toggle Navigation"
+            >
+              {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
+        </header>
+
+        {/* Top bar for desktop */}
+        <header className="hidden lg:flex bg-surface/90 backdrop-blur-md border-b border-surface-border px-8 py-3 items-center justify-between shrink-0 z-20">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-mono font-bold text-white">
+              {navItems.find((i) => i.href === pathname)?.label || 'Admin Control Suite'}
+            </span>
+            <span className="text-slate-600 font-mono">•</span>
+            <span className="text-[11px] font-mono text-gold font-bold">SJIS Tech Carnival 2026</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <MasterRegistrationControl variant="header" />
+          </div>
         </header>
 
         {/* Mobile Sidebar overlay */}

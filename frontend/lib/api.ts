@@ -155,11 +155,13 @@ export interface RegistrationResponse {
 
 // ─── Public API Helpers ────────────────────────────────────────────────────────
 
-export async function fetchSiteSettings(): Promise<SiteSettingsData> {
+export async function fetchSiteSettings(options?: { fresh?: boolean }): Promise<SiteSettingsData> {
   try {
-    const res = await fetch(`${getApiBase()}/settings/`, {
-      next: { revalidate: 30 },
-    });
+    const url = `${getApiBase()}/settings/${options?.fresh ? `?_t=${Date.now()}` : ''}`;
+    const fetchOptions: RequestInit = options?.fresh
+      ? { cache: 'no-store' }
+      : { next: { revalidate: 15 } };
+    const res = await fetch(url, fetchOptions);
     if (!res.ok) throw new Error('Failed to fetch settings');
     return await res.json();
   } catch (err) {
@@ -534,3 +536,25 @@ export async function sendAllPendingReminders(force = false): Promise<{
   if (!res.ok) throw new Error(data.error || 'Failed to trigger batch reminder emails.');
   return data;
 }
+
+export interface ToggleRegistrationResponse {
+  success: boolean;
+  registration_open: boolean;
+  is_active: boolean;
+  status_message: string;
+  updated_at?: string;
+}
+
+export async function toggleRegistration(targetState?: boolean): Promise<ToggleRegistrationResponse> {
+  const res = await adminFetch('/admin/settings/toggle-registration/', {
+    method: 'POST',
+    body: JSON.stringify(targetState !== undefined ? { registration_open: targetState } : {}),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to toggle registration state.');
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('jtc_registration_status_changed', { detail: data }));
+  }
+  return data;
+}
+

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import {
   Users, CheckCircle2, Clock, XCircle, DollarSign, Trophy, ArrowRight, ShieldAlert, Sparkles, TrendingUp, RefreshCw, QrCode
 } from 'lucide-react';
+import MasterRegistrationControl from '@/components/admin/MasterRegistrationControl';
 
 interface StatsData {
   total_registrations: number;
@@ -88,6 +89,9 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Master Registration Gate Control Hero */}
+      <MasterRegistrationControl variant="banner" />
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

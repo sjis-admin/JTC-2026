@@ -15,6 +15,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoSrc, setLogoSrc] = useState<string>('/images/jtc-logo.png');
+  const [registrationOpen, setRegistrationOpen] = useState<boolean>(true);
   const [activeRegCode, setActiveRegCode] = useState<string | null>(null);
   const [activeRegStatus, setActiveRegStatus] = useState<string | null>(null);
   const pathname = usePathname();
@@ -39,15 +40,20 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    fetchSiteSettings()
+    fetchSiteSettings({ fresh: true })
       .then((data) => {
-        if (data?.logo_url && data.logo_url !== logoSrc) {
-          // Verify remote logo loads cleanly before applying to prevent flicker/404s
-          const testImg = new window.Image();
-          testImg.onload = () => {
-            setLogoSrc(data.logo_url!);
-          };
-          testImg.src = data.logo_url;
+        if (data) {
+          if (data.registration_open !== undefined) {
+            setRegistrationOpen(data.registration_open);
+          }
+          if (data?.logo_url && data.logo_url !== logoSrc) {
+            // Verify remote logo loads cleanly before applying to prevent flicker/404s
+            const testImg = new window.Image();
+            testImg.onload = () => {
+              setLogoSrc(data.logo_url!);
+            };
+            testImg.src = data.logo_url;
+          }
         }
       })
       .catch(() => {});
@@ -185,11 +191,20 @@ export default function Navbar() {
                 <span>Find Pass</span>
               </Button>
             </Link>
-            <Link href="/register">
-              <Button variant="glow" size="sm" className="font-extrabold tracking-wide px-4.5 py-2 text-xs sm:text-sm whitespace-nowrap inline-flex items-center">
-                <span>Register Now</span>
-              </Button>
-            </Link>
+            {registrationOpen ? (
+              <Link href="/register">
+                <Button variant="glow" size="sm" className="font-extrabold tracking-wide px-4.5 py-2 text-xs sm:text-sm whitespace-nowrap inline-flex items-center">
+                  <span>Register Now</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/register">
+                <Button variant="outline" size="sm" className="font-bold border-rose-500/50 bg-rose-950/40 text-rose-300 hover:bg-rose-900/50 px-3.5 py-2 text-xs whitespace-nowrap inline-flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  <span>Registration Closed</span>
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Action Group (< lg screens) */}
@@ -201,10 +216,16 @@ export default function Navbar() {
                   <span>Pay Now</span>
                 </Button>
               </Link>
-            ) : (
+            ) : registrationOpen ? (
               <Link href="/register" className="sm:hidden">
                 <Button variant="glow" size="sm" className="text-xs py-1.5 px-3 font-extrabold whitespace-nowrap">
                   Register
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/register" className="sm:hidden">
+                <Button variant="outline" size="sm" className="text-xs py-1.5 px-2.5 font-bold border-rose-500/50 text-rose-300 bg-rose-950/40 whitespace-nowrap">
+                  Closed
                 </Button>
               </Link>
             )}
@@ -295,11 +316,20 @@ export default function Navbar() {
 
           {/* Bottom Actions */}
           <div className="pt-4 border-t border-surface-border/80 space-y-3 pb-8">
-            <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full">
-              <Button variant="glow" size="lg" className="w-full justify-center font-black py-3.5 text-sm shadow-xl shadow-gold/20">
-                Register For Competitions <ArrowRight className="w-4 h-4 ml-1.5" />
-              </Button>
-            </Link>
+            {registrationOpen ? (
+              <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                <Button variant="glow" size="lg" className="w-full justify-center font-black py-3.5 text-sm shadow-xl shadow-gold/20">
+                  Register For Competitions <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full">
+                <Button variant="outline" size="lg" className="w-full justify-center font-bold py-3.5 text-sm border-rose-500/50 text-rose-300 bg-rose-950/40">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse mr-2" />
+                  <span>Registration Closed</span>
+                </Button>
+              </Link>
+            )}
 
             <div className="grid grid-cols-2 gap-2 text-xs">
               <Link href="/verify" onClick={() => setMobileMenuOpen(false)} className="block">

@@ -40,6 +40,11 @@ def auth_google(request):
     Returns a short-lived session JWT + user info on success.
     POST body: { "credential": "<google_id_token>" }
     """
+    site = SiteSettings.get()
+    is_active, status_msg = site.is_registration_active()
+    if not is_active:
+        return Response({'error': status_msg, 'registration_open': False}, status=status.HTTP_403_FORBIDDEN)
+
     credential = request.data.get('credential', '').strip()
     if not credential:
         return Response({'error': 'Missing Google credential token.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -71,6 +76,11 @@ def auth_guest_otp_send(request):
     POST body: { "email": "user@example.com" }
     Rate-limited on the frontend; backend validates format only.
     """
+    site = SiteSettings.get()
+    is_active, status_msg = site.is_registration_active()
+    if not is_active:
+        return Response({'error': status_msg, 'registration_open': False}, status=status.HTTP_403_FORBIDDEN)
+
     email = request.data.get('email', '').strip().lower()
     if not email or not is_valid_email(email):
         return Response({'error': 'Please provide a valid email address.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -95,6 +105,11 @@ def auth_guest_otp_verify(request):
     Validates the OTP entered by the guest and issues a session JWT on success.
     POST body: { "email": "user@example.com", "otp": "123456" }
     """
+    site = SiteSettings.get()
+    is_active, status_msg = site.is_registration_active()
+    if not is_active:
+        return Response({'error': status_msg, 'registration_open': False}, status=status.HTTP_403_FORBIDDEN)
+
     email = str(request.data.get('email') or '').strip().lower()
     otp_input = str(request.data.get('otp') or '').strip()
 
@@ -134,7 +149,7 @@ def site_settings_public(request):
     """Public subset of site settings for frontend."""
     site = SiteSettings.get()
     is_active, status_msg = site.is_registration_active()
-    return Response({
+    response = Response({
         'carnival_name': site.carnival_name,
         'carnival_start_date': site.carnival_start_date,
         'carnival_end_date': site.carnival_end_date,
@@ -153,6 +168,10 @@ def site_settings_public(request):
         'announcement_banner': site.announcement_banner,
         'logo_url': request.build_absolute_uri(site.logo.url) if site.logo else None,
     })
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 
 class RegistrationCreateView(generics.CreateAPIView):
@@ -166,7 +185,7 @@ class RegistrationCreateView(generics.CreateAPIView):
         site = SiteSettings.get()
         is_active, status_msg = site.is_registration_active()
         if not is_active:
-            return Response({'error': status_msg}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': status_msg, 'registration_open': False}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -770,6 +789,9 @@ def admin_dashboard_stats(request):
         'event__name', 'event__category'
     ).annotate(count=Count('id')).order_by('-count')[:10]
 
+    site = SiteSettings.get()
+    is_active, status_msg = site.is_registration_active()
+
     return Response({
         'total_registrations': total_registrations,
         'verified': verified,
@@ -779,6 +801,11 @@ def admin_dashboard_stats(request):
         'total_revenue_pending': pending_revenue,
         'total_events_booked': total_events_booked,
         'event_popularity': list(event_stats),
+        'registration_open': site.registration_open,
+        'is_active': is_active,
+        'registration_status_message': status_msg,
+        'registration_start_date': site.registration_start_date,
+        'registration_deadline': site.registration_deadline,
     })
 
 

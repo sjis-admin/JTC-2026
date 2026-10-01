@@ -194,3 +194,94 @@ class BundleEligibilityTestCase(APITestCase):
         create_resp2 = self.client.post('/api/registrations/', payload, format='json')
         self.assertEqual(create_resp2.status_code, 201)
 
+
+class RegistrationToggleAndBlockTestCase(APITestCase):
+    def setUp(self):
+        from apps.core.models import SiteSettings
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        self.school, _ = School.objects.get_or_create(name='St. Joseph International School')
+        self.group_c, _ = EventGroup.objects.get_or_create(code='C', defaults={'label': 'Group C', 'grade_range': 'Grade 7–8'})
+        self.event = Event.objects.create(
+            name='Speed Typing Challenge',
+            slug='speed-typing-test',
+            category='TYPING',
+            event_type='INDIVIDUAL',
+            individual_fee=200,
+            order=1,
+            is_active=True
+        )
+        self.event.eligibility_groups.set([self.group_c])
+
+        self.admin_user = User.objects.create_superuser(
+            username='admin_tester',
+            email='admin@jtc.test',
+            password='adminpassword123'
+        )
+
+        self.site_settings = SiteSettings.get()
+        self.site_settings.registration_open = True
+        self.site_settings.registration_start_date = None
+        self.site_settings.registration_deadline = None
+        self.site_settings.save()
+
+    def test_admin_toggle_endpoint_and_backend_blocking(self):
+        # 1. Unauthenticated toggle request must be rejected (401)
+        resp = self.client.post('/api/admin/settings/toggle-registration/')
+        self.assertEqual(resp.status_code, 401)
+
+        # 2. Authenticate as admin and toggle registration OFF
+        self.client.force_authenticate(user=self.admin_user)
+        toggle_resp = self.client.post('/api/admin/settings/toggle-registration/', {'registration_open': False}, format='json')
+        self.assertEqual(toggle_resp.status_code, 200)
+        self.assertFalse(toggle_resp.data['registration_open'])
+        self.assertFalse(toggle_resp.data['is_active'])
+
+        # 3. Verify public settings reflect the change immediately
+        self.client.logout()
+        pub_settings = self.client.get('/api/settings/')
+        self.assertEqual(pub_settings.status_code, 200)
+        self.assertFalse(pub_settings.data['registration_open'])
+        self.assertIn('paused by administration', pub_settings.data['registration_status_message'])
+
+        # 4. Attempt student registration while closed -> MUST be blocked with 403
+        payload = {
+            'name': 'Blocked Student',
+            'email': 'blocked.student@example.com',
+            'phone': '01811223344',
+            'school_id': self.school.id,
+            'grade': '7',
+            'is_bundle': False,
+            'events': [{'event_id': self.event.id, 'is_team': False}],
+            'payment_method': 'BKASH',
+            'payment_reference': 'TRX12345678',
+            'turnstile_token': '',
+        }
+        reg_resp = self.client.post('/api/registrations/', payload, format='json')
+        self.assertEqual(reg_resp.status_code, 403)
+        self.assertFalse(reg_resp.data.get('registration_open'))
+        self.assertIn('paused by administration', reg_resp.data.get('error'))
+
+        # 5. Attempt auth endpoints while closed -> MUST be blocked with 403
+        otp_resp = self.client.post('/api/auth/guest/otp/send/', {'email': 'test@example.com'}, format='json')
+        self.assertEqual(otp_resp.status_code, 403)
+
+        # 6. Admin turns registration back ON
+        self.client.force_authenticate(user=self.admin_user)
+        toggle_on_resp = self.client.post('/api/admin/settings/toggle-registration/', {'registration_open': True}, format='json')
+        self.assertEqual(toggle_on_resp.status_code, 200)
+        self.assertTrue(toggle_on_resp.data['registration_open'])
+        self.assertTrue(toggle_on_resp.data['is_active'])
+
+        # 7. Public settings reflect registration open
+        self.client.logout()
+        pub_settings2 = self.client.get('/api/settings/')
+        self.assertTrue(pub_settings2.data['registration_open'])
+
+        # 8. Student registration succeeds now!
+        reg_resp2 = self.client.post('/api/registrations/', payload, format='json')
+        self.assertEqual(reg_resp2.status_code, 201)
+        self.assertEqual(reg_resp2.data['payment_status'], 'PENDING')
+
+

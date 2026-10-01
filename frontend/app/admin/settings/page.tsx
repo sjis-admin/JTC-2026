@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Save, Check, Bell, MessageSquare, Mail, Calendar, Sparkles, Clock, AlertTriangle, ShieldCheck, Phone, CreditCard, Eye, EyeOff } from 'lucide-react';
+import MasterRegistrationControl from '@/components/admin/MasterRegistrationControl';
 
 const toInputDateTime = (val: string | null | undefined) => {
   if (!val) return '';
@@ -31,6 +32,16 @@ export default function AdminSettingsPage() {
         }
       })
       .finally(() => setLoading(false));
+
+    const handleSync = (e: any) => {
+      if (e.detail) {
+        setSettings((prev: any) => prev ? { ...prev, registration_open: e.detail.registration_open } : prev);
+      }
+    };
+    window.addEventListener('jtc_registration_status_changed', handleSync);
+    return () => {
+      window.removeEventListener('jtc_registration_status_changed', handleSync);
+    };
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -177,6 +188,9 @@ export default function AdminSettingsPage() {
             </div>
           </div>
 
+          {/* 1-Click Master Control Widget */}
+          <MasterRegistrationControl variant="card" />
+
           <div className="pt-2 border-t border-surface-border">
             <label className="flex items-center gap-2.5 text-slate-100 text-xs font-bold cursor-pointer">
               <input
@@ -185,7 +199,7 @@ export default function AdminSettingsPage() {
                 onChange={(e) => setSettings({ ...settings, registration_open: e.target.checked })}
                 className="w-4 h-4 accent-gold rounded cursor-pointer"
               />
-              <span>Master Registration Toggle (Check to enable; uncheck to instantly freeze/pause all registrations)</span>
+              <span>Master Registration Checkbox (Included in full configuration save)</span>
             </label>
           </div>
         </Card>
